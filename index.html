@@ -26,11 +26,11 @@
     --sidebar-w: 260px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--gray-50); color: var(--gray-900); line-height: 1.6; height: 100vh; overflow: hidden; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--gray-50); color: var(--gray-900); line-height: 1.6; }
 
   /* TOP NAV */
   .topnav {
-    position: fixed; top: 0; left: 0; right: 0; height: 56px;
+    position: sticky; top: 0; height: 56px;
     background: #fff; border-bottom: 1px solid var(--gray-200);
     display: flex; align-items: center; padding: 0 24px; gap: 16px; z-index: 100;
   }
@@ -47,13 +47,14 @@
   .topnav-search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-400); }
 
   /* LAYOUT */
-  .layout { display: flex; margin-top: 56px; height: calc(100vh - 56px); }
+  .layout { display: flex; min-height: calc(100vh - 56px); }
 
   /* SIDEBAR */
   .sidebar {
     width: var(--sidebar-w); flex-shrink: 0; background: #fff;
-    border-right: 1px solid var(--gray-200); position: fixed;
-    top: 56px; bottom: 0; overflow-y: auto; padding: 16px 0;
+    border-right: 1px solid var(--gray-200);
+    position: sticky; top: 56px; height: calc(100vh - 56px);
+    overflow-y: auto; padding: 16px 0; align-self: flex-start;
   }
   .sidebar-section { margin-bottom: 4px; }
   .sidebar-heading {
@@ -73,7 +74,7 @@
   .sidebar-sub .sidebar-link { font-size: 13px; padding: 5px 20px 5px 14px; }
 
   /* MAIN */
-  .main { margin-left: var(--sidebar-w); flex: 1; padding: 40px 48px; max-width: 960px; overflow-y: auto; height: 100%; }
+  .main { flex: 1; padding: 40px 48px; max-width: 960px; min-width: 0; }
 
   /* HOME */
   .home-hero { margin-bottom: 40px; }
@@ -187,8 +188,7 @@
   @media (max-width: 768px) {
     .block-grid { grid-template-columns: 1fr; }
     .sidebar { display: none; }
-    .main { margin-left: 0; padding: 24px 20px; }
-    body { overflow: hidden; }
+    .main { padding: 24px 20px; }
   }
 
   /* BUTTONS */
@@ -1644,8 +1644,7 @@ function navigate(pageId) {
   if (page) page.classList.add('active');
   const link = document.querySelector(`[onclick="navigate('${pageId}')"]`);
   if (link) link.classList.add('active');
-  const mainEl = document.querySelector('.main');
-  if (mainEl) mainEl.scrollTop = 0; else window.scrollTo(0, 0);
+  window.scrollTo(0, 0);
 
   if (pageId === 'settings') loadSettings();
   refreshEditBtn(pageId);
