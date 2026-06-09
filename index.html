@@ -1534,8 +1534,13 @@ const CONTENT_PAGES = ['tong-quan','so-do','quy-dinh','cong-cu',
 
 // ─── Init ─────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
+  // Lưu email từ URL vào localStorage để dùng lại
+  const urlEmail = new URLSearchParams(window.location.search).get('user_email');
+  if (urlEmail) localStorage.setItem('wiki_user_email', urlEmail);
+  const savedEmail = localStorage.getItem('wiki_user_email');
   try {
-    const res = await fetch('./api/me');
+    const url = savedEmail ? `./api/me?user_email=${encodeURIComponent(savedEmail)}` : './api/me';
+    const res = await fetch(url);
     currentUser = await res.json();
   } catch { /* server chưa chạy — chạy như static file */ }
   renderUserBadge();
