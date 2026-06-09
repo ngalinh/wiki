@@ -19,5 +19,6 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }}
             sudo git pull origin main
             cd server && sudo npm install --production
-            echo "=== vmadmin pm2 list ===" && pm2 jlist 2>/dev/null | python3 -c "import sys,json; [print(p.get('name','?'), p.get('pm_id','?'), p.get('pid','?'), p.get('pm2_env',{}).get('PORT','')) for p in json.load(sys.stdin)]" 2>/dev/null || true
-            echo "=== sudo pm2 list ===" && sudo pm2 jlist 2>/dev/null | python3 -c "import sys,json; [print(p.get('name','?'), p.get('pm_id','?'), p.get('pid','?'), p.get('pm2_env',{}).get('PORT','')) for p in json.load(sys.stdin)]" 2>/dev/null || true
+            echo "=== port 4105 ===" && sudo ss -tlnp 'sport = :4105' 2>/dev/null || sudo lsof -i :4105 2>/dev/null || true
+            echo "=== pm2 cwd ===" && pm2 jlist 2>/dev/null | python3 -c "import sys,json; [print(p.get('name','?'), p.get('pid','?'), p.get('pm2_env',{}).get('pm_cwd',''), p.get('pm2_env',{}).get('PORT','')) for p in json.load(sys.stdin)]" 2>/dev/null || true
+            echo "=== node processes ===" && ps aux 2>/dev/null | grep node | grep -v grep || true
