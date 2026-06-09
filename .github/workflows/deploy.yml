@@ -19,8 +19,6 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }}
             sudo git pull origin main
             cd server && sudo npm install --production && cd ..
-            OLD_PID=$(pgrep -f "node server/index.js" 2>/dev/null || echo "")
-            [ -n "$OLD_PID" ] && sudo kill $OLD_PID && sleep 1 || true
-            nohup sudo node server/index.js >> /tmp/wiki.log 2>&1 &
-            sleep 2
-            echo "Wiki PID: $(pgrep -f 'node server/index.js')"
+            sudo pkill -f "node server/index.js" 2>/dev/null || true
+            sleep 3
+            echo "Wiki process after restart: $(pgrep -f 'node server/index.js' || echo 'not running yet')"
