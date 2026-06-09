@@ -241,6 +241,7 @@
   .wysiwyg-editor hr { border: none; border-top: 2px solid var(--gray-200); margin: 1em 0; }
   .wysiwyg-editor pre, .wysiwyg-editor code { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; padding: 2px 6px; }
   .wysiwyg-editor pre { padding: 12px; display: block; white-space: pre-wrap; }
+  .wysiwyg-editor img { max-width: 100%; height: auto; border-radius: 4px; margin: 4px 0; }
   .wysiwyg-source { flex: 1; border: none; padding: 16px; font-family: 'Courier New', monospace; font-size: 12.5px; resize: none; outline: none; background: #fff; line-height: 1.5; display: none; min-height: 0; }
   .wysiwyg-source.visible { display: block; }
 
@@ -1553,6 +1554,7 @@
       <div class="wysiwyg-sep"></div>
       <button class="wysiwyg-btn" onclick="insertLink()" title="Chèn liên kết">&#128279;</button>
       <button class="wysiwyg-btn" onclick="fmt('unlink')" title="Xóa liên kết">&#128280;</button>
+      <button class="wysiwyg-btn" onclick="insertImage()" title="Chèn hình ảnh">&#128247;</button>
       <button class="wysiwyg-btn" onclick="insertTable()" title="Chèn bảng">&#9783;</button>
       <button class="wysiwyg-btn" onclick="fmt('insertHorizontalRule')" title="Đường kẻ ngang">&#9135;</button>
       <div class="wysiwyg-sep"></div>
@@ -1737,6 +1739,14 @@ function insertLink() {
     document.getElementById('wysiwygEditor').focus();
     document.execCommand('createLink', false, url);
   }
+}
+
+function insertImage() {
+  const url = prompt('Nhập URL hình ảnh:', 'https://');
+  if (!url || url === 'https://') return;
+  const alt = prompt('Mô tả hình ảnh (alt text):', '') || '';
+  document.getElementById('wysiwygEditor').focus();
+  document.execCommand('insertHTML', false, `<img src="${url}" alt="${alt}" style="max-width:100%;height:auto;">`);
 }
 
 function insertTable() {
