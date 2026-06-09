@@ -210,7 +210,7 @@
 
   /* PAGE HEADER with edit button */
   .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--gray-200); position: relative; }
-  .edit-page-btn { position: absolute; right: 0; top: 0; display: none; }
+  .edit-page-btn { display: none; flex-shrink: 0; }
 
   /* EDIT MODAL */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
@@ -1663,7 +1663,17 @@ function refreshEditBtn(pageId) {
   btn.innerHTML = '✏️ Chỉnh sửa';
   btn.style.display = 'inline-flex';
   btn.onclick = () => openEditModal(pageId);
-  header.appendChild(btn);
+  // Đặt nút cạnh h1 bằng flex wrapper
+  const h1 = header.querySelector('h1');
+  if (h1) {
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:12px;';
+    h1.parentNode.insertBefore(wrapper, h1);
+    wrapper.appendChild(h1);
+    wrapper.appendChild(btn);
+  } else {
+    header.appendChild(btn);
+  }
 }
 
 // ─── Custom content load/save ─────────────────────────────────
