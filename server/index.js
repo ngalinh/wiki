@@ -37,15 +37,20 @@ function getConfig() {
   catch { return { admins: [], editors: [] }; }
 }
 
+function getEnvAdmins() {
+  return (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+}
+
 function isAdmin(email) {
   if (!email) return false;
-  return getConfig().admins.includes(email);
+  const c = getConfig();
+  return c.admins.includes(email) || getEnvAdmins().includes(email);
 }
 
 function isEditor(email) {
   if (!email) return false;
   const c = getConfig();
-  return c.admins.includes(email) || c.editors.includes(email);
+  return c.admins.includes(email) || c.editors.includes(email) || getEnvAdmins().includes(email);
 }
 
 // GET /api/me
