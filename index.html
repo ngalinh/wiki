@@ -189,6 +189,61 @@
     .sidebar { display: none; }
     .main { margin-left: 0; padding: 24px 20px; }
   }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s; text-decoration: none; }
+  .btn-primary { background: var(--brand); color: #fff; }
+  .btn-primary:hover { background: var(--brand-dark); }
+  .btn-secondary { background: var(--gray-100); color: var(--gray-700); }
+  .btn-secondary:hover { background: var(--gray-200); }
+  .btn-danger { background: var(--red-light); color: var(--red); }
+  .btn-danger:hover { background: #fee2e2; }
+  .btn-sm { padding: 5px 12px; font-size: 13px; }
+
+  /* USER BADGE */
+  .user-badge { display: flex; align-items: center; gap: 8px; margin-left: 12px; }
+  .user-email { font-size: 13px; color: var(--gray-500); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .role-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; white-space: nowrap; flex-shrink: 0; }
+  .role-admin { background: #fde8d8; color: #9a3412; }
+  .role-editor { background: #d1fae5; color: #065f46; }
+  .role-viewer { background: var(--gray-100); color: var(--gray-500); }
+
+  /* PAGE HEADER with edit button */
+  .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--gray-200); position: relative; }
+  .edit-page-btn { position: absolute; right: 0; top: 0; display: none; }
+
+  /* EDIT MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 12px; width: 100%; max-width: 1100px; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal-header { padding: 18px 24px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+  .modal-header h2 { font-size: 17px; font-weight: 700; }
+  .modal-header .modal-subtitle { font-size: 12px; color: var(--gray-400); margin-bottom: 3px; }
+  .modal-body { flex: 1; overflow: hidden; display: flex; min-height: 0; }
+  .modal-editor-pane { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--gray-200); min-width: 0; }
+  .modal-editor-label { padding: 7px 16px; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); }
+  .modal-editor-pane textarea { flex: 1; border: none; padding: 16px; font-family: 'Courier New', monospace; font-size: 12.5px; resize: none; outline: none; background: #fff; line-height: 1.5; }
+  .modal-preview-pane { flex: 1; overflow-y: auto; padding: 24px; min-width: 0; }
+  .modal-footer { padding: 14px 24px; border-top: 1px solid var(--gray-200); display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+
+  /* SETTINGS */
+  .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .settings-card { border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; background: #fff; }
+  .settings-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .settings-card p { font-size: 13px; color: var(--gray-500); margin-bottom: 14px; }
+  .email-list { list-style: none; padding: 0; min-height: 40px; }
+  .email-list li { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-radius: 6px; background: var(--gray-50); margin-bottom: 5px; font-size: 13px; color: var(--gray-700); }
+  .email-list .empty-msg { color: var(--gray-400); font-style: italic; justify-content: center; background: none; }
+  .btn-remove { background: none; border: none; color: var(--gray-400); cursor: pointer; padding: 1px 5px; border-radius: 4px; font-size: 16px; line-height: 1; }
+  .btn-remove:hover { background: var(--red-light); color: var(--red); }
+  .email-input-row { display: flex; gap: 8px; margin-top: 12px; }
+  .email-input-row input { flex: 1; border: 1px solid var(--gray-200); border-radius: 6px; padding: 7px 12px; font-size: 13px; outline: none; }
+  .email-input-row input:focus { border-color: var(--brand); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; z-index: 999; pointer-events: none; transition: opacity 0.3s; }
+  .toast-success { background: var(--green-light); color: #065f46; border: 1px solid #a7f3d0; }
+  .toast-error { background: var(--red-light); color: #991b1b; border: 1px solid #fecaca; }
 </style>
 </head>
 <body>
@@ -200,6 +255,9 @@
   <div class="topnav-search">
     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="text" id="searchInput" placeholder="Tìm kiếm..." oninput="doSearch(this.value)">
+  </div>
+  <div class="user-badge" id="userBadge">
+    <span style="font-size:13px;color:var(--gray-300);">...</span>
   </div>
 </nav>
 
@@ -228,6 +286,11 @@
     <a class="sidebar-link" onclick="navigate('hang-stock')"><span class="icon">🏪</span> Hàng stock</a>
     <a class="sidebar-link" onclick="navigate('khieu-nai')"><span class="icon">⚠️</span> Khiếu nại thường gặp</a>
     <a class="sidebar-link" onclick="navigate('faq')"><span class="icon">❓</span> FAQ</a>
+  </div>
+  <div class="sidebar-section">
+    <a class="sidebar-link" id="settingsSidebarLink" onclick="navigate('settings')" style="display:none">
+      <span class="icon">⚙️</span> Cài đặt
+    </a>
   </div>
 </aside>
 
@@ -1351,6 +1414,75 @@
   </div>
 </div>
 
+<!-- SETTINGS -->
+<div id="page-settings" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span></div>
+    <h1>⚙️ Cài đặt</h1>
+  </div>
+
+  <div class="section">
+    <h2>🔌 Cách xác thực người dùng</h2>
+    <div class="callout info">
+      Wiki nhận diện người dùng qua <strong>HTTP header</strong> mà dashboard của bạn gửi khi proxy request.<br><br>
+      Tên header mặc định: <code>X-User-Email: email_nhan_vien@company.com</code><br><br>
+      Có thể đổi tên header bằng biến môi trường <code>USER_EMAIL_HEADER</code> trong file <code>.env</code>.
+    </div>
+    <div class="callout warn">
+      <strong>Test nhanh (chỉ dùng khi dev):</strong> Thêm <code>?user_email=your@email.com</code> vào URL để giả lập email đăng nhập.
+    </div>
+  </div>
+
+  <div id="settings-loading" class="callout info" style="margin-bottom:24px;">⏳ Đang tải cài đặt...</div>
+  <div id="settings-forbidden" class="callout danger" style="display:none; margin-bottom:24px;">
+    ⛔ Chỉ <strong>Admin</strong> mới có quyền truy cập trang này. Email hiện tại của bạn không có quyền.
+  </div>
+
+  <div id="settings-content" style="display:none">
+    <div class="section">
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3>👑 Admin <span class="role-tag role-admin">Quản trị viên</span></h3>
+          <p>Có quyền chỉnh sửa nội dung wiki <strong>và</strong> quản lý danh sách tài khoản.</p>
+          <ul class="email-list" id="adminList"></ul>
+          <div class="email-input-row">
+            <input type="email" id="adminInput" placeholder="email@company.com" onkeydown="if(event.key==='Enter')addEmail('admin')">
+            <button class="btn btn-secondary btn-sm" onclick="addEmail('admin')">+ Thêm</button>
+          </div>
+        </div>
+        <div class="settings-card">
+          <h3>✏️ Editor <span class="role-tag role-editor">Biên tập viên</span></h3>
+          <p>Chỉ có quyền chỉnh sửa nội dung các trang wiki, không xem được cài đặt.</p>
+          <ul class="email-list" id="editorList"></ul>
+          <div class="email-input-row">
+            <input type="email" id="editorInput" placeholder="email@company.com" onkeydown="if(event.key==='Enter')addEmail('editor')">
+            <button class="btn btn-secondary btn-sm" onclick="addEmail('editor')">+ Thêm</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <button class="btn btn-primary" onclick="saveSettings()">💾 Lưu cài đặt</button>
+      <span id="settingsSaveMsg" style="font-size:13px;color:var(--green);display:none;font-weight:600;">✓ Đã lưu thành công</span>
+    </div>
+
+    <div class="section" style="margin-top:40px;">
+      <h2>📋 Bảng phân quyền</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Quyền</th><th>Admin</th><th>Editor</th><th>Viewer (mặc định)</th></tr></thead>
+          <tbody>
+            <tr><td>Xem toàn bộ nội dung wiki</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Chỉnh sửa nội dung trang</td><td>✓</td><td>✓</td><td>—</td></tr>
+            <tr><td>Reset nội dung về mặc định</td><td>✓</td><td>✓</td><td>—</td></tr>
+            <tr><td>Xem & quản lý trang Cài đặt</td><td>✓</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- SEARCH RESULTS -->
 <div id="page-search" class="page">
   <div class="page-header">
@@ -1361,8 +1493,81 @@
 
 </main>
 
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-subtitle">Chỉnh sửa nội dung trang</div>
+        <h2 id="editModalTitle"></h2>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="closeEditModal()">✕ Đóng</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-editor-pane">
+        <div class="modal-editor-label">HTML Source</div>
+        <textarea id="editTextarea" spellcheck="false" placeholder="Nội dung HTML..."></textarea>
+      </div>
+      <div class="modal-preview-pane" id="editPreview">
+        <div class="modal-editor-label" style="margin:-24px -24px 16px;padding:7px 24px;">Xem trước</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="resetPageContent()" title="Xóa nội dung tùy chỉnh, về lại mặc định">↩ Về mặc định</button>
+      <div style="flex:1;font-size:12px;color:var(--gray-400)" id="editLastSaved"></div>
+      <button class="btn btn-secondary" onclick="closeEditModal()">Hủy</button>
+      <button class="btn btn-primary" onclick="saveEditModal()">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastEl" class="toast" style="display:none"></div>
+
 <script>
-// Navigation
+// ─── State ───────────────────────────────────────────────────
+let currentUser = { email: null, isAdmin: false, isEditor: false };
+let settingsData = { admins: [], editors: [] };
+let editingPageId = null;
+
+const CONTENT_PAGES = ['tong-quan','so-do','quy-dinh','cong-cu',
+  'thuat-ngu','websites','bao-gia','tao-don','bao-hang-ve','hang-stock','khieu-nai','faq'];
+
+// ─── Init ─────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('/api/me');
+    currentUser = await res.json();
+  } catch { /* server chưa chạy — chạy như static file */ }
+  renderUserBadge();
+  updateRoleUI();
+  loadAllCustomContent();
+
+  // Live preview trong edit modal
+  document.getElementById('editTextarea').addEventListener('input', updatePreview);
+});
+
+// ─── User badge ───────────────────────────────────────────────
+function renderUserBadge() {
+  const el = document.getElementById('userBadge');
+  if (!el) return;
+  if (!currentUser.email) {
+    el.innerHTML = '<span style="font-size:12px;color:var(--gray-300);">Viewer</span>';
+    return;
+  }
+  const role = currentUser.isAdmin ? 'Admin' : currentUser.isEditor ? 'Editor' : 'Viewer';
+  const cls  = currentUser.isAdmin ? 'role-admin' : currentUser.isEditor ? 'role-editor' : 'role-viewer';
+  el.innerHTML = `<span class="user-email" title="${currentUser.email}">${currentUser.email}</span>
+                  <span class="role-tag ${cls}">${role}</span>`;
+}
+
+function updateRoleUI() {
+  // Settings link — chỉ admin
+  const sl = document.getElementById('settingsSidebarLink');
+  if (sl) sl.style.display = currentUser.isAdmin ? 'flex' : 'none';
+  // Edit buttons — chỉ editor/admin, sẽ được thêm khi navigate
+}
+
+// ─── Navigation ───────────────────────────────────────────────
 function navigate(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
@@ -1371,9 +1576,225 @@ function navigate(pageId) {
   const link = document.querySelector(`[onclick="navigate('${pageId}')"]`);
   if (link) link.classList.add('active');
   window.scrollTo(0, 0);
+
+  if (pageId === 'settings') loadSettings();
+  refreshEditBtn(pageId);
 }
 
-// Accordion
+function refreshEditBtn(pageId) {
+  // Xóa nút cũ
+  document.querySelectorAll('.edit-page-btn').forEach(b => b.remove());
+  // Không show nút edit cho home / search / settings
+  if (!currentUser.isEditor) return;
+  if (['home','search','settings'].includes(pageId)) return;
+  const page = document.getElementById('page-' + pageId);
+  const header = page && page.querySelector('.page-header');
+  if (!header) return;
+  const btn = document.createElement('button');
+  btn.className = 'btn btn-secondary btn-sm edit-page-btn';
+  btn.innerHTML = '✏️ Chỉnh sửa';
+  btn.style.display = 'inline-flex';
+  btn.onclick = () => openEditModal(pageId);
+  header.appendChild(btn);
+}
+
+// ─── Custom content load/save ─────────────────────────────────
+async function loadAllCustomContent() {
+  await Promise.all(CONTENT_PAGES.map(id => loadCustomContent(id)));
+}
+
+async function loadCustomContent(pageId) {
+  try {
+    const res = await fetch(`/api/content/${pageId}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data && data.content) setPageBody(pageId, data.content);
+  } catch {}
+}
+
+function getPageBody(pageId) {
+  const page = document.getElementById('page-' + pageId);
+  if (!page) return '';
+  const header = page.querySelector('.page-header');
+  if (!header) return page.innerHTML;
+  let html = '';
+  let el = header.nextElementSibling;
+  while (el) {
+    if (!el.classList.contains('edit-page-btn')) html += el.outerHTML;
+    el = el.nextElementSibling;
+  }
+  return html;
+}
+
+function setPageBody(pageId, html) {
+  const page = document.getElementById('page-' + pageId);
+  if (!page) return;
+  const header = page.querySelector('.page-header');
+  // Xóa tất cả element sau header (trừ edit button)
+  let el = header ? header.nextElementSibling : null;
+  while (el) {
+    const next = el.nextElementSibling;
+    if (!el.classList.contains('edit-page-btn')) el.remove();
+    el = next;
+  }
+  header ? header.insertAdjacentHTML('afterend', html) : (page.innerHTML = html);
+}
+
+// ─── Edit modal ───────────────────────────────────────────────
+async function openEditModal(pageId) {
+  editingPageId = pageId;
+  const page = document.getElementById('page-' + pageId);
+  const titleEl = page && page.querySelector('h1');
+  document.getElementById('editModalTitle').textContent = titleEl ? titleEl.textContent : pageId;
+
+  // Lấy nội dung hiện tại (custom hoặc default)
+  let html = getPageBody(pageId);
+
+  // Kiểm tra xem có custom content không
+  document.getElementById('editLastSaved').textContent = '';
+  try {
+    const res = await fetch(`/api/content/${pageId}`);
+    const data = await res.json();
+    if (data && data.content) {
+      html = data.content;
+      const d = new Date(data.updatedAt);
+      document.getElementById('editLastSaved').textContent =
+        `Lưu lần cuối: ${d.toLocaleDateString('vi')} ${d.toLocaleTimeString('vi')} bởi ${data.updatedBy}`;
+    }
+  } catch {}
+
+  document.getElementById('editTextarea').value = html;
+  updatePreview();
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('open');
+  editingPageId = null;
+}
+
+function updatePreview() {
+  const html = document.getElementById('editTextarea').value;
+  const preview = document.getElementById('editPreview');
+  preview.innerHTML = '<div class="modal-editor-label" style="margin:-24px -24px 16px;padding:7px 24px;">Xem trước</div>' + html;
+}
+
+async function saveEditModal() {
+  if (!editingPageId) return;
+  const content = document.getElementById('editTextarea').value;
+  try {
+    const res = await fetch(`/api/content/${editingPageId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content })
+    });
+    if (res.ok) {
+      setPageBody(editingPageId, content);
+      closeEditModal();
+      showToast('✓ Đã lưu thành công');
+    } else {
+      const err = await res.json();
+      showToast(err.error || 'Lỗi khi lưu', true);
+    }
+  } catch { showToast('Không kết nối được server', true); }
+}
+
+async function resetPageContent() {
+  if (!editingPageId) return;
+  if (!confirm('Xóa nội dung đã chỉnh sửa và về lại nội dung mặc định?')) return;
+  try {
+    await fetch(`/api/content/${editingPageId}`, { method: 'DELETE' });
+    closeEditModal();
+    location.reload();
+  } catch { showToast('Không kết nối được server', true); }
+}
+
+// ─── Settings ─────────────────────────────────────────────────
+async function loadSettings() {
+  document.getElementById('settings-loading').style.display = 'block';
+  document.getElementById('settings-forbidden').style.display = 'none';
+  document.getElementById('settings-content').style.display = 'none';
+  try {
+    const res = await fetch('/api/settings');
+    if (res.status === 403) {
+      document.getElementById('settings-loading').style.display = 'none';
+      document.getElementById('settings-forbidden').style.display = 'block';
+      return;
+    }
+    settingsData = await res.json();
+    renderEmailLists();
+    document.getElementById('settings-loading').style.display = 'none';
+    document.getElementById('settings-content').style.display = 'block';
+  } catch {
+    document.getElementById('settings-loading').textContent = '⚠️ Không kết nối được server. Hãy chắc chắn server đang chạy.';
+  }
+}
+
+function renderEmailLists() {
+  renderList('adminList', settingsData.admins, 'admin');
+  renderList('editorList', settingsData.editors, 'editor');
+}
+
+function renderList(listId, emails, type) {
+  const ul = document.getElementById(listId);
+  if (!ul) return;
+  ul.innerHTML = emails.length
+    ? emails.map(email => `
+        <li>
+          <span>${email}</span>
+          <button class="btn-remove" onclick="removeEmail('${type}','${email}')" title="Xóa">×</button>
+        </li>`).join('')
+    : '<li class="empty-msg">Chưa có tài khoản nào</li>';
+}
+
+function addEmail(type) {
+  const input = document.getElementById(type + 'Input');
+  const email = input.value.trim().toLowerCase();
+  if (!email || !email.includes('@')) { input.focus(); return; }
+  const list = type === 'admin' ? settingsData.admins : settingsData.editors;
+  if (!list.includes(email)) { list.push(email); renderEmailLists(); }
+  input.value = '';
+}
+
+function removeEmail(type, email) {
+  if (type === 'admin') settingsData.admins = settingsData.admins.filter(e => e !== email);
+  else settingsData.editors = settingsData.editors.filter(e => e !== email);
+  renderEmailLists();
+}
+
+async function saveSettings() {
+  try {
+    const res = await fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settingsData)
+    });
+    if (res.ok) {
+      const data = await res.json();
+      settingsData = data.config;
+      renderEmailLists();
+      const msg = document.getElementById('settingsSaveMsg');
+      msg.style.display = 'inline';
+      setTimeout(() => msg.style.display = 'none', 3000);
+    } else {
+      const err = await res.json();
+      showToast(err.error || 'Lỗi khi lưu', true);
+    }
+  } catch { showToast('Không kết nối được server', true); }
+}
+
+// ─── Toast ────────────────────────────────────────────────────
+function showToast(msg, isError = false) {
+  const el = document.getElementById('toastEl');
+  el.textContent = msg;
+  el.className = 'toast ' + (isError ? 'toast-error' : 'toast-success');
+  el.style.display = 'block';
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.style.display = 'none', 300); }, 2500);
+}
+
+// ─── Accordion ───────────────────────────────────────────────
 function toggleAcc(header) {
   const body = header.nextElementSibling;
   const isOpen = body.classList.contains('open');
@@ -1381,7 +1802,7 @@ function toggleAcc(header) {
   body.classList.toggle('open', !isOpen);
 }
 
-// Search
+// ─── Search ───────────────────────────────────────────────────
 let searchTimeout;
 function doSearch(q) {
   clearTimeout(searchTimeout);
@@ -1402,21 +1823,17 @@ function doSearch(q) {
         results.push({ id: pageId, title, snippet: snippet.replace(re, m => `<mark>${m}</mark>`) });
       }
     });
-    if (results.length === 0) {
-      resultsEl.innerHTML = '<p style="color:var(--gray-500);font-size:14px;">Không tìm thấy kết quả nào.</p>';
-    } else {
-      resultsEl.innerHTML = results.map(r => `
-        <div class="accordion" style="margin-bottom:12px;">
-          <div class="accordion-header" onclick="navigate('${r.id}')" style="cursor:pointer;">
-            ${r.title}
-            <span style="font-size:12px;color:var(--brand);font-weight:400;">Xem →</span>
-          </div>
-          <div class="accordion-body open" style="display:block;">
-            <p style="color:var(--gray-500);">${r.snippet}...</p>
-          </div>
-        </div>
-      `).join('');
-    }
+    resultsEl.innerHTML = results.length === 0
+      ? '<p style="color:var(--gray-500);font-size:14px;">Không tìm thấy kết quả nào.</p>'
+      : results.map(r => `
+          <div class="accordion" style="margin-bottom:12px;">
+            <div class="accordion-header" onclick="navigate('${r.id}')" style="cursor:pointer;">
+              ${r.title}<span style="font-size:12px;color:var(--brand);font-weight:400;margin-left:8px;">Xem →</span>
+            </div>
+            <div class="accordion-body open" style="display:block;">
+              <p style="color:var(--gray-500);">${r.snippet}...</p>
+            </div>
+          </div>`).join('');
   }, 300);
 }
 </script>
