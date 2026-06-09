@@ -17,7 +17,7 @@ jobs:
           port: 22
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
-            git pull origin main
-            cd server && npm install --production
-            pm2 restart bot-e9778bedc4f9f670
-            pm2 save
+            sudo git pull origin main
+            cd server && sudo npm install --production
+            sudo pm2 restart bot-e9778bedc4f9f670
+            sudo pm2 save
