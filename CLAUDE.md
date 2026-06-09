@@ -63,3 +63,21 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+## 5. PR & Deploy Workflow (project-specific)
+
+**Every fix goes through a PR and auto-deploys to the server.**
+
+- Develop on the designated feature branch (`claude/gifted-newton-s0aceb` or whatever the session assigns).
+- Before creating a PR, always `git fetch origin main && git rebase origin/main` to avoid squash-merge divergence.
+- Create the PR as **ready-for-review** (not draft) so it can be merged immediately — this repo has no required CI checks.
+- **Merge immediately** after creating the PR (squash merge). Do not wait.
+- Pushing to `main` triggers the GitHub Actions deploy workflow (`.github/workflows/deploy.yml`) which SSH-deploys to the server and restarts PM2.
+- Never push directly to `main`; always use a PR.
+
+### Server details (for context)
+- SSH: `vmadmin@103.140.249.232` (passwordless sudo)
+- Deploy path: `/opt/dashboard-bot/data/bots/e9778bedc4f9f670`
+- PM2 app: `bot-e9778bedc4f9f670` (managed by root PM2, use `sudo pm2 ...`)
+- Wiki runs on port `4105`, proxied by nginx at `/b/e9778bedc4f9f670/`
+- Admin email env var: `ADMIN_EMAILS` in the bot's `.env` file
