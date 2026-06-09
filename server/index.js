@@ -19,7 +19,13 @@ if (!fs.existsSync(CONFIG_FILE)) {
 }
 
 app.use(express.json({ limit: '2mb' }));
-app.use(express.static(path.join(__dirname, '..')));
+app.use(express.static(path.join(__dirname, '..'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('index.html')) {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
+  }
+}));
 
 // Lấy email người dùng từ header do dashboard gửi
 function getUserEmail(req) {
