@@ -1630,7 +1630,9 @@ function updateRoleUI() {
   // Settings link — chỉ admin
   const sl = document.getElementById('settingsSidebarLink');
   if (sl) sl.style.display = currentUser.isAdmin ? 'flex' : 'none';
-  // Edit buttons — chỉ editor/admin, sẽ được thêm khi navigate
+  // Refresh edit button cho trang đang active
+  const activePage = document.querySelector('.page.active');
+  if (activePage) refreshEditBtn(activePage.id.replace('page-', ''));
 }
 
 // ─── Navigation ───────────────────────────────────────────────
