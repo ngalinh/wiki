@@ -21,4 +21,3 @@ jobs:
             cd server && sudo npm install --production && cd ..
             sudo pkill -u root -f "node server/index.js" 2>/dev/null || true
             sleep 3
-            echo "Wiki process after restart: $(pgrep -f 'node server/index.js' || echo 'not running yet')"
