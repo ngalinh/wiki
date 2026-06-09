@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wiki Nội Bộ</title>
+<style>
+  :root {
+    --brand: #2563eb;
+    --brand-light: #eff6ff;
+    --brand-dark: #1d4ed8;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-700: #374151;
+    --gray-900: #111827;
+    --green: #059669;
+    --green-light: #ecfdf5;
+    --amber: #d97706;
+    --amber-light: #fffbeb;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --sidebar-w: 260px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--gray-50); color: var(--gray-900); line-height: 1.6; }
+
+  /* TOP NAV */
+  .topnav {
+    position: fixed; top: 0; left: 0; right: 0; height: 56px;
+    background: #fff; border-bottom: 1px solid var(--gray-200);
+    display: flex; align-items: center; padding: 0 24px; gap: 16px; z-index: 100;
+  }
+  .topnav-logo { font-weight: 700; font-size: 18px; color: var(--brand); letter-spacing: -0.3px; }
+  .topnav-title { color: var(--gray-400); font-size: 14px; }
+  .topnav-search {
+    margin-left: auto; position: relative;
+  }
+  .topnav-search input {
+    border: 1px solid var(--gray-200); border-radius: 8px; padding: 6px 12px 6px 34px;
+    font-size: 14px; width: 220px; background: var(--gray-50); outline: none; color: var(--gray-700);
+  }
+  .topnav-search input:focus { border-color: var(--brand); background: #fff; }
+  .topnav-search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-400); }
+
+  /* LAYOUT */
+  .layout { display: flex; margin-top: 56px; min-height: calc(100vh - 56px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w); flex-shrink: 0; background: #fff;
+    border-right: 1px solid var(--gray-200); position: fixed;
+    top: 56px; bottom: 0; overflow-y: auto; padding: 16px 0;
+  }
+  .sidebar-section { margin-bottom: 4px; }
+  .sidebar-heading {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--gray-400); padding: 12px 20px 6px;
+  }
+  .sidebar-link {
+    display: flex; align-items: center; gap: 8px; padding: 7px 20px;
+    font-size: 14px; color: var(--gray-700); cursor: pointer;
+    border-radius: 0; transition: background 0.1s; text-decoration: none;
+    border-left: 3px solid transparent;
+  }
+  .sidebar-link:hover { background: var(--gray-50); }
+  .sidebar-link.active { background: var(--brand-light); color: var(--brand); border-left-color: var(--brand); font-weight: 600; }
+  .sidebar-link .icon { width: 16px; text-align: center; font-size: 15px; flex-shrink: 0; }
+  .sidebar-sub { padding-left: 12px; }
+  .sidebar-sub .sidebar-link { font-size: 13px; padding: 5px 20px 5px 14px; }
+
+  /* MAIN */
+  .main { margin-left: var(--sidebar-w); flex: 1; padding: 40px 48px; max-width: 960px; }
+
+  /* HOME */
+  .home-hero { margin-bottom: 40px; }
+  .home-hero h1 { font-size: 28px; font-weight: 800; color: var(--gray-900); margin-bottom: 8px; }
+  .home-hero p { color: var(--gray-500); font-size: 15px; }
+  .block-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+  .block-card {
+    background: #fff; border: 1px solid var(--gray-200); border-radius: 12px;
+    padding: 24px; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .block-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--brand); }
+  .block-card-icon { font-size: 28px; margin-bottom: 12px; }
+  .block-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--gray-900); }
+  .block-card p { font-size: 13px; color: var(--gray-500); margin-bottom: 14px; }
+  .block-card-links { display: flex; flex-direction: column; gap: 4px; }
+  .block-card-links a {
+    font-size: 13px; color: var(--brand); text-decoration: none; padding: 3px 0;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .block-card-links a:hover { text-decoration: underline; }
+  .block-card-links a::before { content: '→'; font-size: 12px; }
+
+  /* CONTENT PAGE */
+  .page { display: none; }
+  .page.active { display: block; }
+  .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--gray-200); }
+  .page-header .breadcrumb { font-size: 13px; color: var(--gray-400); margin-bottom: 8px; }
+  .page-header .breadcrumb span { color: var(--brand); cursor: pointer; }
+  .page-header .breadcrumb span:hover { text-decoration: underline; }
+  .page-header h1 { font-size: 24px; font-weight: 800; color: var(--gray-900); }
+
+  /* CONTENT ELEMENTS */
+  .section { margin-bottom: 32px; }
+  .section h2 { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .section h3 { font-size: 15px; font-weight: 600; color: var(--gray-700); margin: 16px 0 8px; }
+
+  /* CALLOUT */
+  .callout {
+    border-radius: 8px; padding: 14px 16px; margin-bottom: 12px;
+    font-size: 14px; border-left: 4px solid;
+  }
+  .callout.info { background: var(--brand-light); border-color: var(--brand); color: #1e40af; }
+  .callout.warn { background: var(--amber-light); border-color: var(--amber); color: #92400e; }
+  .callout.success { background: var(--green-light); border-color: var(--green); color: #065f46; }
+  .callout.danger { background: var(--red-light); border-color: var(--red); color: #991b1b; }
+  .callout strong { font-weight: 700; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; margin-bottom: 16px; border-radius: 8px; border: 1px solid var(--gray-200); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; }
+  th { background: var(--gray-50); padding: 10px 14px; text-align: left; font-weight: 600; font-size: 13px; color: var(--gray-700); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--gray-50); }
+
+  /* ACCORDION */
+  .accordion { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin-bottom: 12px; background: #fff; }
+  .accordion-header {
+    padding: 14px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; color: var(--gray-900);
+    user-select: none; transition: background 0.1s;
+  }
+  .accordion-header:hover { background: var(--gray-50); }
+  .accordion-header .acc-arrow { transition: transform 0.2s; color: var(--gray-400); font-size: 12px; }
+  .accordion-header.open .acc-arrow { transform: rotate(180deg); }
+  .accordion-body { padding: 0 18px 16px; font-size: 14px; color: var(--gray-700); display: none; border-top: 1px solid var(--gray-100); padding-top: 14px; }
+  .accordion-body.open { display: block; }
+  .accordion-body ul { padding-left: 18px; }
+  .accordion-body li { margin-bottom: 5px; }
+  .accordion-body p { margin-bottom: 8px; }
+
+  /* STEP */
+  .steps { counter-reset: step; }
+  .step { display: flex; gap: 14px; margin-bottom: 16px; align-items: flex-start; }
+  .step-num {
+    counter-increment: step; flex-shrink: 0;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--brand); color: #fff; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .step-content { flex: 1; }
+  .step-content strong { display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .step-content p, .step-content ul { font-size: 14px; color: var(--gray-600); }
+  .step-content ul { padding-left: 16px; }
+
+  /* TAG */
+  .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 12px; font-weight: 600;
+  }
+  .tag.sale { background: #dbeafe; color: #1d4ed8; }
+  .tag.cskh { background: #d1fae5; color: #065f46; }
+  .tag.mh { background: #fde8d8; color: #9a3412; }
+  .tag.kho { background: #ede9fe; color: #5b21b6; }
+
+  /* FAQ */
+  .faq-category { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-400); margin: 24px 0 8px; }
+
+  /* SEARCH HIGHLIGHT */
+  mark { background: #fef08a; border-radius: 2px; padding: 0 2px; }
+
+  /* UTILS */
+  .mt-4 { margin-top: 16px; }
+  .mb-2 { margin-bottom: 8px; }
+  ul.checklist { list-style: none; padding: 0; }
+  ul.checklist li { padding: 4px 0 4px 24px; position: relative; font-size: 14px; color: var(--gray-700); }
+  ul.checklist li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+  .divider { border: none; border-top: 1px solid var(--gray-200); margin: 24px 0; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; background: var(--gray-100); border-radius: 6px; padding: 3px 10px; font-size: 13px; color: var(--gray-600); }
+  .time-badge { background: var(--amber-light); color: #92400e; font-weight: 600; }
+
+  @media (max-width: 768px) {
+    .block-grid { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="topnav-logo">🏢 Basso Wiki</div>
+  <div class="topnav-title">Trang nội bộ</div>
+  <div class="topnav-search">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Tìm kiếm..." oninput="doSearch(this.value)">
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-heading">Tổng quan</div>
+    <a class="sidebar-link active" onclick="navigate('home')">
+      <span class="icon">🏠</span> Trang chủ
+    </a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-heading">Bắt đầu tại đây</div>
+    <a class="sidebar-link" onclick="navigate('tong-quan')"><span class="icon">📋</span> Tổng quan công ty</a>
+    <a class="sidebar-link" onclick="navigate('so-do')"><span class="icon">🗂️</span> Sơ đồ phòng ban</a>
+    <a class="sidebar-link" onclick="navigate('quy-dinh')"><span class="icon">📌</span> Quy định chung</a>
+    <a class="sidebar-link" onclick="navigate('cong-cu')"><span class="icon">🛠️</span> Tài khoản & Công cụ</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-heading">Quy trình CSKH</div>
+    <a class="sidebar-link" onclick="navigate('thuat-ngu')"><span class="icon">📖</span> Thuật ngữ</a>
+    <a class="sidebar-link" onclick="navigate('websites')"><span class="icon">🌐</span> Websites</a>
+    <a class="sidebar-link" onclick="navigate('bao-gia')"><span class="icon">💰</span> Báo giá</a>
+    <a class="sidebar-link" onclick="navigate('tao-don')"><span class="icon">📝</span> Tạo đơn</a>
+    <a class="sidebar-link" onclick="navigate('bao-hang-ve')"><span class="icon">📦</span> Báo hàng về</a>
+    <a class="sidebar-link" onclick="navigate('hang-stock')"><span class="icon">🏪</span> Hàng stock</a>
+    <a class="sidebar-link" onclick="navigate('khieu-nai')"><span class="icon">⚠️</span> Khiếu nại thường gặp</a>
+    <a class="sidebar-link" onclick="navigate('faq')"><span class="icon">❓</span> FAQ</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="home-hero">
+    <h1>👋 Chào mừng đến Wiki Nội Bộ</h1>
+    <p>Tài liệu hướng dẫn quy trình, nghiệp vụ dành cho toàn bộ nhân viên Basso / ShipUS.</p>
+  </div>
+  <div class="block-grid">
+    <div class="block-card" onclick="navigate('tong-quan')">
+      <div class="block-card-icon">🚀</div>
+      <h2>Bắt đầu tại đây</h2>
+      <p>Dành cho nhân viên mới — tổng quan công ty, quy định và công cụ cần thiết.</p>
+      <div class="block-card-links">
+        <a onclick="navigate('tong-quan');event.stopPropagation()">Tổng quan công ty</a>
+        <a onclick="navigate('so-do');event.stopPropagation()">Sơ đồ phòng ban</a>
+        <a onclick="navigate('quy-dinh');event.stopPropagation()">Quy định chung</a>
+        <a onclick="navigate('cong-cu');event.stopPropagation()">Tài khoản & Công cụ</a>
+      </div>
+    </div>
+    <div class="block-card" onclick="navigate('thuat-ngu')">
+      <div class="block-card-icon">📦</div>
+      <h2>Quy trình CSKH</h2>
+      <p>Hướng dẫn đầy đủ quy trình chăm sóc khách hàng — từ báo giá đến giao hàng.</p>
+      <div class="block-card-links">
+        <a onclick="navigate('thuat-ngu');event.stopPropagation()">Thuật ngữ</a>
+        <a onclick="navigate('bao-gia');event.stopPropagation()">Báo giá</a>
+        <a onclick="navigate('tao-don');event.stopPropagation()">Tạo đơn</a>
+        <a onclick="navigate('faq');event.stopPropagation()">FAQ</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <strong>📌 Lưu ý:</strong> Tất cả nhân viên đều phải đọc và nắm rõ nội dung trong mục <strong>Bắt đầu tại đây</strong> trước khi bắt đầu làm việc.
+  </div>
+
+  <div class="section mt-4">
+    <h2>🔄 Quy trình đơn hàng tổng quan</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Báo giá <span class="tag sale">SALE</span></strong>
+          <p>Khách gửi link/hình sp → SALE tìm sp, tư vấn và báo giá → Yêu cầu khách ck cọc</p>
+          <div class="badge time-badge">⏱ Trả lời trong 15 phút</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Tạo đơn <span class="tag cskh">CSKH</span></strong>
+          <p>Tạo đơn hàng trong hệ thống (thông tin khách, sp, giá, màu/size...) → Gửi email/link xác nhận đơn cho khách</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Check đơn <span class="tag mh">MUA HÀNG</span></strong>
+          <p>Mua đơn hàng nếu đúng giá, sp. Nếu sai giá / hết hàng / tăng rate → báo lại SALE</p>
+          <div class="badge time-badge">⏱ Trong 48h</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Mua hàng <span class="tag mh">MUA HÀNG</span></strong>
+          <p>Tạo đơn admin (có order #) → Follow đơn đến khi ship về kho Mỹ</p>
+          <div class="badge time-badge">⏱ 7–10 ngày đến kho Mỹ</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <strong>Hàng về VN <span class="tag kho">KHO</span></strong>
+          <p>Kho nhận & soạn hàng, update cân nặng. Hàng OK → CSKH báo khách. Hàng sai/thiếu/hỏng → lên issue</p>
+          <div class="badge time-badge">⏱ 10–12 ngày về VN từ kho Mỹ</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <strong>Báo hàng về <span class="tag cskh">CSKH</span></strong>
+          <p>Báo hàng về cho khách & phân phối giao hàng. Tham chiếu thanh toán đúng đủ</p>
+          <div class="badge time-badge">⏱ 2–3 ngày giao hàng</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TỔNG QUAN CÔNG TY -->
+<div id="page-tong-quan" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Bắt đầu tại đây</div>
+    <h1>📋 Tổng quan công ty</h1>
+  </div>
+  <div class="callout info"><strong>Mục này dành để bổ sung nội dung.</strong> Quản trị viên vui lòng cập nhật thông tin tổng quan công ty, lịch sử, sứ mệnh, tầm nhìn tại đây.</div>
+  <div class="section">
+    <h2>Giới thiệu</h2>
+    <p style="color:var(--gray-500);font-size:14px;">Nội dung đang được cập nhật...</p>
+  </div>
+</div>
+
+<!-- SƠ ĐỒ PHÒNG BAN -->
+<div id="page-so-do" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Bắt đầu tại đây</div>
+    <h1>🗂️ Sơ đồ phòng ban</h1>
+  </div>
+  <div class="callout info"><strong>Mục này dành để bổ sung sơ đồ phòng ban.</strong> Quản trị viên vui lòng cập nhật cơ cấu tổ chức tại đây.</div>
+  <div class="section">
+    <h2>Các phòng ban</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Phòng ban</th><th>Vai trò</th><th>Trưởng nhóm</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag sale">SALE</span></td><td>Tư vấn & báo giá cho khách, post sale, tìm kiếm khách hàng</td><td>—</td></tr>
+          <tr><td><span class="tag cskh">CSKH</span></td><td>Tạo đơn, tham chiếu, báo hàng về, giao hàng, xử lý khiếu nại</td><td>—</td></tr>
+          <tr><td><span class="tag mh">MUA HÀNG</span></td><td>Mua đơn, follow tracking, xử lý sự cố</td><td>—</td></tr>
+          <tr><td><span class="tag kho">KHO</span></td><td>Nhận hàng, soạn hàng, giao hàng</td><td>—</td></tr>
+          <tr><td><span class="badge">KẾ TOÁN</span></td><td>Xử lý payment, duyệt đơn, hoàn tiền</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- QUY ĐỊNH CHUNG -->
+<div id="page-quy-dinh" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Bắt đầu tại đây</div>
+    <h1>📌 Quy định chung</h1>
+  </div>
+  <div class="section">
+    <h2>⏱ Thời gian phản hồi</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Kênh</th><th>Thời gian phản hồi</th></tr></thead>
+        <tbody>
+          <tr><td>Fanpage, Zalo, FB cá nhân</td><td><strong>Trong 15 phút</strong></td></tr>
+          <tr><td>Email</td><td><strong>Trong 30 phút</strong></td></tr>
+          <tr><td>Web chat</td><td><strong>Ưu tiên trả lời ngay</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>💬 Các group công ty</h2>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Asale - Must Read <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">Nội quy công ty, thay đổi quy định, cập nhật hệ thống... Sếp sẽ nhắn vào group này → <strong>Tất cả mọi người đều phải đọc và phản hồi.</strong></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Asale Team <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">Các thông tin liên quan đến công ty, công việc, quy trình, báo lỗi hệ thống, báo công nợ...</div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Asale - Mua hàng <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">Các thông tin liên quan đến việc mua hàng: SALE hỏi đơn đã mua chưa, khách muốn hủy đơn, thay đổi sản phẩm... Khi hỏi về đơn hàng <strong>phải kèm theo mã đơn + tên khách</strong>.</div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Asale - Payment <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">Các khoản payment hệ thống không tự động lấy sẽ được kế toán gửi vào group. Nhân viên sau khi tham chiếu xong phải báo vào group đã tham chiếu.</div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Asale - Kho hàng <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">Thông tin liên quan đến kho, vận chuyển. Khi hỏi kho về đơn hàng <strong>phải kèm mã đơn + tên khách</strong>.</div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Team SALE-CSKH <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">Cập nhật thông tin nội bộ, update tỷ giá, báo chỉnh tỷ giá riêng cho một đơn hàng...</div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">KHO - Kênh X <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">Group riêng của mỗi kênh làm việc với KHO về hàng hoá khách của kênh đó.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>⚠️ Quy định xử phạt</h2>
+    <div class="callout warn">
+      Các sai phạm sẽ được nhắc nhở tối đa <strong>2 lần</strong>. Lần thứ 3 phạt <strong>50k</strong>, lần thứ 4 phạt <strong>100k</strong> và cứ thế nhân đôi cho các lần sau.
+    </div>
+    <div class="callout warn">
+      Nhân viên làm sai (mua sai, lên đơn sai...) có <strong>01 tháng</strong> kể từ khi hàng về để tự thanh lý. Sau 01 tháng không thanh lý được thì nhân viên sẽ phải nhận hàng đó và trả chi phí liên quan.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📋 Quy định giao hàng</h2>
+    <ul class="checklist">
+      <li>Tính từ <strong>Ngày nhập kho 10 ngày</strong>, không giao hàng cho khách → CSKH phải note lý do</li>
+      <li>Tính từ <strong>Ngày đã giao hàng 10 ngày</strong> mà khách chưa thanh toán → CSKH phải liên hệ đòi tiền</li>
+      <li>Không giao hàng cho khách nếu khách chưa thanh toán. Chỉ ship COD khi khách yêu cầu (số tiền &lt; 2 triệu)</li>
+      <li>Chỉ xử lý khiếu nại trong <strong>24h</strong> kể từ khi giao hàng thành công</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>💰 Quy định đòi công nợ</h2>
+    <div class="callout info">Đòi tiền khách từ <strong>11h trưa trở ra</strong>, không đòi sáng sớm và tránh ngày mùng 1 âm lịch. Nếu hôm sau là mùng 1 âm thì báo công nợ toàn bộ ngày trước đó.</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Loại khách</th><th>Công nợ tối đa</th></tr></thead>
+        <tbody>
+          <tr><td>Khách lẻ</td><td>10 triệu</td></tr>
+          <tr><td>Khách CTV / Sỉ nhỏ</td><td>20 triệu</td></tr>
+          <tr><td>Khách Sỉ vừa</td><td>50 triệu</td></tr>
+          <tr><td>Khách Sỉ to</td><td>100 triệu</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- CÔNG CỤ -->
+<div id="page-cong-cu" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Bắt đầu tại đây</div>
+    <h1>🛠️ Tài khoản & Công cụ</h1>
+  </div>
+  <div class="section">
+    <h2>📦 Hệ thống Order</h2>
+    <div class="callout info">Xem hướng dẫn sử dụng hệ thống ORDER đầy đủ tại tài liệu nội bộ (liên hệ quản lý để lấy link).</div>
+    <h3>Các tab cần tạo để theo dõi đơn hàng:</h3>
+    <ul class="checklist">
+      <li><strong>Đơn chưa mua:</strong> Theo dõi các đơn đã lên đơn nhưng chưa mua xong</li>
+      <li><strong>Đơn chờ duyệt:</strong> Các đơn đang chờ kế toán duyệt payment</li>
+      <li><strong>Đơn đang GD (giao dịch):</strong> Đơn đã được duyệt đang trong quá trình xử lý</li>
+      <li><strong>Hàng về VN:</strong> Theo dõi các kiện hàng đã về kho VN</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h2>🔧 Công cụ hỗ trợ</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Công cụ</th><th>Mô tả</th><th>Lưu ý</th></tr></thead>
+        <tbody>
+          <tr><td><strong>NordVPN</strong></td><td>Truy cập web US — tạo 1 profile Chrome riêng tên "Nordvpn", cài extension NordVPN</td><td>Các web như Macys, Costco, Nordstrom cần dùng VPN</td></tr>
+          <tr><td><strong>Lightshot</strong></td><td>Cắt ảnh chụp màn hình</td><td>Ctrl-C và Ctrl-V để paste trực tiếp, không cần lưu về máy</td></tr>
+          <tr><td><strong>Fotojet</strong></td><td>Ghép ảnh collage — fotojet.com</td><td>Hoặc dùng Pic Collage trên mobile</td></tr>
+          <tr><td><strong>Bitly</strong></td><td>Rút gọn link</td><td>app.bitly.com</td></tr>
+          <tr><td><strong>Cloudy Calculator</strong></td><td>Extension Chrome tính báo giá</td><td>Tìm trên Chrome Web Store</td></tr>
+          <tr><td><strong>Scamadviser</strong></td><td>Check độ uy tín website lạ</td><td>Phải đạt trên 80%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="section">
+    <h2>🏦 Tham chiếu ngân hàng</h2>
+    <div class="callout info">
+      <strong>SMS Payment:</strong><br>
+      • Techcombank Nga Linh, ACB Nga Linh — phụ trách: Uyên<br>
+      • Techcombank Thùy Dương, Oceanbank Thùy Dương, VPBank — phụ trách: Chị Trang
+    </div>
+    <div class="callout success"><strong>Cú pháp CK để nạp ví khách:</strong> <code>DT[SĐT khách]</code> — luôn nhắc khách ck theo đúng cú pháp này để đỡ phải tham chiếu thủ công. Ghim tin nhắn cú pháp theo SĐT của từng khách riêng.</div>
+  </div>
+</div>
+
+<!-- THUẬT NGỮ -->
+<div id="page-thuat-ngu" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
+    <h1>📖 Thuật ngữ</h1>
+  </div>
+  <div class="section">
+    <h2>I. Thuật ngữ cơ bản</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Thuật ngữ</th><th>Giải thích</th><th>Ghi chú</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Kênh CheckOut (CO)</strong></td><td>Kênh nhận mua hộ khách sỉ (khách gửi link mua theo yêu cầu) về địa chỉ kho của khách ở Mỹ</td><td>Mã đơn bắt đầu bằng <strong>CO...</strong></td></tr>
+          <tr><td>2</td><td><strong>Mua rate thấp</strong></td><td>Mua tỷ giá &lt; tỷ giá niêm yết của Vietcombank</td><td>$ thường dưới dạng gift card</td></tr>
+          <tr><td>3</td><td><strong>Mua rate thẻ</strong></td><td>Mua tỷ giá tương đương tỷ giá niêm yết của Vietcombank</td><td>Dùng khi không thu được $ rate thấp hoặc web bắt buộc</td></tr>
+          <tr><td>4</td><td><strong>Thu $</strong></td><td>Thu giftcard rate thấp để mua hàng</td><td>Thường áp dụng với mua rate thấp</td></tr>
+          <tr><td>5</td><td><strong>Chờ $, chờ GC</strong></td><td>Chờ có giftcard rate thấp để mua đơn</td><td></td></tr>
+          <tr><td>6</td><td><strong>Rate chờ $</strong></td><td>Mua rate thấp, chờ thu được $ thấp hơn rate chốt khách thì team Mua Hàng mới mua</td><td>Thường chờ đô trong ngày là sẽ thu được. Nếu không thu do rate tăng cao → báo SALE</td></tr>
+          <tr><td>7</td><td><strong>Rate mua ngay</strong></td><td>Rate cao hơn rate chờ $, có thể mua ngay lập tức</td><td>Áp dụng khi khách yêu cầu mua ngay (sp low stock hoặc sắp hết sale)</td></tr>
+          <tr><td>8</td><td><strong>Chỉnh rate</strong></td><td>Điều chỉnh rate của đơn hàng khác với rate mặc định trên hệ thống</td><td>Áp dụng: tăng rate vì mua nhanh / không mua được; khách sỉ lớn mua số lượng lớn</td></tr>
+          <tr><td>9</td><td><strong>Gửi mua hộ</strong></td><td>Nhờ bên khác mua hộ khi bên mình không tự mua được (không có đô, acc bị chặn...)</td><td>Là nghiệp vụ của team Mua Hàng</td></tr>
+          <tr><td>10</td><td><strong>Mã đơn CO......</strong></td><td>Đơn hàng tạo cho khách Checkout mua về địa chỉ kho của khách tại Mỹ</td><td>Khi tạo đơn chọn "Tạo đơn checkout"</td></tr>
+          <tr><td>11</td><td><strong>Mã đơn SU......</strong></td><td>Đơn hàng tạo cho khách Checkout mua về kho bên mình</td><td>Tạo đơn → Tạo đơn order → Brand chọn "ShipUS"</td></tr>
+          <tr><td>12</td><td><strong>Bill</strong></td><td>Thông tin đơn hàng đã mua: order number, date, address, items...</td><td>Team MH sẽ forward mail confirmation khi khách yêu cầu</td></tr>
+          <tr><td>13</td><td><strong>Forward bill/mail</strong></td><td>Forward mail xác nhận đơn hàng cho khách khi có yêu cầu</td><td><strong>Phải xóa thông tin email của team mua hàng</strong> trước khi forward</td></tr>
+          <tr><td>14</td><td><strong>Trung gian</strong></td><td>Bên thứ 3 uy tín đứng ra đảm bảo giao dịch khi khách và bên mình giao dịch lần đầu</td><td>Phí trung gian do bên mua chịu. Liên hệ: Trung gian Tài Giang</td></tr>
+          <tr><td>15</td><td><strong>Ra Track / Tracking</strong></td><td>Sau khi mua hàng xong, web ship đơn hàng và thông báo tracking # (mã vận đơn nội địa Mỹ)</td><td></td></tr>
+          <tr><td>16</td><td><strong>Deli</strong></td><td>Viết tắt của <em>Delivered</em> — hàng được giao tại kho Mỹ</td><td></td></tr>
+          <tr><td>17</td><td><strong>Bảo hành deli</strong></td><td>Đảm bảo hàng được delivered tại kho của khách (dựa trên tracking của web)</td><td></td></tr>
+          <tr><td>18</td><td><strong>Gom đơn</strong></td><td>Gom nhiều item của 1 khách vào 1 đơn khi đơn lẻ không đủ free ship hoặc áp code giảm giá</td><td></td></tr>
+          <tr><td>19</td><td><strong>Code Off</strong></td><td>Code giảm giá thêm so với giá hiển thị trên web. Có 2 loại: code của web và code riêng</td><td>Code riêng → hỏi leader Thuy Duong xem còn dùng được không</td></tr>
+          <tr><td>20</td><td><strong>Địa chỉ kho</strong></td><td>Địa chỉ kho tại nước mua hàng — không bao giờ ship thẳng từ nước ngoài về VN của khách</td><td>Khách lẻ / CTV thường mua về kho bên mình. Khách sỉ kênh CO cần xin địa chỉ kho</td></tr>
+          <tr><td>21</td><td><strong>Tax</strong></td><td>Thuế VAT Mỹ — 50 bang, mỗi bang áp mức thuế 0–10% cố định theo địa chỉ kho</td><td>Công thức: (tổng tiền hàng + phí ship) × % tax</td></tr>
+          <tr><td>22</td><td><strong>Pickup Store</strong></td><td>Đơn hàng ship tới cửa hàng của hãng, khách tự ra cửa hàng lấy</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>II. Các trường hợp phát sinh khi mua hàng</h2>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">1. Mua chậm <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p><strong>Lý do:</strong> Bên mình chưa thu được $ rate thấp, hoặc đơn gom chưa đủ để mua, hoặc bên mua hộ mua chậm...</p>
+        <p><strong>Xử lý:</strong> SALE phải nắm được nguyên nhân mua chậm để thông báo kịp thời cho khách. Đối với một số khách có hàng low stock hoặc sắp hết sale cần push team Mua Hàng xử lý gấp.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">2. Sản phẩm bị tăng giá hoặc Sold-out <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Team MH sẽ thông báo với SALE về sp bị tăng giá/sold out — nguyên nhân chủ yếu là xử lý không kịp trong thời gian sale.</p>
+        <p>Nếu deal hot dễ bị sold thì SALE cần follow sát để push team MH lấy thông tin tình trạng xử lý đơn.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">3. Mua không được do đơn gấp sát giờ hết sale / low stock <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>SALE phải đảm bảo đã warning khách tại thời điểm nhận đơn. SALE phải push team Mua Hàng xử lý ngay, không để chậm trễ.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">4. Đơn đã mua nhưng web cancel <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p><strong>Lý do web cancel:</strong> Web không chấp nhận thanh toán, web phát hiện mua số lượng lớn, web hết hàng sau khi đặt...</p>
+        <p><strong>Xử lý:</strong> Thông báo cho khách theo mẫu câu: <em>"Em chào anh/chị, đơn [xxx] của anh/chị bên em đã mua nhưng vì lý do [xxx] web/seller đã cancel đơn ạ..."</em></p>
+        <p>Sau khi báo khách và hủy đơn → vào File Orders → Sheet Request Refund → nhập đủ thông tin để kế toán hoàn tiền.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">5. Đơn đã báo cancel nhưng vẫn về hàng <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p><strong>Nguyên nhân:</strong> Kho làm lạc đã tìm ra hàng / Acc die nên mua hộ rf trước, hàng về nhờ lấy giúp</p>
+        <p><strong>Xử lý:</strong> Báo sếp để được hướng dẫn xử lý từng trường hợp cụ thể.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WEBSITES -->
+<div id="page-websites" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
+    <h1>🌐 Websites</h1>
+  </div>
+  <div class="callout info"><strong>Lưu ý:</strong> Cột "Code Ngoài" chỉ áp dụng cho CTV và khách Sỉ.</div>
+  <div class="section">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Website</th><th>Ghi chú & Chính sách</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Amazon / Ebay</strong></td>
+            <td>Trang TMĐT có nhiều seller — thông tin ship web hiển thị ngay dưới giá sp. <br><strong>Ebay:</strong> Seller uy tín cần: Rating feedback &gt; 5k + có giao dịch trong vòng 3 tháng. Khi báo giá phải chụp màn hình giá sp + seller vì giá hay thay đổi.</td>
+          </tr>
+          <tr>
+            <td><strong>Adidas</strong></td>
+            <td>Code ngoài 25–30% (áp dụng tuỳ sp) — 250–300k/code tuỳ thời điểm.<br>Gom đơn áp dụng cho cả Lẻ, CTV, Sỉ. Nếu khách muốn ghép đơn dùng code: tính phí 20k/item.</td>
+          </tr>
+          <tr>
+            <td><strong>Bath &amp; Body Works (BBW)</strong></td>
+            <td>Code ngoài 20% — 80k/code. Web BBW luôn mất phí ship $6.99 nên khi gom đơn tính phí ship $0.5/item. <br>Nhận mua hàng pickup at store. <br>⚠️ Chỉ áp dụng 1 code/đơn, nếu dùng code web thì không áp dụng code ngoài.</td>
+          </tr>
+          <tr>
+            <td><strong>DSW</strong></td>
+            <td>Free ship web. Web hay có deal kiểu "$60 off $200" — cần gom đủ đơn mới áp dụng được.</td>
+          </tr>
+          <tr>
+            <td><strong>Jomashop</strong></td>
+            <td>Có code riêng cho đơn &gt;$300, &gt;$600. Hàng "In Stock" ship nhanh. <br>Web có chương trình "$20 off" cho account tạo lần đầu — bên mình không áp dụng mã này.</td>
+          </tr>
+          <tr>
+            <td><strong>Lacoste</strong></td>
+            <td>Code ngoài 10% — Free. Chỉ áp dụng cho khách CTV, Sỉ.</td>
+          </tr>
+          <tr>
+            <td><strong>Macy's</strong></td>
+            <td>Code ngoài 25% — Free (áp dụng cho một số mã hàng nguyên giá). $25 free ship web.<br>Code 25% dùng để mời khách sỉ lớn ôm hàng khi có rate thấp — hỏi lại Thuy Duong trước khi đi mời khách.</td>
+          </tr>
+          <tr>
+            <td><strong>Puma</strong></td>
+            <td>Code ngoài 20% — Free. Không áp dụng kèm với code web.</td>
+          </tr>
+          <tr>
+            <td><strong>Saks Fifth Avenue</strong></td>
+            <td>Code 10% — Free (áp dụng cho hàng new).</td>
+          </tr>
+          <tr>
+            <td><strong>Saks Off 5th</strong></td>
+            <td>Code 10% — Free (không áp dụng cho item không phải CLEARANCE, áp dụng khi không có off 25% của web). <br>Cách check: Tạo account mới, verify account, điền sđt Mỹ bất kỳ để xác nhận.</td>
+          </tr>
+          <tr>
+            <td><strong>Sephora</strong></td>
+            <td>Code 10% — Free (khi nào có sẽ thông báo). <br>⚠️ <strong>Khi lên đơn Sephora phải add đủ các item: món chính + quà nếu khách yêu cầu.</strong><br>Sephora đôi lúc ship thiếu/sai/hỏng và <strong>KHÔNG ĐỀN BÙ</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>Walmart</strong></td>
+            <td>⚠️ Các issue đơn <strong>khách Sỉ</strong> Walmart hiện tại không cho chat/email claim — bên mình sẽ không nhận xử lý. Gửi bill cho khách tự call Walmart.</td>
+          </tr>
+          <tr>
+            <td><strong>GAP / Old Navy / Banana Republic</strong></td>
+            <td>Các site này có thể add chung bag để mua chung. Rất kén kho — nếu khách có địa chỉ kho mới (kho ít phổ biến) cần hỏi team MH xem có mua được không trước khi nhận đơn.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- BÁO GIÁ -->
+<div id="page-bao-gia" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
+    <h1>💰 Báo giá</h1>
+  </div>
+
+  <div class="section">
+    <h2>1. Nhận đơn từ khách</h2>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Khách gửi link sản phẩm <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body"><p>SALE chỉ cần check và báo giá + tư vấn cho khách.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Khách gửi hình ảnh sản phẩm <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body"><p>Dùng Google Lens hoặc tìm kiếm hình ảnh để tìm sản phẩm tương tự trên web.</p></div>
+    </div>
+    <div class="callout warn"><strong>Thời gian phản hồi:</strong> Fanpage/Zalo/FB cá nhân → <strong>15 phút</strong> | Email → <strong>30 phút</strong></div>
+    <div class="callout info">
+      <strong>Quy định Sale/CSKH:</strong><br>
+      1. Với khách cũ, SALE mới cần đọc lại các đoạn chat trước với khách để biết cách tư vấn phù hợp.<br>
+      2. Luôn screenshot giá sp + seller khi báo giá Amazon/Walmart/Ebay (giá hay thay đổi).
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>2. Phí ship web</h2>
+    <p style="font-size:14px;color:var(--gray-700);margin-bottom:12px;">Phí ship web là phí ship từ địa chỉ người bán đến địa chỉ kho của mình ở Mỹ/Anh/Tây Ban Nha. Cần check phí ship web trước khi báo giá.</p>
+    <div class="callout info">Địa chỉ các kho — xem ở sheet Note file Orders.</div>
+  </div>
+
+  <div class="section">
+    <h2>3. Cách check promotion</h2>
+    <ul style="font-size:14px;color:var(--gray-700);padding-left:20px;">
+      <li style="margin-bottom:6px;">Thông tin sale có ở <strong>đầu trang web hoặc Homepage</strong></li>
+      <li style="margin-bottom:6px;">Nhập code giảm giá mới: code có ở trong chi tiết sản phẩm hoặc khi checkout</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>4. Truy cập web US</h2>
+    <div class="callout warn">Các brand khi vào web bằng IP VN thường hiển thị location: Vietnam → phải đổi sang US mới xem được giá US.</div>
+    <p style="font-size:14px;color:var(--gray-700);">Tạo profile Chrome mới (đặt tên "Nordvpn") → set NordVPN vào profile này → chỉ dùng khi cần check web US vì load sẽ chậm hơn.</p>
+  </div>
+
+  <div class="section">
+    <h2>5. Các trường hợp đặc biệt</h2>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Web lạ (không phải brand nổi tiếng) <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul>
+          <li>Không nhận web <strong>không có đuôi .com</strong></li>
+          <li>Check scamadviser.com — phải trên <strong>80%</strong> và chú ý dòng chữ xanh</li>
+          <li>Yêu cầu khách <strong>cọc 100%</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Deal giảm giá theo số tiền ($60 off $200) <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul>
+          <li>Khách mua lẻ món, không đủ 1 đơn $200 → SALE lên đơn theo <strong>tỷ lệ giảm giá của web - 5%</strong> (ví dụ deal $60 off $200 = tỷ lệ 30% → tính 25%)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Deal sắp hết sale <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Bên mình chỉ nhận đơn <strong>&gt; 1 giờ</strong> trước khi hết sale. Trường hợp đơn cần mua kịp sale khi còn ít hơn 1h thì sẽ không nhận.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Hàng cấm nhận <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body"><p>Xem danh sách tại: basso.vn/tro-giup/39</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Hàng dễ vỡ (gốm, sứ, thủy tinh, chai lọ...) <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul>
+          <li>Báo khách bên mình <strong>không chịu trách nhiệm</strong> nếu hàng vỡ trong quá trình vận chuyển</li>
+          <li>Yêu cầu khách đồng ý bằng văn bản trước khi nhận đơn</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Hàng pre-order <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body"><p>Xác nhận với khách thời gian web sẽ ship và yêu cầu khách thanh toán 100% trước khi nhận đơn.</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>6. Công thức báo giá</h2>
+    <div class="callout success">
+      <strong>Công thức:</strong> <code>[Giá web + Ship web (nếu có)] × Tỷ giá + Phụ thu (nếu có) + Phí VC quốc tế (theo kg)</code>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nguồn</th><th>Tỷ giá USA</th><th>Phí VC US→VN</th><th>Tỷ giá UK</th><th>Phí VC UK→VN</th><th>Yêu cầu cọc</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Asale</strong></td><td>28,500</td><td>250,000đ/kg</td><td>39,000</td><td>240,000đ/kg</td><td>50–80%</td></tr>
+          <tr><td><strong>Basso</strong></td><td>29,500</td><td>250,000đ/kg</td><td>—</td><td>—</td><td>Cọc 100% hoặc 80% (+2%)</td></tr>
+          <tr><td><strong>ShipUS</strong></td><td>28,500</td><td>240,000đ/kg</td><td>—</td><td>—</td><td>Cọc 100% hoặc 80% (+2%)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Bảng phụ thu hàng Mỹ</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mặt hàng</th><th>Phụ thu</th></tr></thead>
+        <tbody>
+          <tr><td>Đồng hồ</td><td>&lt;$500: 70k/cái | &gt;$500: 3%/cái | Apple Watch: 200k/cái</td></tr>
+          <tr><td>Kính mắt</td><td>$50–$500: 50k/cái | &gt;$500: 3%/cái</td></tr>
+          <tr><td>Nước hoa (≥30ml)</td><td>50k/chai</td></tr>
+          <tr><td>Trang sức</td><td>&gt;$50: 50k/cái | &gt;$300: 100k/cái</td></tr>
+          <tr><td>Zippos</td><td>20k/cái</td></tr>
+          <tr><td>Xe đạp</td><td>500k/cái</td></tr>
+          <tr><td>Laptop</td><td>&lt;$700: 1,000,000đ | $700–$1200: 1,200,000đ | &gt;$1200: 5%</td></tr>
+          <tr><td>Tai nghe / AirPods</td><td>&gt;$50: 50k/cái | AirPod: 50k/cái</td></tr>
+          <tr><td>Smartphone / Tablet / Máy ảnh / iPad / Printer</td><td>&lt;$300: 150k | $300–$500: 250k | &gt;$500: 3%/cái</td></tr>
+          <tr><td>Kindle / Fire Tablets / Máy vẽ</td><td>150k/cái</td></tr>
+          <tr><td>Đồ điện tử, thiết bị khác</td><td>&gt;$500: 3%/cái</td></tr>
+          <tr><td>Cigar</td><td>650,000/kg — min 0.5kg/đơn</td></tr>
+          <tr><td>iPhone thường</td><td>500,000/cái</td></tr>
+          <tr><td>iPhone 17</td><td>1,000,000/cái</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout info">
+      <strong>Lưu ý quan trọng:</strong><br>
+      • Tất cả sp &gt;$500: phụ thu 3% (tính theo từng item, không phải tổng đơn)<br>
+      • Đơn hàng &lt;$30: phụ thu 50k (không áp dụng cho khách sỉ/CTV)<br>
+      • Sp &gt;10kg: 240k/kg | Sp &gt;20kg: 230k/kg<br>
+      • Sp &gt;5kg: CSKH phải check kg dự tính và thu tiền kg cùng tiền hàng<br>
+      • Phụ thu 3% theo giá sp × tỷ giá 25,500 = phụ thu VNĐ
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>7. Chốt đơn</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Xin thông tin khách</strong>
+          <p>Email, số điện thoại (để tạo tài khoản hệ thống)</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Yêu cầu đặt cọc</strong>
+          <p>Tối thiểu 80% giá trị đơn hàng. Trường hợp khách sỉ hoặc khách quen có thể ck sau khi đơn được mua xong.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Đặt nickname khách</strong>
+          <p>Với khách mới, SALE đặt lại nickname cho fb/zalo để tiện theo dõi giữa SALE-CSKH.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout success"><strong>Thời gian hàng về báo khách:</strong> "Hàng về dự kiến 2–3 tuần kể từ khi kho Mỹ nhận được hàng. Hàng Mỹ: 3–4 tuần, Hàng UK/TBN: 3 tuần kể từ ngày đặt hàng."</div>
+  </div>
+</div>
+
+<!-- TẠO ĐƠN -->
+<div id="page-tao-don" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
+    <h1>📝 Tạo đơn</h1>
+  </div>
+
+  <div class="section">
+    <h2>1. Quy trình tạo đơn hàng</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Kiểm tra khách đã có tài khoản chưa</strong>
+          <p>Copy SĐT khách → add vào ô "Khách hàng" → nếu hiện thông tin thì chọn. Nếu chưa có → tạo tài khoản mới cho khách.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Nhập thông tin đơn hàng</strong>
+          <p>Thông tin khách + Brand + Chi nhánh hàng về + Sản phẩm (hình ảnh, size, màu, giá, số lượng). Nhập thêm mã SKU/Item # cho hàng đặc biệt.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Nhập Note mua hàng</strong>
+          <p>Code giảm giá, yêu cầu gom đơn, thời hạn hết sale (giờ VN), hàng low stock, ghi chú đặc biệt...</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Tham chiếu payment & duyệt đơn</strong>
+          <p>Nhập payment vào đơn hàng → duyệt đơn → gửi sang Mua Hàng.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <strong>Gửi link đơn hàng cho khách</strong>
+          <p>Gửi email/link ĐH để khách xác nhận lại → tránh rủi ro lên đơn sai ý khách.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout danger"><strong>Đơn GẤP:</strong> Các đơn cần mua gấp vì sp còn ít / sắp hết sale → phải nhắn vào group Mua Hàng và note rõ chữ "GẤP".</div>
+  </div>
+
+  <div class="section">
+    <h2>2. Checklist review đơn hàng</h2>
+    <ul class="checklist">
+      <li>Đúng thông tin KH & Brand & Chi nhánh hàng về</li>
+      <li>Đúng thông tin sp: hình ảnh, size, màu (đảm bảo tất cả sp đều có hình ảnh)</li>
+      <li>Note thêm mã SKU/Item # cho sp đặc biệt (hàng kính số lượng...)</li>
+      <li>Note mua hàng đầy đủ (code, gom đơn, thời hạn sale...)</li>
+      <li>Đã tham chiếu payment</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>3. Tham chiếu payment</h2>
+    <div class="callout success"><strong>Cú pháp CK nạp ví khách: DT[SĐT]</strong> — Luôn nhắc khách ck đúng cú pháp để đỡ tham chiếu thủ công. Ghim tin nhắn cú pháp theo SĐT riêng từng khách.</div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Kiểm tra SMS Payment <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul>
+          <li>Khách mới hoặc khách cần cọc mới lên đơn → sau khi khách ck kiểm tra SMS Payment trước để tạo đơn ngay</li>
+          <li>Nếu không thấy trong hệ thống sau 1h → hỏi kế toán</li>
+          <li>Nếu khách đã gửi biên lai chuyển khoản mà hệ thống chưa có → vẫn được tạo đơn</li>
+        </ul>
+        <p class="mt-4"><strong>Phân công:</strong><br>
+        Techcombank Nga Linh, ACB Nga Linh → Uyên<br>
+        Techcombank Thùy Dương, Oceanbank Thùy Dương, VPBank → Chị Trang</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Thời gian tham chiếu <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Tham chiếu tiền khách: <strong>2 lần/ngày vào lúc 10h và 16h</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>4. Tax</h2>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Cách tính và check tax <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul>
+          <li>Mỹ có 50 bang, mỗi bang áp mức thuế 0–10% cố định theo địa chỉ kho</li>
+          <li><strong>2 bang miễn thuế:</strong> Oregon (OR) và New Hampshire (NH)</li>
+          <li>Khi khách đưa địa chỉ kho ngoài 2 bang miễn thuế → add bag thử 1 item và checkout thử để check tax</li>
+          <li>Công thức: <strong>(tổng tiền hàng + phí ship) × % tax</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>5. Khi đơn bị cancel</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>SALE nhận thông báo cancel</strong>
+          <p>Từ góc trái tài khoản hệ thống hoặc từ team Mua Hàng báo lại.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Thông báo cho khách theo mẫu</strong>
+          <p><em>"Em chào anh/chị, đơn [xxx] của anh/chị bên em đã mua nhưng vì lý do [xxx] web/seller đã cancel đơn ạ..."</em></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Vào Request Refund</strong>
+          <p>File Orders → Sheet Request Refund → nhập đủ thông tin để kế toán hoàn tiền cho khách.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>6. Quy định duyệt khách CTV/Sỉ</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content"><strong>Nhập đủ thông tin khách vào sheet Khách mới</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content"><strong>Tạo tài khoản khách trên hệ thống</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content"><strong>Gửi sếp Dzuong SĐT + kênh fb</strong><p>Chờ sếp duyệt đổi nhóm khách hàng trước khi lên đơn với giá CTV/Sỉ.</p></div>
+      </div>
+    </div>
+    <div class="callout danger">Không được lên đơn nếu tài khoản khách chưa được đổi nhóm khách hàng.</div>
+  </div>
+</div>
+
+<!-- BÁO HÀNG VỀ -->
+<div id="page-bao-hang-ve" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
+    <h1>📦 Báo hàng về</h1>
+  </div>
+
+  <div class="section">
+    <h2>1. Quy trình báo hàng về</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Vào tab Hàng về VN</strong>
+          <p>Sau khi kho soạn hàng xong → vào tab "Hàng về VN" trong hệ thống để xem kiện hàng nào đã về.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Gửi email báo hàng về cho khách</strong>
+          <p>Click nút "Gửi email báo hàng về" trong chi tiết đơn hàng. Nội dung bao gồm thông tin hàng, cân nặng, phí vận chuyển.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Thu tiền & xếp lịch giao</strong>
+          <p>Yêu cầu khách ck trước khi nhận hàng. Phân phối giao hàng hợp lý.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Xin feedback sau khi giao</strong>
+          <p>"Anh/chị có hài lòng với sản phẩm không ạ? Anh/chị có thể cho em xin vài góp ý để bên em nâng cao chất lượng dịch vụ không ạ?"</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout warn">Trường hợp đơn hàng chưa về hết → hỏi khách có muốn nhận trước các item đã về không hay đợi hàng về hết.</div>
+  </div>
+
+  <div class="section">
+    <h2>2. Giao hàng & Phí ship nội địa</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Điều kiện</th><th>Phí ship nội địa</th></tr></thead>
+        <tbody>
+          <tr><td>Khách lẻ — Đơn order &gt; 2 triệu (nội thành HN & HCM)</td><td><strong>FREE SHIP</strong></td></tr>
+          <tr><td>Khách lẻ — Đơn stock &gt; 1 triệu (nội thành HN & HCM)</td><td><strong>FREE SHIP</strong></td></tr>
+          <tr><td>Ship tỉnh</td><td>Hỗ trợ 20k, khách chịu phần còn lại</td></tr>
+          <tr><td>Đơn freeship nhưng hàng nặng</td><td>Hỗ trợ 30k (không free hoàn toàn)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout info">
+      <strong>COD:</strong> Chỉ ship COD cho lần đầu tiên khách mua (số tiền &lt; 1 triệu). Các lần sau phải thanh toán trước.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>3. Xử lý khi khách complain</h2>
+    <div class="callout danger"><strong>Quan trọng:</strong> Phải xin lỗi khách hàng trong MỌI trường hợp khi khách có complain dù không phải lỗi của bên mình.</div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Quy trình xử lý khiếu nại <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul>
+          <li>Xin lỗi khách trước. Nếu không phải lỗi của mình → xin lỗi đã mang lại trải nghiệm không tốt và giải thích nguyên nhân</li>
+          <li>Giải quyết vấn đề cho khách theo đúng policy</li>
+          <li>Chỉ xử lý khiếu nại trong <strong>24h</strong> kể từ khi giao hàng thành công</li>
+          <li>Những khách đang complain đa phần là đang tức giận → bình tĩnh xử lý, không tranh cãi</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Quy trình yêu cầu hỗ trợ thêm <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul>
+          <li>Xử lý issue → đền bù đúng theo policy → báo khách</li>
+          <li>Nếu khách yêu cầu hỗ trợ thêm hoặc SALE thấy cần thiết → báo sếp xin ý kiến (chỉ dành cho khách VIP có trong list)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>4. Báo refund</h2>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Quy trình hoàn tiền <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul>
+          <li>Xin thông tin chuyển khoản của khách</li>
+          <li>Báo khách kế toán sẽ chuyển khoản trong thời gian X</li>
+          <li>Trường hợp khách chưa tạo đơn mà đã ck tiền, đổi ý không mua → lên Request Refund đính kèm ảnh tin nhắn của khách</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>5. Cân nặng tối thiểu</h2>
+    <div class="callout info">
+      <strong>Khách lẻ:</strong> Tối thiểu 1 lần hàng về là <strong>0.5kg</strong>. Khi khách đặt đơn hàng nhẹ → thông báo cho khách về cân nặng tối thiểu ngay từ đầu.
+    </div>
+  </div>
+</div>
+
+<!-- HÀNG STOCK -->
+<div id="page-hang-stock" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
+    <h1>🏪 Hàng Stock</h1>
+  </div>
+
+  <div class="section">
+    <h2>1. Giao hàng stock</h2>
+    <ul class="checklist">
+      <li>Trước khi cho hàng đi kho phải <strong>quay/chụp ảnh lại sp</strong> để đảm bảo sp không xước, vỡ hay có vấn đề</li>
+      <li>SALE báo khách lúc nhận hàng <strong>quay video unbox</strong> để làm bằng chứng nếu có vấn đề</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>2. Quy định đơn hàng</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Trạng thái</th><th>Quy định</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Đơn Chờ duyệt</strong></td><td>Hàng stock chỉ được hold tối đa <strong>2 ngày</strong>. Sau 2 ngày phải hủy đơn để hàng back về kho cho SALE khác bán.</td></tr>
+          <tr><td><strong>Đơn Đang GD</strong></td><td>Đơn đang giao dịch nhưng ở tình trạng chưa thanh toán sau nhiều ngày → xử lý theo quy định công nợ.</td></tr>
+          <tr><td><strong>Hoàn hàng</strong></td><td>Tính năng Hoàn hàng chỉ được dùng trong <strong>72h</strong> (3 ngày) kể từ lúc khách nhận hàng.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>3. Giá CTV / Sỉ</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Loại</th><th>Điều kiện</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Giá CTV</strong></td><td>Có fb/zalo bán hàng; hoặc mua số lượng tối thiểu 2 nếu không bán hàng</td></tr>
+          <tr><td><strong>Giá Sỉ</strong></td><td>Liên hệ quản lý để biết điều kiện cụ thể</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>4. Phí ship hàng stock</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Loại ship</th><th>Phí</th></tr></thead>
+        <tbody>
+          <tr><td>Trong Hà Nội & Hồ Chí Minh</td><td>30k/kiện</td></tr>
+          <tr><td>Ship HN ↔ HCM — 1kg</td><td>30k/kiện</td></tr>
+          <tr><td>Ship HN ↔ HCM — 2kg</td><td>40k/kiện</td></tr>
+          <tr><td>Ship HN ↔ HCM — 3kg</td><td>50k/kiện</td></tr>
+          <tr><td>Kiện &gt; 3kg hoặc ship tỉnh</td><td>Tính riêng — hỏi quản lý</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>5. Đơn Shopee</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content"><strong>Xác nhận đơn Shopee</strong><p>Vào "Tất Cả" → Quản lý đơn hàng → Bấm "Xác nhận đơn hàng" (Chuẩn bị hàng) ở mục "Chờ xác nhận".</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content"><strong>Lên đơn và xếp lịch lấy hàng</strong><p>Lên đơn stock trên hệ thống → đặt lịch để DVVC Shopee tới lấy hàng.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content"><strong>Follow đến khi giao thành công</strong><p>Nếu sau 2–3 ngày DVVC chưa tới lấy → complaint với Shopee và SPX, chụp hình đoạn chat đã thúc.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KHIẾU NẠI -->
+<div id="page-khieu-nai" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
+    <h1>⚠️ Khiếu nại thường gặp</h1>
+  </div>
+
+  <div class="callout warn"><strong>Nguyên tắc:</strong> Luôn xin lỗi khách trước. Giữ bình tĩnh. Giải quyết theo đúng policy. Không tranh cãi với khách.</div>
+
+  <div class="section">
+    <h2>Các tình huống thường gặp</h2>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">🕐 Mua chậm <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p><strong>Nguyên nhân:</strong> Chưa thu được $ rate thấp / Đơn gom chưa đủ / Bên mua hộ chậm</p>
+        <p><strong>Xử lý:</strong> SALE nắm nguyên nhân và thông báo kịp thời cho khách. Deal hot / low stock → push team MH xử lý gấp.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">📈 Sản phẩm tăng giá hoặc Sold-out <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p><strong>Nguyên nhân:</strong> Xử lý không kịp trong thời gian sale / Web hết hàng bất ngờ</p>
+        <p><strong>Xử lý:</strong> Team MH thông báo với SALE. SALE thông báo ngay cho khách và hỏi khách có phương án thay thế không (hàng tương tự, đổi size/màu...).</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">⏰ Không mua kịp do đơn gấp sát giờ hết sale <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>SALE phải đảm bảo đã warning khách ngay từ đầu khi nhận đơn sát giờ. Phải push team MH xử lý ngay, không để chậm trễ.</p>
+        <div class="callout warn">Bên mình chỉ nhận đơn <strong>&gt; 1 giờ</strong> trước khi hết sale.</div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">❌ Đơn đã mua nhưng web cancel <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p><strong>Nguyên nhân:</strong> Web không chấp nhận payment / Web phát hiện mua số lượng lớn / Web hết hàng sau khi đặt...</p>
+        <p><strong>Mẫu câu thông báo:</strong><br><em>"Em chào anh/chị, đơn [xxx] của anh/chị bên em đã mua nhưng vì lý do [xxx] web/seller đã cancel đơn ạ. Em rất tiếc về sự việc này..."</em></p>
+        <p>Sau khi báo khách → File Orders → Request Refund → kế toán hoàn tiền.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">📦 Đơn đã báo cancel nhưng vẫn về hàng <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p><strong>Nguyên nhân:</strong> Kho làm lạc đã tìm ra hàng / Acc die nên mua hộ rf trước</p>
+        <p><strong>Xử lý:</strong> Báo sếp để được hướng dẫn cụ thể theo từng trường hợp.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">🔍 Hàng về sai / thiếu / hỏng <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul>
+          <li>Kho lên issue trong hệ thống khi phát hiện hàng sai/thiếu/hỏng</li>
+          <li>CSKH xử lý theo policy đền bù của từng brand</li>
+          <li>Quy định đền bù: xem file Drive (liên hệ quản lý để lấy link)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">📋 Khách đặt hàng 1 tuần rồi bị cancel <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p><em>"Dạ em chào anh/chị, đầu tiên em rất xin lỗi khi phải báo tới anh/chị là đơn hàng của mình bị cancel do hết hàng ạ. Ngay hôm mình order bên em pay thì web vẫn còn hàng nhưng sau đó web đã cancel đơn này vì hết hàng trong kho của họ ạ. Em rất tiếc về sự cố này..."</em></p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">💸 Hàng về lâu hơn 1 tháng do hải quan <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Hỏi lại sếp để cho phương án xử lý vì tuỳ từng trường hợp cụ thể.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">🔄 Hàng về không dùng được, khách đòi trả tiền <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p><em>"Đầu tiên em rất lấy làm tiếc vì hàng anh/chị mua về mà không sử dụng được. Đồng thời em cũng muốn chia sẻ với anh/chị bên em chỉ là bên mua hộ hàng cho anh/chị từ web [xxx], bên em không phải là nhà sản xuất nên không thể chịu trách nhiệm về chất lượng sản phẩm ạ. Tuy nhiên bên em sẽ hỗ trợ anh/chị liên hệ với web để giải quyết..."</em></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div id="page-faq" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
+    <h1>❓ FAQ — Câu hỏi thường gặp</h1>
+  </div>
+
+  <div class="faq-category">⏱ Thời gian</div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Lúc đặt hàng hỏi bao giờ hàng về? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><strong>Trả lời:</strong> Hàng Mỹ: 3–4 tuần. Hàng UK, TBN: 3 tuần (kể từ ngày đặt hàng và tùy thuộc vào web ship hàng nhanh hay chậm tới kho bên mình).</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Sau khi mua 1–2 tuần hỏi bao giờ hàng về? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Tìm đơn hàng trong hệ thống. Nếu đã có tracking number (chưa có delivered date) → kiện đó đang đến kho Mỹ, tầm 20 ngày sẽ về VN. Nếu chưa có tracking → đang trong quá trình mua.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Báo 3–4 tuần nhưng chưa về, khách hỏi? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Dạ như từ đầu em đã báo là hàng về dự kiến trong 3–4 tuần anh/chị ạ. Do vận chuyển là vận chuyển quốc tế qua nhiều khâu kiểm tra nên về mặt thời gian bên em chỉ ước tính được dự kiến thôi ạ. Bên em sẽ thông báo ngay khi hàng về ạ."</em></p></div>
+  </div>
+
+  <div class="faq-category">💰 Giá & Thanh toán</div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Có mất phí vận chuyển khi nhận hàng không? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Free ship nội thành HN, SG đối với đơn hàng trên 2 triệu. Các tỉnh khác, ngoại thành và đơn dưới 2 triệu → khách tự thanh toán phí ship.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Khách mặc cả đặt cọc ít hơn 80%? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Đồng ý cho đặt cọc nhưng tối thiểu phải là 50% tiền hàng. Giải thích đây là đơn hàng đầu tiên nên ngoại lệ để khách tin tưởng dịch vụ.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Khách thắc mắc giá cước vận chuyển quá cao? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Nếu hàng nặng trên 20kg có thể báo giảm còn 230k/kg. Nếu khách vẫn kêu đắt và so sánh thì giải thích: <em>"Dạ anh/chị ơi phí ship tụi em là theo kg thực tế chứ không chia nhỏ như bên khác ạ, nên anh/chị so sánh theo đơn giá/kg sẽ thấy tụi em cạnh tranh hơn đó ạ."</em></p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Sao tỷ giá cao thế? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Tỷ giá bên em đã bao gồm thuế và các loại chi phí rồi ạ. Chị có thể tham khảo các bên đặt hàng khác, phí dịch vụ bên em luôn thấp hơn đấy ạ."</em></p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Khách lấy tỷ giá ngân hàng để so sánh? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Dạ bên em là bên mua hàng hộ tại các trang web tại Mỹ, nên khi mua hàng bên em cần thu những chi phí bắt buộc như: công mua, phí hải quan Mỹ–Việt, công vận chuyển... nên tỷ giá sẽ cao hơn tỷ giá ngân hàng ạ."</em></p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Giá cao hơn hàng có sẵn tại shop trong nước? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Có thể giải thích: Shop ở VN nhập hàng đúng đợt sale nhiều hơn nên giá thành thấp hơn, hoặc có trường hợp hàng không chính hãng. Bên em đảm bảo 100% hàng chính hãng với bill đầy đủ.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Phát sinh phí nộp thuế hải quan, khách muốn chia sẻ? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Dạ anh/chị chi phí này là chi phí phát sinh với hải quan mà đến UK/US mới được thông báo ạ, anh/chị thông cảm giúp em, profit bên em cũng không có nhiều để chia sẻ thêm ạ."</em></p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Tính theo cân thực tế hay cân thể tích (hàng nhẹ nhưng to)? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Nếu cân nặng thực tế nhỏ hơn cân nặng thể tích → bên em tính theo <strong>cân nặng thể tích</strong>.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Muốn lấy hóa đơn VAT? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Dạ giá bên em báo chưa bao gồm VAT, anh/chị muốn lấy hóa đơn VAT thì bên em tính thêm 15%/giá trị đơn hàng ạ. Trong đó 10% là theo quy định, 5% là phí xuất hóa đơn."</em></p></div>
+  </div>
+
+  <div class="faq-category">📦 Sản phẩm</div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Khách yêu cầu có hóa đơn (bill), hộp mác đầy đủ? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Bên em mua hàng online trên web nên có những sp về không có bill giấy, chỉ có bill online khi mua hàng. Hàng sẽ được repack hoặc giữ nguyên kiện gửi về.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Hàng có đảm bảo chất lượng không? (lo sợ hàng fake) <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Bên em cam kết 100% hàng chính hãng có bill đầy đủ ạ. Bên em chỉ order khi khách đặt thôi chứ không bán hàng có sẵn nên chị yên tâm là hàng nhập trực tiếp từ web chính hãng ạ."</em></p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Hàng Made in Vietnam / China / Indonesia? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Thường các hãng lớn đặt nhà máy sản xuất ở các nước thứ 3 nhưng không vì thế mà ảnh hưởng tới chất lượng sản phẩm. Hàng vẫn là chính hãng 100%.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Bảo hành sản phẩm như thế nào? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Các sản phẩm mua ở Mỹ chỉ bảo hành được ở Mỹ. Trường hợp cần bảo hành phải gửi lại sản phẩm về Mỹ. Đồng hồ mua ở Mỹ chỉ bảo hành ở Mỹ vì đây là hàng xách tay, không có bảo hành tại VN.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Khách yêu cầu kiểm tra hàng tại kho Mỹ trước khi gửi? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Phí kiểm hàng từ $5–$10/kiện (tuỳ sản phẩm). Khách cần kiểm hàng khi nhận thì báo trước khi đặt đơn.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Cho kiểm hàng trước khi giao tiền? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Dạ vì đây là hàng order, trước khi giao cho chị thì bên em đã kiểm tra qua đúng thông tin hàng gồm tên, màu sắc, kích thước, hình dáng nên chị thanh toán trước rồi nhận hàng ạ. Nếu có bất kỳ vấn đề gì về hàng, bên em sẽ xử lý ngay cho chị."</em></p></div>
+  </div>
+
+  <div class="faq-category">🏛️ Chính sách & Hỗ trợ</div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Không muốn đặt cọc vì không tin tưởng, sợ lừa đảo? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Vì bên em là hàng order nên theo quy định của công ty khách hàng phải chuyển khoản trước bên em mới mua được hàng ạ. Do bên em cũng phải ứng tiền thanh toán với web Mỹ trước. Anh/chị có thể tham khảo review của bên em trên fanpage để yên tâm hơn ạ."</em></p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Những hàng này có khai với hải quan không? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Dạ, bên em đi hàng tiểu ngạch nên các hàng nhập về đều phải khai báo với hải quan và có tính phụ thu cho nhập khẩu nếu có ạ. Chỉ cần không phải hàng cấm là bên em nhận ạ."</em></p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Khách yêu cầu nhờ thanh lý hàng hộ? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Vẫn giao hàng và thu tiền hàng bình thường, để hàng khách giữ, nói sẽ đăng bài để bán thanh lý giúp khách và khi nào có khách khác hỏi mua sẽ liên hệ lại.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Khách hỏi vì sao cần cung cấp CCCD? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Dạ, bên em cần CCCD để khi nào bên phía hải quan cần cung cấp thông tin người mua của kiện hàng, bên em sẽ có thông tin để đưa luôn ạ. Ngoài ra bên em cũng dùng để xác minh danh tính khách hàng."</em></p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Khách có công nợ cũ, hàng đã về — có giao không? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p><em>"Chị ck giúp em hết công nợ cũ & mới, để kế toán bên em cho xuất hàng chị nha."</em></p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Không nhận được mail đơn hàng? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Nhắn khách check Spam, rồi move email đó ra inbox để lần sau email từ bên mình sẽ vào thẳng inbox (thường lần đầu dễ vào Spam).</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Khách mua nhiều item &lt;$30 nhưng tổng đơn &gt;$30 thì có phụ thu 50k? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body"><p>Tính theo <strong>tổng đơn hàng</strong>, không tính theo item. Chỉ phụ thu 50k khi tổng đơn hàng &lt;$30.</p></div>
+  </div>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAcc(this)">Đơn 3 link sp, tổng &lt;$30 — chọn danh mục như thế nào? <span class="acc-arrow">▼</span></div>
+    <div class="accordion-body">
+      <ul>
+        <li>Link sản phẩm thứ 1 → chọn danh mục <strong>"Items nhỏ hơn $30"</strong></li>
+        <li>Link thứ 2 và thứ 3 → chọn <strong>"Hàng thông thường"</strong></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH RESULTS -->
+<div id="page-search" class="page">
+  <div class="page-header">
+    <h1>🔍 Kết quả tìm kiếm</h1>
+  </div>
+  <div id="searchResults"></div>
+</div>
+
+</main>
+
+<script>
+// Navigation
+function navigate(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  const page = document.getElementById('page-' + pageId);
+  if (page) page.classList.add('active');
+  const link = document.querySelector(`[onclick="navigate('${pageId}')"]`);
+  if (link) link.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Accordion
+function toggleAcc(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  header.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+// Search
+let searchTimeout;
+function doSearch(q) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    q = q.trim();
+    if (!q) { navigate('home'); return; }
+    navigate('search');
+    const resultsEl = document.getElementById('searchResults');
+    const pages = document.querySelectorAll('.page:not(#page-search):not(#page-home)');
+    const results = [];
+    const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    pages.forEach(page => {
+      const title = page.querySelector('h1') ? page.querySelector('h1').textContent : '';
+      const text = page.innerText;
+      if (re.test(text)) {
+        const pageId = page.id.replace('page-', '');
+        const snippet = text.replace(/\n+/g, ' ').substring(0, 300);
+        results.push({ id: pageId, title, snippet: snippet.replace(re, m => `<mark>${m}</mark>`) });
+      }
+    });
+    if (results.length === 0) {
+      resultsEl.innerHTML = '<p style="color:var(--gray-500);font-size:14px;">Không tìm thấy kết quả nào.</p>';
+    } else {
+      resultsEl.innerHTML = results.map(r => `
+        <div class="accordion" style="margin-bottom:12px;">
+          <div class="accordion-header" onclick="navigate('${r.id}')" style="cursor:pointer;">
+            ${r.title}
+            <span style="font-size:12px;color:var(--brand);font-weight:400;">Xem →</span>
+          </div>
+          <div class="accordion-body open" style="display:block;">
+            <p style="color:var(--gray-500);">${r.snippet}...</p>
+          </div>
+        </div>
+      `).join('');
+    }
+  }, 300);
+}
+</script>
+</body>
+</html>
