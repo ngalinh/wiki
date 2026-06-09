@@ -19,6 +19,6 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }}
             sudo git pull origin main
             cd server && sudo npm install --production && cd ..
-            sudo pkill -f "node server/index.js" 2>/dev/null || true
+            sudo pkill -u root -f "node server/index.js" 2>/dev/null || true
             sleep 3
             echo "Wiki process after restart: $(pgrep -f 'node server/index.js' || echo 'not running yet')"
