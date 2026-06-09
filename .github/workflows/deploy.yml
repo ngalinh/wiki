@@ -19,5 +19,5 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }}
             sudo git pull origin main
             cd server && sudo npm install --production
-            pm2 restart bot-e9778bedc4f9f670 || sudo pm2 restart bot-e9778bedc4f9f670
-            pm2 save 2>/dev/null; sudo pm2 save 2>/dev/null; true
+            echo "=== vmadmin pm2 list ===" && pm2 jlist 2>/dev/null | python3 -c "import sys,json; [print(p.get('name','?'), p.get('pm_id','?'), p.get('pid','?'), p.get('pm2_env',{}).get('PORT','')) for p in json.load(sys.stdin)]" 2>/dev/null || true
+            echo "=== sudo pm2 list ===" && sudo pm2 jlist 2>/dev/null | python3 -c "import sys,json; [print(p.get('name','?'), p.get('pm_id','?'), p.get('pid','?'), p.get('pm2_env',{}).get('PORT','')) for p in json.load(sys.stdin)]" 2>/dev/null || true
