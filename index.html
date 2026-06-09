@@ -1532,6 +1532,12 @@ let editingPageId = null;
 const CONTENT_PAGES = ['tong-quan','so-do','quy-dinh','cong-cu',
   'thuat-ngu','websites','bao-gia','tao-don','bao-hang-ve','hang-stock','khieu-nai','faq'];
 
+function apiUrl(path) {
+  const email = currentUser.email || localStorage.getItem('wiki_user_email');
+  const sep = path.includes('?') ? '&' : '?';
+  return email ? `${path}${sep}user_email=${encodeURIComponent(email)}` : path;
+}
+
 // ─── Init ─────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
   // Lưu email từ URL vào localStorage để dùng lại
@@ -1658,7 +1664,7 @@ async function openEditModal(pageId) {
   // Kiểm tra xem có custom content không
   document.getElementById('editLastSaved').textContent = '';
   try {
-    const res = await fetch(`./api/content/${pageId}`);
+    const res = await fetch(apiUrl(`./api/content/${pageId}`));
     const data = await res.json();
     if (data && data.content) {
       html = data.content;
@@ -1688,7 +1694,7 @@ async function saveEditModal() {
   if (!editingPageId) return;
   const content = document.getElementById('editTextarea').value;
   try {
-    const res = await fetch(`./api/content/${editingPageId}`, {
+    const res = await fetch(apiUrl(`./api/content/${editingPageId}`), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content })
@@ -1708,7 +1714,7 @@ async function resetPageContent() {
   if (!editingPageId) return;
   if (!confirm('Xóa nội dung đã chỉnh sửa và về lại nội dung mặc định?')) return;
   try {
-    await fetch(`./api/content/${editingPageId}`, { method: 'DELETE' });
+    await fetch(apiUrl(`./api/content/${editingPageId}`), { method: 'DELETE' });
     closeEditModal();
     location.reload();
   } catch { showToast('Không kết nối được server', true); }
@@ -1720,7 +1726,7 @@ async function loadSettings() {
   document.getElementById('settings-forbidden').style.display = 'none';
   document.getElementById('settings-content').style.display = 'none';
   try {
-    const res = await fetch('./api/settings');
+    const res = await fetch(apiUrl('./api/settings'));
     if (res.status === 403) {
       document.getElementById('settings-loading').style.display = 'none';
       document.getElementById('settings-forbidden').style.display = 'block';
@@ -1769,7 +1775,7 @@ function removeEmail(type, email) {
 
 async function saveSettings() {
   try {
-    const res = await fetch('./api/settings', {
+    const res = await fetch(apiUrl('./api/settings'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(settingsData)
