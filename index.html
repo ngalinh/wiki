@@ -315,6 +315,12 @@
     <a class="sidebar-link" onclick="navigate('faq')"><span class="icon">❓</span> FAQ</a>
   </div>
   <div class="sidebar-section">
+    <div class="sidebar-heading">Nội quy nhân sự</div>
+    <a class="sidebar-link" onclick="navigate('noi-quy')"><span class="icon">📌</span> Nội quy chung</a>
+    <a class="sidebar-link" onclick="navigate('cach-lam-viec')"><span class="icon">💡</span> Cách làm việc</a>
+    <a class="sidebar-link" onclick="navigate('quyen-loi')"><span class="icon">🎁</span> Quyền lợi</a>
+  </div>
+  <div class="sidebar-section">
     <a class="sidebar-link" id="settingsSidebarLink" onclick="navigate('settings')" style="display:none">
       <span class="icon">⚙️</span> Cài đặt
     </a>
@@ -1441,6 +1447,354 @@
   </div>
 </div>
 
+<!-- NỘI QUY CHUNG -->
+<div id="page-noi-quy" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Nội quy nhân sự</div>
+    <h1>📌 Nội quy chung</h1>
+  </div>
+
+  <div class="section">
+    <h2>⏰ Thời gian làm việc</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Chi nhánh</th><th>Buổi sáng</th><th>Buổi chiều</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Hà Nội</strong></td><td>08:30 – 12:30</td><td>13:30 – 17:00</td></tr>
+          <tr><td><strong>Sài Gòn</strong></td><td>09:00 – 12:30</td><td>13:30 – 17:30</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout info"><strong>Thứ 2 – Thứ 6:</strong> Làm việc tại văn phòng.<br><strong>Thứ 7:</strong> Làm việc online theo giờ ngày thường (buổi sáng).</div>
+  </div>
+
+  <div class="section">
+    <h2>⚠️ Hình thức xử lý vi phạm</h2>
+    <div class="callout warn">
+      <strong>Phạt tài chính:</strong> Mỗi lỗi được nhắc nhở tối đa <strong>2 lần</strong>. Từ lần thứ 3 trở đi: phạt <strong>50,000đ/lỗi</strong>. Các lần tiếp theo nhân đôi số tiền phạt của lần trước.
+    </div>
+    <div class="callout danger">
+      <strong>Buộc thôi việc khi:</strong>
+      <ul style="margin-top:8px;padding-left:18px;">
+        <li>Vi phạm lỗi nhiều lần mà không cải thiện</li>
+        <li>Có hành vi thiếu trung thực, vi phạm đạo đức trong công việc</li>
+        <li>Gây hậu quả, thiệt hại nặng nề cho công ty</li>
+      </ul>
+    </div>
+    <div class="callout danger"><strong>(*) Công ty có quyền cho nghỉ việc và không trả lương</strong> với trường hợp sai phạm quy định, quy trình và không báo cáo.</div>
+  </div>
+
+  <div class="section">
+    <h2>🛒 Xử lý sai phạm đơn hàng</h2>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Đơn mua sai do lỗi CSKH/Mua hàng <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Nhân sự có <strong>1 tháng</strong> để tự thanh lý hàng đó. Không nhập kho stock — giữ ở kho để thanh lý.</p>
+        <p>Sau 1 tháng không thanh lý được, nhân sự làm sai sẽ nhận hàng về. Công ty hỗ trợ theo tỷ lệ mua (không phải rate báo khách):</p>
+        <ul style="padding-left:18px;margin-top:6px;">
+          <li>Sai lần 1: công ty hỗ trợ <strong>30%</strong> thiệt hại</li>
+          <li>Các lần sau: công ty hỗ trợ <strong>20%</strong> thiệt hại</li>
+          <li>Sai quá 3 lần: công ty <strong>không hỗ trợ</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Đơn không hoàn thành do khách không thanh toán <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>CSKH đòi khách, nếu không được sẽ xem xét nguyên nhân (lỗi khách hay lỗi CSKH không làm đúng quy định).</p>
+      </div>
+    </div>
+    <div class="callout danger"><strong>Quan trọng:</strong> Mức hỗ trợ của công ty chỉ áp dụng khi nhân sự <strong>thông báo với công ty ngay khi phát hiện lỗi sai</strong>. Nếu tự ý xử lý rồi mới báo, công ty sẽ không hỗ trợ và nhân sự tự chịu thiệt hại 100%.</div>
+  </div>
+
+  <div class="section">
+    <h2>🏖️ Quy định ngày nghỉ phép</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Thâm niên</th><th>Số ngày nghỉ</th></tr></thead>
+        <tbody>
+          <tr><td>Đủ 12 tháng làm việc</td><td>12 ngày/năm (hưởng nguyên lương)</td></tr>
+          <tr><td>Chưa đủ 12 tháng</td><td>Tỷ lệ tương ứng số tháng làm việc</td></tr>
+          <tr><td>Cứ đủ 3 năm</td><td>+1 ngày tăng thêm mỗi 3 năm</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="checklist">
+      <li>Mỗi lần xin nghỉ không quá <strong>7 ngày làm việc</strong> liên tiếp, phải bố trí nhân sự backup</li>
+      <li>Phép chưa dùng hết được xin nghỉ trong <strong>Quý I năm sau</strong> (hết tháng 3). Sau đó mất ngày phép đó</li>
+      <li>Nếu không nghỉ phép và đi làm, công ty thanh toán tiền lương và trả vào thời điểm kết thúc quyền lợi nghỉ phép (hết Q1 năm sau)</li>
+      <li>Về sớm/đến muộn: trừ lương theo tổng số giờ (tối thiểu 1h)</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>📱 Chấm công & Xin nghỉ</h2>
+    <div class="callout success">
+      Sử dụng app: <strong>chamcong.basso.vn</strong><br>
+      Tạo tài khoản và thực hiện chấm công, xin nghỉ, xin làm online, báo đi muộn trên app.<br>
+      Xem mục <strong>Nội quy công ty</strong> trên app để biết thêm chi tiết.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🆕 Quy định nhân sự mới</h2>
+    <div class="callout warn">
+      <strong>Chưa qua 3 tháng làm việc:</strong> KHÔNG được chat riêng công việc (về đơn hàng) với nhân sự khác ngoại trừ người trainer. Tất cả các vấn đề phải chat vào group làm việc.<br><br>
+      Mục đích: để sếp kiểm soát và điều chỉnh kịp thời cách làm việc của nhân sự mới cho đúng quy trình, văn hoá công ty.
+    </div>
+    <div class="callout danger">
+      <strong>(*)</strong> Nhân sự khác nếu chat riêng với nhân sự mới về công việc, sếp phát hiện sẽ bị phạt <strong>50k/lần</strong> (dù bất kể lý do gì).
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🔒 Bảo mật thông tin</h2>
+    <ul class="checklist">
+      <li>Không cung cấp bất kỳ thông tin tài khoản nào của công ty cho khách hàng/đối tác khi chưa có sự đồng ý của sếp</li>
+      <li>Tuyệt đối không download bất kỳ thứ gì người khác gửi về máy làm việc</li>
+    </ul>
+  </div>
+</div>
+
+<!-- CÁCH LÀM VIỆC -->
+<div id="page-cach-lam-viec" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Nội quy nhân sự</div>
+    <h1>💡 Cách làm việc</h1>
+  </div>
+
+  <div class="callout info"><strong>Phong cách làm việc:</strong> Thẳng thắn – Bình đẳng – Hiệu quả. Mọi ý kiến, tranh cãi không tư thù cá nhân — chỉ vì một mục đích: <strong>Hiệu quả công việc</strong>.</div>
+
+  <div class="section">
+    <h2>1. Follow công việc đến cùng</h2>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Quy tắc hỏi & follow câu trả lời <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul>
+          <li>Việc không gấp: chờ câu trả lời trong <strong>1h</strong>. Nếu không thấy rep — nhắc lại.</li>
+          <li>Việc gấp: trong <strong>15–30 phút</strong> chưa có câu trả lời — nhắc lại ngay hoặc gọi điện.</li>
+          <li>Người nhận câu hỏi phải trả lời ngay hoặc báo thời gian sẽ trả lời (ví dụ: "4h anh trả lời nhé"). Đến giờ không có câu trả lời — người hỏi nhắc lại.</li>
+          <li>Tất cả yêu cầu, hỏi thông tin đều phải xác định thời hạn/ngày giờ trả lời.</li>
+          <li>Khi có việc cần hỏi thì hỏi ngay, không để sau vì sẽ quên.</li>
+        </ul>
+        <div class="callout danger" style="margin-top:12px;"><strong>Không chấp nhận</strong> lý do "em hỏi mà sếp/bạn không trả lời nên cứ để đó" hoặc tự ý xử lý không đúng.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>2. Làm đúng quy trình</h2>
+    <div class="callout danger">
+      <strong>TUYỆT ĐỐI KHÔNG THAY ĐỔI QUY TRÌNH</strong> khi chưa có sự cho phép của sếp.<br><br>
+      Nếu tự ý làm khác quy trình: ngoài việc chịu trách nhiệm thiệt hại, khi QC check sẽ bị phạt <strong>200k/lần</strong> (bất kể lỗi nhỏ hay lớn). Các lần tiếp theo nhân đôi.
+    </div>
+    <ul class="checklist">
+      <li>Nhân sự cũ dạy nhân sự mới sai quy trình → nhân sự cũ chịu trách nhiệm</li>
+      <li>Muốn thay đổi quy trình để hiệu quả hơn → báo sếp để được duyệt</li>
+      <li>Với khách có vấn đề (chậm tiền, kêu ca...) → báo sếp để có cách xử lý riêng</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>3. Cách hỏi xử lý vấn đề</h2>
+    <div class="callout info">
+      Khi nhờ sếp support về cách trả lời khách hoặc giải quyết vấn đề, hãy <strong>đề xuất phương án của mình trước</strong> rồi hỏi sếp xem có được không. Sếp sẽ chỉnh sửa nếu cần.<br><br>
+      Không nên hỏi kiểu: <em>"Cái này bây giờ phải làm sao?"</em> — hãy chủ động động não suy nghĩ trước.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>4. Mẫu report vấn đề</h2>
+    <div class="callout success">
+      Khi report vấn đề với sếp/đồng nghiệp, <strong>nói cụ thể trong 1 tin nhắn</strong> để người đọc không phải hỏi lại, tiết kiệm thời gian chat qua lại.
+    </div>
+    <p style="font-size:14px;color:var(--gray-500);">Tham khảo ví dụ mẫu report tại các link hướng dẫn nội bộ (liên hệ quản lý).</p>
+  </div>
+
+  <div class="section">
+    <h2>5. Gửi thông tin</h2>
+    <div class="callout info">
+      Khi gửi thông tin, luôn nghĩ đến <strong>người nhận có đủ thông tin để xử lý không</strong>.<br><br>
+      Ví dụ: Luôn copy cả mã đơn hàng khi hỏi, không chỉ gửi ảnh screenshot (người kia phải gõ lại mã). Hỏi team mua hàng thì gửi mã ĐH + tên web để được rep nhanh.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>6. Rõ ràng nguyên nhân</h2>
+    <div class="callout info">
+      Khi sếp hỏi tức là sếp cần biết <strong>nguyên nhân gốc rễ</strong>. Đừng trả lời ngắn gọn — hãy trả lời <strong>cụ thể, chi tiết và thừa nhận sai lầm ngay</strong> để đỡ mất thời gian hỏi đi hỏi lại.<br><br>
+      Sếp không thích lắt léo, vòng vo, không vào trọng tâm vấn đề.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>7. Bảo mật tài khoản</h2>
+    <div class="callout danger"><strong>Phạt 500k</strong> khi nhân sự không bảo mật tài khoản theo các quy định sau:</div>
+    <ul class="checklist">
+      <li>Cẩn thận không tải/click linh tinh trên thiết bị có đăng nhập tài khoản công ty — tránh virus</li>
+      <li>Không click bất kỳ file nào khách gửi (kể cả hình ảnh). File .zip hoặc tên lạ: tuyệt đối không click</li>
+      <li>Khi cần tạo tài khoản web: chỉ check out as guest hoặc nhập email riêng. <strong>TUYỆT ĐỐI KHÔNG đăng nhập bằng Facebook hoặc Gmail</strong></li>
+      <li>Không cài app yêu cầu quyền access Gmail. Không đăng nhập Gmail trên thiết bị lạ</li>
+      <li><strong>Cấm tuyệt đối</strong> share file công ty cho email cá nhân</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>8. Báo lỗi hệ thống</h2>
+    <div class="callout info">
+      Tất cả yêu cầu/lỗi hệ thống phải nhắn vào <strong>group Asale</strong>, không nhắn riêng.<br><br>
+      <strong>Lý do:</strong>
+      <ul style="margin-top:8px;padding-left:18px;">
+        <li>Để sếp nắm được các vấn đề và đánh giá mức độ cần thiết của yêu cầu</li>
+        <li>Mọi đóng góp đều được ghi nhận khi xét thưởng/miễn phạt — ý kiến nhiều là tốt miễn là hợp lý</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>9. Yêu cầu khác quy định</h2>
+    <div class="callout warn">
+      Khi yêu cầu đồng nghiệp làm việc <strong>khác quy trình</strong>: người yêu cầu phải <strong>screenshot tin nhắn đã được sếp duyệt</strong> và gửi cho bộ phận kia.<br><br>
+      Người nhận yêu cầu cũng phải hỏi xin screenshot xác nhận — tránh làm sai nhiệm vụ của mình.
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>10. Xử lý khi không ưa nhau trong công việc</h2>
+    <div class="callout info">
+      Nếu không ưa nhau hoặc khó hiểu ý nhau: <strong>KHÔNG CHAT RIÊNG</strong>. Yêu cầu nhắn group công ty khi trao đổi công việc.<br><br>
+      Trước khi bức xúc, khó chịu hãy hỏi: <em>"Việc đó có mang lại hiệu quả cho công việc không?"</em><br>
+      • Nếu có → cư xử chuyên nghiệp<br>
+      • Nếu không → report lại với sếp
+    </div>
+  </div>
+</div>
+
+<!-- QUYỀN LỢI -->
+<div id="page-quyen-loi" class="page">
+  <div class="page-header">
+    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Nội quy nhân sự</div>
+    <h1>🎁 Quyền lợi</h1>
+  </div>
+
+  <div class="section">
+    <h2>💰 Lương & Thưởng</h2>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Lương ngoài giờ <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Áp dụng cho nhân sự backend làm việc theo giờ hành chính:</p>
+        <p><strong>Lương ngoài giờ = Thời gian làm ngoài giờ × Tiền lương thực trả theo công việc</strong></p>
+        <p style="margin-top:8px;"><em>Lưu ý: Tối thiểu 30 phút làm ngoài giờ mới được tính. Thời gian làm ngoài giờ phải được xác nhận là hợp lý.</em></p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Thưởng Tết <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Việc thưởng và mức thưởng tùy theo quyết định của công ty theo từng năm. Tiêu chí xét thưởng:</p>
+        <ul style="padding-left:18px;margin-top:8px;">
+          <li><strong>Ý thức trong công việc (40%):</strong> thâm niên, chuyên cần, chấp hành nội quy, văn hoá, tự giác, thành thật, thẳng thắn, tử tế, giúp đỡ đồng nghiệp...</li>
+          <li><strong>Hoàn thành tốt công việc (40%):</strong> làm đúng yêu cầu được giao, biết khắc phục lỗi, không gây thiệt hại cho công ty...</li>
+          <li><strong>Vượt yêu cầu (20%):</strong> đóng góp ý kiến, tăng doanh số, chủ động làm việc mang lại hiệu quả cao khi chưa cần sếp yêu cầu, sẵn sàng hỗ trợ khi công ty cần...</li>
+        </ul>
+        <p style="margin-top:8px;">Nhân sự backend (lương cứng) sẽ được thưởng nhiều hơn vào cuối năm.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Thưởng góp ý hệ thống <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Thưởng thêm cho các góp ý cải thiện tính năng hoặc phát hiện lỗi:</p>
+        <p><strong>50k – 500k/ý kiến</strong> (tùy mức độ quan trọng của tính năng/lỗi)</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Xét tăng lương <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Công ty xét tăng lương dựa trên 3 tiêu chí:</p>
+        <ol style="padding-left:18px;margin-top:8px;">
+          <li>Thêm khối lượng công việc không?</li>
+          <li>Đóng góp chất xám, năng lực giúp tăng doanh thu, phát triển công ty không?</li>
+          <li>Tình hình kinh doanh của công ty và kinh tế nói chung đang tốt không?</li>
+        </ol>
+        <p style="margin-top:8px;">Nhân sự muốn tăng lương có thể đề xuất với sếp dựa trên các tiêu chí trên.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Lương thâm niên <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Nhân sự gắn bó <strong>từ 3 năm trở lên</strong> và có đóng góp trong công việc sẽ được tăng lương (mức tăng tùy năng lực và thái độ làm việc).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🏥 Phúc lợi</h2>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Bảo hiểm xã hội <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Nhân viên sau khi làm chính thức <strong>3 tháng</strong> sẽ được đóng Bảo hiểm (có thể thương lượng tùy theo năng lực).</p>
+        <p>Nhân viên có thể <strong>chọn không đóng Bảo hiểm</strong> và được cộng thêm <strong>1,000,000đ/tháng</strong> vào lương cứng.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Sinh nhật <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <ul style="padding-left:18px;">
+          <li>Ngày sinh nhật: được về sớm <strong>2 tiếng</strong> + nhận <strong>500,000đ</strong> tiền sinh nhật + tổ chức sinh nhật tại văn phòng</li>
+          <li>Ngày sinh nhật người thân (bố mẹ, chồng, con, anh chị em ruột): được về sớm <strong>2 tiếng</strong> — tối đa <strong>3 ngày/năm</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Thưởng giới thiệu nhân sự <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Giới thiệu được nhân sự cho công ty: thưởng <strong>1,000,000đ</strong> khi nhân sự đó được tuyển (sau thời gian thử việc).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🏠 Làm online (WFH)</h2>
+    <div class="callout success">
+      <strong>3 ngày làm online/tháng</strong> — chọn bất kỳ ngày nào trong tháng, xin trên app chamcong.<br>
+      Không trừ phép, không trừ lương nhưng phải đảm bảo chất lượng công việc như khi ở công ty.
+    </div>
+    <div class="callout warn">
+      Sau 3 ngày làm online: nếu tiếp tục làm online sẽ tính <strong>50% lương</strong> hoặc <strong>trừ nửa ngày phép</strong>.<br>
+      <em>(Không áp dụng cho nhân viên kho và nhân viên thử việc)</em>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Làm online khi trời mưa <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body">
+        <p>Vào ngày mưa nặng hạt, nhân viên có thể làm online buổi đó:</p>
+        <ul style="padding-left:18px;margin-top:6px;">
+          <li>Mưa lúc sáng đi làm → sáng làm online. Chiều tạnh mưa → qua công ty</li>
+          <li>Chiều vẫn mưa (vào thời điểm đi làm) → có thể làm online luôn</li>
+          <li>Phải gửi video proof cho sếp khi xin làm online vì trời mưa</li>
+        </ul>
+        <p style="margin-top:6px;"><em>Không áp dụng cho bộ phận kho (kho có thể đi làm muộn khi mưa)</em></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🛍️ Ưu đãi mua hàng nội bộ</h2>
+    <ul class="checklist">
+      <li>Tỉ giá mua hàng: tính theo <strong>tỉ giá khách sỉ to</strong>. Hàng stock: giá sỉ to thấp nhất</li>
+      <li>Mỗi nhân viên có 1 tài khoản riêng để mua hàng (tài khoản Nhân viên) — tạo tài khoản và gửi link cho sếp để được đổi nhóm khách hàng</li>
+      <li>Tự tạo đơn hàng và gửi link ĐH cho Kế toán duyệt. Bộ phận khác không biết tạo ĐH: Kế toán hỗ trợ</li>
+      <li>Đơn hàng <strong>&gt; 5 triệu</strong>: đặt cọc tối thiểu <strong>50%</strong>. Tất cả đơn thanh toán 100% khi nhận hàng</li>
+    </ul>
+  </div>
+</div>
+
 <!-- SETTINGS -->
 <div id="page-settings" class="page">
   <div class="page-header">
@@ -1593,7 +1947,8 @@ let settingsData = { admins: [], editors: [] };
 let editingPageId = null;
 
 const CONTENT_PAGES = ['tong-quan','so-do','quy-dinh','cong-cu',
-  'thuat-ngu','websites','bao-gia','tao-don','bao-hang-ve','hang-stock','khieu-nai','faq'];
+  'thuat-ngu','websites','bao-gia','tao-don','bao-hang-ve','hang-stock','khieu-nai','faq',
+  'noi-quy','cach-lam-viec','quyen-loi'];
 
 function apiUrl(path) {
   const email = currentUser.email || localStorage.getItem('wiki_user_email');
