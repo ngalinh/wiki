@@ -679,6 +679,151 @@ tbody tr:hover{background:var(--cream);}
   </div>
 
   <div class="section">
+    <h2>🗺️ Sơ đồ quy trình chi tiết theo phòng ban</h2>
+    <div style="border:1px solid var(--line);border-radius:13px;background:var(--white);overflow-x:auto;">
+      <div style="min-width:660px;">
+        <div style="display:grid;grid-template-columns:1fr 64px 1fr 64px 1fr;text-align:center;font-weight:700;font-size:13px;border-bottom:1px solid var(--line);">
+          <div style="background:var(--blue);color:var(--blue-ink);padding:9px 4px;border-radius:12px 0 0 0;">CSKH</div>
+          <div></div>
+          <div style="background:var(--peach);color:var(--peach-ink);padding:9px 4px;">MUA HÀNG</div>
+          <div></div>
+          <div style="background:var(--lav);color:var(--lav-ink);padding:9px 4px;border-radius:0 12px 0 0;">KHO</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 64px 1fr 64px 1fr;align-items:center;gap:8px 4px;padding:16px 12px;text-align:center;font-size:12.5px;">
+          <div style="background:var(--white);border:1.5px solid var(--blue-ink);border-radius:10px;padding:9px 8px;font-weight:700;">📋 1. Báo giá</div>
+          <div></div>
+          <div style="border:1.5px dashed var(--ink-soft);border-radius:10px;padding:6px 8px;font-size:10.5px;color:var(--ink-soft);">SAI GIÁ / HẾT HÀNG ⤴ báo lại SALE, quay về bước 1</div>
+          <div></div>
+          <div></div>
+
+          <div style="font-weight:700;color:var(--ink-soft);">↓</div>
+          <div></div>
+          <div style="color:var(--ink-soft);">⇡</div>
+          <div></div>
+          <div></div>
+
+          <div style="background:var(--white);border:1.5px solid var(--blue-ink);border-radius:10px;padding:9px 8px;font-weight:700;">📝 2. Tạo đơn</div>
+          <div style="font-weight:700;color:var(--ink-soft);">→</div>
+          <div style="background:var(--white);border:1.5px solid var(--peach-ink);border-radius:10px;padding:9px 8px;font-weight:700;">🔍 3. Check đơn</div>
+          <div></div>
+          <div></div>
+
+          <div></div>
+          <div></div>
+          <div style="font-weight:700;color:var(--ink-soft);">↓ <span style="font-size:10.5px;">OK ✓</span></div>
+          <div></div>
+          <div></div>
+
+          <div></div>
+          <div></div>
+          <div style="background:var(--white);border:1.5px solid var(--peach-ink);border-radius:10px;padding:9px 8px;font-weight:700;">🛒 4. Mua hàng</div>
+          <div style="font-weight:700;color:var(--ink-soft);font-size:10.5px;">— SHIPPED →</div>
+          <div style="background:var(--white);border:1.5px solid var(--lav-ink);border-radius:10px;padding:9px 8px;font-weight:700;">🏠 5. Hàng về VN</div>
+
+          <div></div>
+          <div></div>
+          <div style="font-weight:700;color:var(--ink-soft);">↓ <span style="font-size:10.5px;">KO SHIP ✗</span></div>
+          <div></div>
+          <div style="font-weight:700;color:var(--ink-soft);">↓</div>
+
+          <div></div>
+          <div></div>
+          <div style="background:#FCF4D9;border:1.5px solid #C9A227;border-radius:10px;padding:9px 8px;font-weight:700;">⚠️ Xử lý issue</div>
+          <div></div>
+          <div style="font-size:10.5px;color:var(--ink-soft);">Hàng OK → bước 6 · Sai/thiếu/hỏng → lên issue</div>
+
+          <div style="background:var(--white);border:1.5px solid var(--blue-ink);border-radius:10px;padding:9px 8px;font-weight:700;">🚚 6. Báo hàng về</div>
+          <div style="font-weight:700;color:var(--ink-soft);font-size:10.5px;">← HÀNG OK</div>
+          <div></div>
+          <div></div>
+          <div></div>
+
+          <div style="font-weight:700;color:var(--ink-soft);">↓</div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+
+          <div style="background:var(--white);border:1.5px solid var(--blue-ink);border-radius:10px;padding:9px 8px;font-weight:700;">💬 7. Xin feedback</div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:55%">Mô tả chi tiết</th><th>Team</th><th>Thời gian</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Báo giá</strong>
+              <ul style="margin:6px 0 0;padding-left:18px;">
+                <li>Khách gửi link hoặc hình sp</li>
+                <li>SALE tìm sp, tư vấn và báo giá cho khách</li>
+                <li>Yêu cầu khách ck cọc</li>
+              </ul>
+            </td>
+            <td><span class="tag sale">SALE</span></td>
+            <td>⏱ Trả lời khách trong 15p</td>
+          </tr>
+          <tr>
+            <td><strong>2. Tạo đơn</strong>
+              <ul style="margin:6px 0 0;padding-left:18px;">
+                <li>Tạo đơn hàng trong hệ thống: nhập thông tin khách, sản phẩm (giá, số lượng, màu/size…)</li>
+                <li>Sau khi khách ck, SALE gửi email/link ĐH để xác nhận đơn hàng cho khách</li>
+              </ul>
+            </td>
+            <td><span class="tag cskh">CSKH</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>3. Check đơn</strong>
+              <ul style="margin:6px 0 0;padding-left:18px;">
+                <li>Team Mua Hàng mua đơn hàng nếu đúng giá, sp như SALE lên đơn</li>
+                <li>Nếu sai giá, hết hàng, tăng rate vì khó mua… team Mua Hàng sẽ báo lại SALE để báo lại khách</li>
+              </ul>
+            </td>
+            <td><span class="tag mh">MUA HÀNG</span></td>
+            <td>⏱ Trong 48h</td>
+          </tr>
+          <tr>
+            <td><strong>4. Mua hàng</strong>
+              <ul style="margin:6px 0 0;padding-left:18px;">
+                <li>Sau khi mua hàng xong team Mua Hàng sẽ tạo đơn admin (có order #) cho sản phẩm đã mua</li>
+                <li>Team Mua Hàng follow đơn hàng cho đến khi đơn dc ship về VN</li>
+              </ul>
+            </td>
+            <td><span class="tag mh">MUA HÀNG</span></td>
+            <td>📅 7–10 ngày đơn dc ship đến kho Mỹ</td>
+          </tr>
+          <tr>
+            <td><strong>5. Hàng về VN</strong>
+              <ul style="margin:6px 0 0;padding-left:18px;">
+                <li>Kho nhận và soạn hàng, update cân nặng cho các sản phẩm</li>
+                <li>Hàng OK CSKH sẽ báo hàng về cho khách. Nếu hàng sai/thiếu/hỏng CSKH sẽ lên issue để xử lý</li>
+              </ul>
+            </td>
+            <td><span class="tag kho">KHO</span></td>
+            <td>📅 10–12 ngày về VN kể từ khi deli kho Mỹ</td>
+          </tr>
+          <tr>
+            <td><strong>6. Báo hàng về</strong>
+              <ul style="margin:6px 0 0;padding-left:18px;">
+                <li>Báo hàng về cho khách &amp; phân phối giao hàng cho khách</li>
+                <li>Tham chiếu thanh toán đúng cho các đơn hàng</li>
+              </ul>
+            </td>
+            <td><span class="tag cskh">CSKH</span></td>
+            <td>📅 2–3 ngày giao hàng cho khách</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
     <h2>🏢 Về Basso / ShipUS</h2>
     <p>Basso là dịch vụ mua hộ &amp; vận chuyển hàng từ Mỹ, Anh và Tây Ban Nha về Việt Nam. Khách gửi link hoặc hình sản phẩm, đội ngũ Sale báo giá trọn gói, sau đó hàng được mua, gom về kho nước ngoài và vận chuyển quốc tế về tay khách.</p>
     <div class="callout success"><strong>Cam kết:</strong> Báo giá minh bạch, thời gian hàng về rõ ràng, và hỗ trợ khách xuyên suốt từ lúc chốt đơn đến khi nhận hàng.</div>
