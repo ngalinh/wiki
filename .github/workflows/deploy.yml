@@ -26,11 +26,17 @@ jobs:
             sudo pkill -u root -f "server/index.js" || true
             sleep 3
             sudo git log --oneline -1
-            # --- Chẩn đoán Hỏi đáp AI (tạm thời, sẽ gỡ sau) ---
-            node --version || true
-            sudo awk -F= '/^GEMINI_API_KEY=/{print "GEMINI key: dai", length($2), "ky tu, prefix", substr($2,1,4)}' server/.env || true
-            for i in 1 2 3 4 5; do curl -s -o /dev/null http://localhost:4105/api/me && break; sleep 2; done
-            echo "--- test /api/ask truc tiep tren server (bo qua proxy) ---"
-            time curl -s -m 90 -o /tmp/ask.json -w "HTTP %{http_code}\n" -X POST http://localhost:4105/api/ask -H 'Content-Type: application/json' -d '{"question":"Tỷ giá báo khách hiện tại là bao nhiêu?"}' || true
+            # --- Chẩn đoán Hỏi đáp AI vòng 2 (tạm thời, sẽ gỡ sau) ---
+            sleep 5
+            sudo grep '^PORT=' server/.env || echo "khong co PORT trong .env"
+            WPID=$(pgrep -f "server/index.js" | head -1) || true
+            echo "wiki pid: $WPID"
+            sudo ss -ltnp | grep node || true
+            WPORT=$(sudo ss -ltnp 2>/dev/null | grep "pid=$WPID," | head -1 | awk '{split($4,a,":"); print a[length(a)]}') || true
+            echo "wiki port: ${WPORT:-khong tim thay}"
+            echo "--- test outbound toi Gemini tu server ---"
+            time curl -s -m 15 -o /dev/null -w "Gemini HTTP %{http_code}\n" "https://generativelanguage.googleapis.com/v1beta/models" || true
+            echo "--- test /api/ask qua port that ---"
+            time curl -s -m 90 -o /tmp/ask.json -w "HTTP %{http_code}\n" -X POST "http://localhost:${WPORT:-4105}/api/ask" -H 'Content-Type: application/json' -d '{"question":"Tỷ giá báo khách hiện tại là bao nhiêu?"}' || true
             head -c 500 /tmp/ask.json || true
             echo ""
