@@ -78,6 +78,6 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ### Server details (for context)
 - SSH: `vmadmin@103.140.249.232` (passwordless sudo)
 - Deploy path: `/opt/dashboard-bot/data/bots/e9778bedc4f9f670`
-- Process wiki KHÔNG chạy bằng PM2 — do dashboard-bot manager (`node dist/app.js`) quản lý và tự respawn sau khi bị kill. Restart: `sudo pkill -u root -f "server/index.js"`. (Đã xác minh 2026-06-11 qua log deploy: `sudo pm2 list` của root trống, PM2 của vmadmin chỉ có app khác.)
+- Process wiki chạy TRONG container Docker của dashboard-bot: cmdline là `node index.js`, cwd `/app/data/bots/e9778bedc4f9f670/server` (mount từ deploy path trên host). KHÔNG dùng PM2. `pkill -f "server/index.js"` KHÔNG trúng wiki (và suýt trúng app khác `image-server`). Restart đúng: tìm pid theo cwd chứa id bot (`readlink /proc/<pid>/cwd`) rồi `kill` — manager tự respawn; xem lệnh trong deploy.yml. Port của wiki nằm trong network namespace của container, không thấy bằng `ss` trên host. (Đã xác minh 2026-06-11 qua log deploy #36–#38.)
 - Wiki runs on port `4105`, proxied by nginx at `/b/e9778bedc4f9f670/`
 - Admin email env var: `ADMIN_EMAILS` in the bot's `.env` file

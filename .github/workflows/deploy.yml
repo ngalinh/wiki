@@ -21,35 +21,13 @@ jobs:
             sudo git fetch origin main
             sudo git reset --hard origin/main
             cd server && sudo npm install --omit=dev && cd ..
-            # Wiki do dashboard-bot manager quản lý (không phải PM2):
-            # kill process là manager tự khởi động lại với code mới
-            sudo pkill -u root -f "server/index.js" || true
-            sleep 3
+            # Wiki chạy TRONG container của dashboard-bot (cmdline "node index.js",
+            # cwd /app/data/bots/<id>/server) — pkill theo tên không trúng được.
+            # Tìm đúng process theo cwd chứa id bot rồi kill; manager tự respawn
+            # với code mới. (Xác minh 2026-06-11 qua log chẩn đoán deploy #36-#38)
+            for pid in $(pgrep node); do
+              cwd=$(sudo readlink /proc/$pid/cwd 2>/dev/null) || true
+              case "$cwd" in *e9778bedc4f9f670*) echo "restart wiki pid=$pid"; sudo kill $pid || true;; esac
+            done
+            sleep 5
             sudo git log --oneline -1
-            # --- Chẩn đoán vòng 3: tìm process wiki theo cwd + restart đúng (tạm thời) ---
-            sudo grep -rn "e9778bedc4f9f670" /etc/nginx/ 2>/dev/null | head -5 || true
-            WIKI_PIDS=""
-            for pid in $(pgrep node); do
-              cwd=$(sudo readlink /proc/$pid/cwd 2>/dev/null) || true
-              case "$cwd" in *e9778bedc4f9f670*)
-                WIKI_PIDS="$WIKI_PIDS $pid"
-                echo "wiki pid=$pid cwd=$cwd start=$(ps -o lstart= -p $pid)"
-                sudo tr '\0' ' ' < /proc/$pid/cmdline || true; echo ""
-                sudo ss -ltnp | grep "pid=$pid," || true
-              ;; esac
-            done
-            echo "wiki pids:${WIKI_PIDS:- khong tim thay}"
-            [ -n "$WIKI_PIDS" ] && sudo kill $WIKI_PIDS || true
-            sleep 10
-            NEWPID=""
-            for pid in $(pgrep node); do
-              cwd=$(sudo readlink /proc/$pid/cwd 2>/dev/null) || true
-              case "$cwd" in *e9778bedc4f9f670*) NEWPID=$pid;; esac
-            done
-            echo "wiki pid moi: ${NEWPID:-khong thay (manager chua respawn?)}"
-            NPORT=$(sudo ss -ltnp 2>/dev/null | grep "pid=$NEWPID," | head -1 | awk '{split($4,a,":"); print a[length(a)]}') || true
-            echo "wiki port moi: ${NPORT:-khong tim thay}"
-            echo "--- test /api/ask sau restart ---"
-            time curl -s -m 90 -o /tmp/ask.json -w "HTTP %{http_code}\n" -X POST "http://localhost:${NPORT:-4105}/api/ask" -H 'Content-Type: application/json' -d '{"question":"Tỷ giá báo khách hiện tại là bao nhiêu?"}' || true
-            head -c 600 /tmp/ask.json || true
-            echo ""
