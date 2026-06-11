@@ -141,7 +141,11 @@ strong{font-weight:700;color:var(--ink);}
 
 .main{flex:1;height:calc(100vh - var(--nav-h));overflow-y:auto;}
 .page{max-width:880px;margin:0 auto;padding:40px 44px calc(90px + env(safe-area-inset-bottom, 0px));display:none;}
-.page img{max-width:100%;height:auto;}
+.page img{max-width:100%;height:auto;cursor:zoom-in;}
+.expand-all-row{display:flex;justify-content:flex-end;margin:14px 0 8px;}
+.img-lightbox{position:fixed;inset:0;z-index:300;background:rgba(26,25,22,.88);display:none;align-items:center;justify-content:center;padding:18px;cursor:zoom-out;}
+.img-lightbox.show{display:flex;}
+.img-lightbox img{max-width:100%;max-height:calc(100vh - 36px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border-radius:10px;box-shadow:var(--shadow-md);}
 .h2-ico{display:inline-flex;width:30px;height:30px;flex:0 0 auto;border-radius:9px;background:var(--brown-soft);color:var(--brown-ink);align-items:center;justify-content:center;margin-right:10px;vertical-align:middle;}
 .h2-ico svg{width:17px;height:17px;}
 /* Tiêu đề có icon: dùng flex để icon luôn thẳng hàng giữa với chữ */
@@ -415,10 +419,15 @@ tbody tr:hover{background:var(--cream);}
   .sidebar{position:fixed;left:0;top:var(--nav-h);z-index:30;background:var(--cream);transform:translateX(-100%);transition:.2s;box-shadow:var(--shadow-md);}
   .sidebar.open{transform:none;}
   .block-grid,.settings-grid{grid-template-columns:1fr;}
-  .topnav-search{width:auto;flex:1;}
+  .topnav{gap:10px;padding-left:14px;padding-right:max(14px, env(safe-area-inset-right));}
+  .topnav-search{width:auto;flex:1;padding:8px 12px;}
   .topnav-title{display:none;}
   .user-email{display:none;}
   .page{padding:26px 20px calc(70px + env(safe-area-inset-bottom, 0px));}
+  /* Chặn tràn ngang: nội dung rộng (bảng, sơ đồ) cuộn trong khối của nó,
+     không làm cả trang/header bị đẩy lệch */
+  body,.main{overflow-x:hidden;}
+  .page table{display:block;max-width:100%;overflow-x:auto;}
 }
 .menu-toggle{display:none;border:none;background:none;font-size:20px;cursor:pointer;color:var(--ink);}
 @media(max-width:820px){.menu-toggle{display:block;}}
@@ -2406,6 +2415,11 @@ tbody tr:hover{background:var(--cream);}
   <button onclick="imgDelete()" title="Xóa ảnh">&#128465;</button>
 </div>
 
+<!-- Popup xem ảnh to (bấm vào ảnh trên trang) -->
+<div class="img-lightbox" id="imgLightbox" onclick="this.classList.remove('show')">
+  <img id="imgLightboxImg" alt="">
+</div>
+
 <script>
 // ─── Icons (Lucide-style line icons) ─────────────────────────
 const ICONS = {
@@ -2556,6 +2570,14 @@ function bindGo(root) {
   });
 }
 
+// ─── Lightbox: bấm ảnh trên trang → xem to trong popup ───────
+document.addEventListener('click', e => {
+  const img = e.target.closest('.page img');
+  if (!img || e.target.closest('.wysiwyg-editor')) return;
+  document.getElementById('imgLightboxImg').src = img.src;
+  document.getElementById('imgLightbox').classList.add('show');
+});
+
 // ─── Accordion (animated max-height) ─────────────────────────
 // Copy/dán trong editor làm trình duyệt gỡ thuộc tính onclick, nên ngoài
 // onclick gốc còn có delegation: mọi .accordion-header đều bấm được.
@@ -2624,11 +2646,28 @@ paintIcons(document);
 navigate((location.hash || '#home').slice(1));
 
 // ─── User badge ───────────────────────────────────────────────
+// Đăng nhập thủ công (PWA cài ngoài màn hình không có phiên dashboard):
+// bấm badge → nhập email → lưu localStorage → nạp lại quyền
+function loginPrompt() {
+  const cur = authEmail || currentUser.email || '';
+  const v = prompt('Nhập email công ty của bạn để nhận quyền (để trống = đăng xuất):', cur);
+  if (v === null) return;
+  const email = v.trim().toLowerCase();
+  try {
+    if (email) localStorage.setItem('wiki_user_email', email);
+    else localStorage.removeItem('wiki_user_email');
+  } catch {}
+  location.reload();
+}
+
 function renderUserBadge() {
   const el = document.getElementById('userBadge');
   if (!el) return;
+  el.style.cursor = 'pointer';
+  el.title = 'Bấm để đăng nhập / đổi tài khoản';
+  el.onclick = loginPrompt;
   if (!currentUser.email) {
-    el.innerHTML = '<a href="/login.html" title="Đăng nhập hệ thống để được nhận diện và phân quyền"><span class="role-tag role-viewer">Đăng nhập</span></a>';
+    el.innerHTML = '<span class="role-tag role-viewer">Đăng nhập</span>';
     return;
   }
   const role = currentUser.isAdmin ? 'Admin' : currentUser.isEditor ? 'Editor' : 'Viewer';
@@ -2660,14 +2699,14 @@ function refreshEditBtn(pageId) {
   row.appendChild(btn);
 }
 
-// Nút "Xem toàn bộ" góc phải trang: sổ/thu gọn tất cả khối hỏi-đáp một lần
+// Nút "Xem toàn bộ" đặt ngay phía trên khối hỏi-đáp đầu tiên của trang:
+// sổ/thu gọn tất cả các khối một lần
 function refreshExpandBtn(pageId) {
   const page = document.querySelector(`.page[data-page="${pageId}"]`);
   if (!page) return;
-  page.querySelectorAll('.expand-all-btn').forEach(b => b.remove());
-  if (!page.querySelector('.accordion')) return;
-  const row = page.querySelector('.page-header-row');
-  if (!row) return;
+  page.querySelectorAll('.expand-all-row').forEach(b => b.remove());
+  const firstAcc = page.querySelector('.accordion');
+  if (!firstAcc) return;
   const btn = document.createElement('button');
   btn.className = 'btn btn-secondary btn-sm expand-all-btn';
   btn.textContent = '⌄ Xem toàn bộ';
@@ -2681,9 +2720,10 @@ function refreshExpandBtn(pageId) {
     btn.dataset.open = expanding ? '1' : '';
     btn.textContent = expanding ? '⌃ Thu gọn' : '⌄ Xem toàn bộ';
   };
-  // Đặt trước nút Chỉnh sửa nếu có
-  const editBtn = row.querySelector('.edit-page-btn');
-  editBtn ? row.insertBefore(btn, editBtn) : row.appendChild(btn);
+  const row = document.createElement('div');
+  row.className = 'expand-all-row';
+  row.appendChild(btn);
+  firstAcc.parentNode.insertBefore(row, firstAcc);
 }
 
 // ─── Custom content load/save ─────────────────────────────────
@@ -2725,13 +2765,15 @@ function getPageBody(pageId) {
   if (!page) return '';
   const header = page.querySelector('.page-header');
   if (!header) return page.innerHTML;
-  let html = '';
+  const tmp = document.createElement('div');
   let el = header.nextElementSibling;
   while (el) {
-    html += el.outerHTML;
+    tmp.appendChild(el.cloneNode(true));
     el = el.nextElementSibling;
   }
-  return html;
+  // Nút "Xem toàn bộ" là UI chèn lúc hiển thị, không thuộc nội dung lưu
+  tmp.querySelectorAll('.expand-all-row').forEach(b => b.remove());
+  return tmp.innerHTML;
 }
 
 function setPageBody(pageId, html) {
