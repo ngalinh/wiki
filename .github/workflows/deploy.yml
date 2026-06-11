@@ -21,6 +21,15 @@ jobs:
             sudo git fetch origin main
             sudo git reset --hard origin/main
             cd server && sudo npm install --omit=dev && cd ..
+            # --- Chẩn đoán quyền admin (tạm, sẽ gỡ) ---
+            echo "Cau truc .env (chi ten bien + do dai gia tri, khong in gia tri):"
+            sudo awk -F= '{print NR": "$1" ("length($0)-length($1)-1" ky tu)"}' server/.env || true
+            # Sua dong bi dinh neu tee -a append vao file thieu newline cuoi
+            sudo sed -i 's/^\(ADMIN_EMAILS=.*\)GEMINI_API_KEY=.*$/\1/' server/.env || true
+            echo "Sau khi sua:"
+            sudo awk -F= '{print NR": "$1" ("length($0)-length($1)-1" ky tu)"}' server/.env || true
+            echo "config.json (admins che bot, chi 3 ky tu dau):"
+            sudo jq -r '"admins: " + (.admins | map(.[0:3] + "***") | join(", ")) + " | so editors: " + (.editors | length | tostring)' server/data/config.json || sudo ls -la server/data/ || true
             # Wiki chạy TRONG container của dashboard-bot (cmdline "node index.js",
             # cwd /app/data/bots/<id>/server) — pkill theo tên không trúng được.
             # Tìm đúng process theo cwd chứa id bot rồi kill; manager tự respawn
