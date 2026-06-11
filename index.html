@@ -3,367 +3,542 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Wiki Nội Bộ</title>
+<title>Wiki Nội Bộ — Basso</title>
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#2563eb">
+<meta name="theme-color" content="#F2EFE8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wiki">
 <link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --brand: #2563eb;
-    --brand-light: #eff6ff;
-    --brand-dark: #1d4ed8;
-    --gray-50: #f9fafb;
-    --gray-100: #f3f4f6;
-    --gray-200: #e5e7eb;
-    --gray-300: #d1d5db;
-    --gray-400: #9ca3af;
-    --gray-500: #6b7280;
-    --gray-700: #374151;
-    --gray-900: #111827;
-    --green: #059669;
-    --green-light: #ecfdf5;
-    --amber: #d97706;
-    --amber-light: #fffbeb;
-    --red: #dc2626;
-    --red-light: #fef2f2;
-    --sidebar-w: 260px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--gray-50); color: var(--gray-900); line-height: 1.6; height: 100vh; overflow: hidden; }
+/* ===========================================================
+   Basso Wiki — ATLAS design language
+   Cream / warm ink / lavender accent · Schibsted + Hanken Grotesk
+   Pill buttons, 18px cards.
+   =========================================================== */
+:root{
+  /* surfaces */
+  --cream:#F2EFE8;
+  --cream-2:#ECE8DE;
+  --beige-card:#EAE5D9;
+  --white:#FFFFFF;
+  /* ink */
+  --ink:#1A1916;
+  --ink-soft:#55524A;
+  --ink-mute:#86837A;
+  --btn:#181712;
+  --line:#DEDACE;
+  --line-soft:#E7E3D8;
+  /* accents */
+  --lav:#DBD3F4;        --lav-ink:#6657C6;  --lav-soft:#EDE9FA;
+  --brown:#E5D6C3;      --brown-ink:#7A552F; --brown-soft:#EFE6D8;
+  --blue:#D8E3F1;       --blue-ink:#3F66A6;
+  --peach:#F3DECE;      --peach-ink:#B5774A;
+  --green:#D8ECD9;      --green-ink:#3F7A45;
+  --red:#F4D9D4;        --red-ink:#B0503C;
 
-  /* TOP NAV */
-  .topnav {
-    position: sticky; top: 0;
-    height: calc(56px + env(safe-area-inset-top, 0px));
-    padding-top: env(safe-area-inset-top, 0px);
-    background: #fff; border-bottom: 1px solid var(--gray-200);
-    display: flex; align-items: center; padding-left: 24px; padding-right: 24px; gap: 16px; z-index: 100;
-  }
-  .topnav-logo { font-weight: 700; font-size: 18px; color: var(--brand); letter-spacing: -0.3px; }
-  .topnav-title { color: var(--gray-400); font-size: 14px; }
-  .topnav-search {
-    margin-left: auto; position: relative;
-  }
-  .topnav-search input {
-    border: 1px solid var(--gray-200); border-radius: 8px; padding: 6px 12px 6px 34px;
-    font-size: 14px; width: 220px; background: var(--gray-50); outline: none; color: var(--gray-700);
-  }
-  .topnav-search input:focus { border-color: var(--brand); background: #fff; }
-  .topnav-search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-400); }
+  /* semantic callouts */
+  --info-bg:var(--lav-soft);   --info-bd:#CFC6F0;   --info-ink:#4B3F9E;   --info-bar:var(--lav-ink);
+  --warn-bg:#FBEEDF;           --warn-bd:#EBCBA4;   --warn-ink:#8A5A2B;   --warn-bar:var(--peach-ink);
+  --danger-bg:#F8E4DF;         --danger-bd:#EBC3BA; --danger-ink:#8E3D2C; --danger-bar:var(--red-ink);
+  --success-bg:#E4F0E4;        --success-bd:#BEDCC0;--success-ink:#2F6638;--success-bar:var(--green-ink);
 
-  /* SIDEBAR */
-  .sidebar {
-    width: var(--sidebar-w); background: #fff;
-    border-right: 1px solid var(--gray-200);
-    position: fixed; top: calc(56px + env(safe-area-inset-top, 0px)); bottom: 0;
-    overflow-y: auto; padding: 16px 0;
-  }
-  .sidebar-section { margin-bottom: 4px; }
-  .sidebar-heading {
-    font-size: 10px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.8px; color: var(--gray-400); padding: 12px 20px 6px;
-  }
-  .sidebar-link {
-    display: flex; align-items: center; gap: 8px; padding: 7px 20px;
-    font-size: 14px; color: var(--gray-700); cursor: pointer;
-    border-radius: 0; transition: background 0.1s; text-decoration: none;
-    border-left: 3px solid transparent;
-  }
-  .sidebar-link:hover { background: var(--gray-50); }
-  .sidebar-link.active { background: var(--brand-light); color: var(--brand); border-left-color: var(--brand); font-weight: 600; }
-  .sidebar-link .icon { width: 16px; text-align: center; font-size: 15px; flex-shrink: 0; }
-  .sidebar-sub { padding-left: 12px; }
-  .sidebar-sub .sidebar-link { font-size: 13px; padding: 5px 20px 5px 14px; }
+  /* legacy aliases — nội dung đã lưu trên server có thể còn dùng các biến cũ */
+  --brand:#6657C6;
+  --gray-400:#86837A;
+  --gray-500:#55524A;
+  --gray-600:#55524A;
+  --gray-700:#55524A;
+  --gray-900:#1A1916;
 
-  /* MAIN */
-  .main { margin-left: var(--sidebar-w); padding: 40px 48px calc(40px + env(safe-area-inset-bottom, 0px)) 48px; max-width: 960px; overflow-y: auto; height: 100%; }
+  /* radii — Atlas */
+  --r-card:18px;
+  --r-btn:999px;
+  --r-input:999px;
+  --r-pill:999px;
+  --r-sm:12px;
+  --r-xs:8px;
 
-  /* HOME */
-  .home-hero { margin-bottom: 40px; }
-  .home-hero h1 { font-size: 28px; font-weight: 800; color: var(--gray-900); margin-bottom: 8px; }
-  .home-hero p { color: var(--gray-500); font-size: 15px; }
-  .block-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
-  .block-card {
-    background: #fff; border: 1px solid var(--gray-200); border-radius: 12px;
-    padding: 24px; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s;
-  }
-  .block-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--brand); }
-  .block-card-icon { font-size: 28px; margin-bottom: 12px; }
-  .block-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--gray-900); }
-  .block-card p { font-size: 13px; color: var(--gray-500); margin-bottom: 14px; }
-  .block-card-links { display: flex; flex-direction: column; gap: 4px; }
-  .block-card-links a {
-    font-size: 13px; color: var(--brand); text-decoration: none; padding: 3px 0;
-    display: flex; align-items: center; gap: 4px;
-  }
-  .block-card-links a:hover { text-decoration: underline; }
-  .block-card-links a::before { content: '→'; font-size: 12px; }
+  --nav-h:calc(60px + env(safe-area-inset-top, 0px));
+  --side-w:272px;
+  --shadow-sm:0 1px 0 rgba(40,36,20,.03);
+  --shadow:0 14px 30px -20px rgba(40,36,20,.35);
+  --shadow-md:0 26px 50px -30px rgba(40,36,20,.45);
 
-  /* CONTENT PAGE */
-  .page { display: none; }
-  .page.active { display: block; }
-  .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--gray-200); }
-  .page-header .breadcrumb { font-size: 13px; color: var(--gray-400); margin-bottom: 8px; }
-  .page-header .breadcrumb span { color: var(--brand); cursor: pointer; }
-  .page-header .breadcrumb span:hover { text-decoration: underline; }
-  .page-header h1 { font-size: 24px; font-weight: 800; color: var(--gray-900); }
+  --font:"Hanken Grotesk",system-ui,sans-serif;
+  --font-head:"Schibsted Grotesk",sans-serif;
+  --font-mono:"Space Mono",monospace;
+}
 
-  /* CONTENT ELEMENTS */
-  .section { margin-bottom: 32px; }
-  .section h2 { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-  .section h3 { font-size: 15px; font-weight: 600; color: var(--gray-700); margin: 16px 0 8px; }
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  font-family:var(--font);
+  background:var(--cream);
+  color:var(--ink);
+  line-height:1.55;
+  overflow:hidden;
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--font-head);font-weight:700;letter-spacing:-.02em;line-height:1.1;}
+a{color:inherit;text-decoration:none;cursor:pointer;}
+code{font-family:var(--font-mono);background:var(--cream-2);border:1px solid var(--line);
+  border-radius:var(--r-xs);padding:1px 6px;font-size:.82em;color:var(--ink);}
+strong{font-weight:700;color:var(--ink);}
 
-  /* CALLOUT */
-  .callout {
-    border-radius: 8px; padding: 14px 16px; margin-bottom: 12px;
-    font-size: 14px; border-left: 4px solid;
-  }
-  .callout.info { background: var(--brand-light); border-color: var(--brand); color: #1e40af; }
-  .callout.warn { background: var(--amber-light); border-color: var(--amber); color: #92400e; }
-  .callout.success { background: var(--green-light); border-color: var(--green); color: #065f46; }
-  .callout.danger { background: var(--red-light); border-color: var(--red); color: #991b1b; }
-  .callout strong { font-weight: 700; }
+/* ---------- TOP NAV ---------- */
+.topnav{
+  position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:40;
+  background:rgba(242,239,232,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line-soft);
+  display:flex;align-items:center;gap:18px;padding:env(safe-area-inset-top, 0px) 20px 0;
+}
+.topnav-logo{font-family:var(--font-head);font-weight:800;font-size:18px;letter-spacing:-.02em;white-space:nowrap;display:flex;align-items:center;gap:9px;}
+.topnav-logo .logo-mark{width:26px;height:26px;border-radius:8px;background:var(--ink);color:var(--cream);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.topnav-logo .logo-mark svg{width:16px;height:16px;}
+.topnav-title{color:var(--ink-mute);font-size:13px;font-family:var(--font-mono);letter-spacing:.04em;border-left:1px solid var(--line);padding-left:18px;}
+.topnav-search{
+  margin-left:auto;display:flex;align-items:center;gap:9px;
+  background:var(--white);border:1px solid var(--line);border-radius:var(--r-pill);
+  padding:8px 16px;width:300px;color:var(--ink-mute);transition:.15s;
+}
+.topnav-search:focus-within{border-color:var(--lav-ink);box-shadow:0 0 0 3px var(--lav-soft);}
+.topnav-search input{border:none;outline:none;background:none;flex:1;min-width:0;font-family:var(--font);font-size:14px;color:var(--ink);}
+.topnav-search input::placeholder{color:var(--ink-mute);}
+.user-badge{display:flex;align-items:center;gap:10px;white-space:nowrap;}
+.user-email{font-size:13px;color:var(--ink-soft);max-width:160px;overflow:hidden;text-overflow:ellipsis;}
+.role-tag{font-size:11px;font-weight:700;padding:4px 10px;border-radius:var(--r-pill);letter-spacing:.02em;font-family:var(--font);}
+.role-admin{background:var(--lav);color:var(--lav-ink);}
+.role-editor{background:var(--green);color:var(--green-ink);}
+.role-viewer{background:var(--cream-2);color:var(--ink-mute);}
 
-  /* TABLE */
-  .table-wrap { overflow-x: auto; margin-bottom: 16px; border-radius: 8px; border: 1px solid var(--gray-200); }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; }
-  th { background: var(--gray-50); padding: 10px 14px; text-align: left; font-weight: 600; font-size: 13px; color: var(--gray-700); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
-  td { padding: 10px 14px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); vertical-align: top; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--gray-50); }
+/* ---------- LAYOUT ---------- */
+.shell{display:flex;height:100vh;padding-top:var(--nav-h);}
+.sidebar{
+  width:var(--side-w);flex:0 0 var(--side-w);height:calc(100vh - var(--nav-h));
+  background:transparent;border-right:1px solid var(--line-soft);
+  overflow-y:auto;padding:22px 16px calc(40px + env(safe-area-inset-bottom, 0px));
+}
+.sidebar-section{margin-bottom:24px;}
+.sidebar-heading{
+  font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-mute);padding:0 12px;margin-bottom:8px;
+}
+.sidebar-link{
+  display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:12px;
+  color:var(--ink-soft);font-size:14px;font-weight:500;transition:.13s;margin-bottom:2px;
+}
+.sidebar-link .icon{width:20px;height:20px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);}
+.sidebar-link .icon svg{width:18px;height:18px;display:block;}
+.sidebar-link:hover{background:var(--cream-2);color:var(--ink);}
+.sidebar-link:hover .icon{color:var(--ink);}
+.sidebar-link.active{background:var(--brown);color:var(--brown-ink);font-weight:600;}
+.sidebar-link.active .icon{color:var(--brown-ink);}
 
-  /* ACCORDION */
-  .accordion { border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin-bottom: 12px; background: #fff; }
-  .accordion-header {
-    padding: 14px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
-    display: flex; justify-content: space-between; align-items: center; color: var(--gray-900);
-    user-select: none; transition: background 0.1s;
-  }
-  .accordion-header:hover { background: var(--gray-50); }
-  .accordion-header .acc-arrow { transition: transform 0.2s; color: var(--gray-400); font-size: 12px; }
-  .accordion-header.open .acc-arrow { transform: rotate(180deg); }
-  .accordion-body { padding: 0 18px 16px; font-size: 14px; color: var(--gray-700); display: none; border-top: 1px solid var(--gray-100); padding-top: 14px; }
-  .accordion-body.open { display: block; }
-  .accordion-body ul { padding-left: 18px; }
-  .accordion-body li { margin-bottom: 5px; }
-  .accordion-body p { margin-bottom: 8px; }
+.main{flex:1;height:calc(100vh - var(--nav-h));overflow-y:auto;}
+.page{max-width:880px;margin:0 auto;padding:40px 44px calc(90px + env(safe-area-inset-bottom, 0px));display:none;}
+.page.active{display:block;}
+/* entrance: base state is fully visible; animation only enhances when motion is allowed */
+@media (prefers-reduced-motion: no-preference){
+  .page.active > *{animation:rise .5s cubic-bezier(.22,.61,.36,1) both;}
+  .page.active > *:nth-child(1){animation-delay:.00s;}
+  .page.active > *:nth-child(2){animation-delay:.06s;}
+  .page.active > *:nth-child(3){animation-delay:.12s;}
+  .page.active > *:nth-child(4){animation-delay:.18s;}
+  .page.active > *:nth-child(5){animation-delay:.24s;}
+  .page.active > *:nth-child(6){animation-delay:.30s;}
+  .page.active > *:nth-child(n+7){animation-delay:.34s;}
+  @keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+  /* block cards pop in a touch later, staggered */
+  .page.active .block-grid .block-card{animation:rise .5s cubic-bezier(.22,.61,.36,1) both;}
+  .page.active .block-grid .block-card:nth-child(2){animation-delay:.10s;}
+  .page.active .block-grid .block-card:nth-child(3){animation-delay:.16s;}
+  .page.active .block-grid .block-card:nth-child(4){animation-delay:.22s;}
+}
 
-  /* STEP */
-  .steps { counter-reset: step; }
-  .step { display: flex; gap: 14px; margin-bottom: 16px; align-items: flex-start; }
-  .step-num {
-    counter-increment: step; flex-shrink: 0;
-    width: 28px; height: 28px; border-radius: 50%;
-    background: var(--brand); color: #fff; font-size: 13px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center; margin-top: 1px;
-  }
-  .step-content { flex: 1; }
-  .step-content strong { display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-  .step-content p, .step-content ul { font-size: 14px; color: var(--gray-600); }
-  .step-content ul { padding-left: 16px; }
+/* ---------- PAGE HEADER ---------- */
+.page-header{margin-bottom:28px;}
+.breadcrumb{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:14px;}
+.breadcrumb span{cursor:pointer;}
+.breadcrumb span:hover{color:var(--lav-ink);}
+.page-header-row{display:flex;justify-content:space-between;align-items:center;gap:14px;}
+.page-header h1{font-size:clamp(28px,3.6vw,38px);font-weight:700;line-height:1.1;flex:1;min-width:0;display:flex;align-items:center;gap:12px;}
+.page-header h1 .h-ico{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:var(--brown-soft);color:var(--brown-ink);display:inline-flex;align-items:center;justify-content:center;}
+.page-header h1 .h-ico svg{width:22px;height:22px;}
+.page-header-row .btn{flex:0 0 auto;white-space:nowrap;}
 
-  /* TAG */
-  .tag {
-    display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 12px; font-weight: 600;
-  }
-  .tag.sale { background: #dbeafe; color: #1d4ed8; }
-  .tag.cskh { background: #d1fae5; color: #065f46; }
-  .tag.mh { background: #fde8d8; color: #9a3412; }
-  .tag.kho { background: #ede9fe; color: #5b21b6; }
+/* ---------- TYPOGRAPHY ---------- */
+.section{margin-top:34px;}
+.section h2{font-size:24px;font-weight:700;letter-spacing:-.015em;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:1px solid var(--line);}
+.section h3{font-size:17px;font-weight:700;margin:20px 0 8px;}
+.section p{margin-bottom:11px;color:var(--ink-soft);}
+.section p:last-child{margin-bottom:0;}
+.section ul:not(.checklist):not(.email-list),.section ol{padding-left:20px;color:var(--ink-soft);font-size:14.5px;margin-bottom:11px;}
+.mt-4{margin-top:34px;}
 
-  /* FAQ */
-  .faq-category { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-400); margin: 24px 0 8px; }
+/* ---------- HOME HERO ---------- */
+.home-hero{
+  background:var(--beige-card);
+  border:1px solid var(--line);border-radius:var(--r-card);padding:40px 36px;margin-bottom:30px;
+}
+.hero-badge{width:50px;height:50px;border-radius:15px;background:var(--lav-soft);color:var(--lav-ink);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.hero-badge svg{width:27px;height:27px;}
+.home-hero h1{font-size:clamp(30px,4.4vw,44px);font-weight:700;margin-bottom:12px;letter-spacing:-.025em;}
+.home-hero p{color:var(--ink-soft);max-width:60ch;font-size:16px;}
 
-  /* SEARCH HIGHLIGHT */
-  mark { background: #fef08a; border-radius: 2px; padding: 0 2px; }
+/* ---------- BLOCK CARDS ---------- */
+.block-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.block-card{
+  background:var(--white);border:1px solid var(--line);border-radius:var(--r-card);padding:24px;
+  cursor:pointer;transition:.16s;box-shadow:var(--shadow-sm);
+}
+.block-card:hover{border-color:var(--ink);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.block-card-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px;color:var(--ink);}
+.block-card-icon svg{width:25px;height:25px;}
+.block-grid .block-card:nth-child(1) .block-card-icon{background:var(--lav-soft);color:var(--lav-ink);}
+.block-grid .block-card:nth-child(2) .block-card-icon{background:var(--peach);color:var(--peach-ink);}
+.block-grid .block-card:nth-child(3) .block-card-icon{background:var(--blue);color:var(--blue-ink);}
+.block-grid .block-card:nth-child(4) .block-card-icon{background:var(--green);color:var(--green-ink);}
+.block-card h2{font-size:18px;font-weight:700;margin-bottom:6px;border:none;padding:0;}
+.block-card p{font-size:13.5px;color:var(--ink-soft);margin-bottom:16px;line-height:1.5;}
+.block-card-links{display:flex;flex-direction:column;gap:7px;border-top:1px solid var(--line-soft);padding-top:14px;}
+.block-card-links a{font-size:13px;color:var(--lav-ink);font-weight:600;display:inline-flex;align-items:center;gap:7px;}
+.block-card-links a::before{content:"→";opacity:.7;}
+.block-card-links a:hover{color:var(--ink);}
 
-  /* UTILS */
-  .mt-4 { margin-top: 16px; }
-  .mb-2 { margin-bottom: 8px; }
-  ul.checklist { list-style: none; padding: 0; }
-  ul.checklist li { padding: 4px 0 4px 24px; position: relative; font-size: 14px; color: var(--gray-700); }
-  ul.checklist li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
-  .divider { border: none; border-top: 1px solid var(--gray-200); margin: 24px 0; }
-  .badge { display: inline-flex; align-items: center; gap: 4px; background: var(--gray-100); border-radius: 6px; padding: 3px 10px; font-size: 13px; color: var(--gray-600); }
-  .time-badge { background: var(--amber-light); color: #92400e; font-weight: 600; }
+/* ---------- CALLOUT ---------- */
+.callout{border-radius:var(--r-sm);padding:14px 18px;margin:18px 0;font-size:14.5px;
+  border:1px solid;border-left-width:4px;line-height:1.55;}
+.callout strong{color:inherit;}
+.callout ol,.callout ul{color:inherit;}
+.callout.info{background:var(--info-bg);border-color:var(--info-bd);color:var(--info-ink);border-left-color:var(--info-bar);}
+.callout.warn{background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn-ink);border-left-color:var(--warn-bar);}
+.callout.danger{background:var(--danger-bg);border-color:var(--danger-bd);color:var(--danger-ink);border-left-color:var(--danger-bar);}
+.callout.success{background:var(--success-bg);border-color:var(--success-bd);color:var(--success-ink);border-left-color:var(--success-bar);}
 
-  @media (max-width: 768px) {
-    .block-grid { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .main { margin-left: 0; padding: 24px max(20px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); }
-  }
+/* ---------- STEPS ---------- */
+.steps{display:flex;flex-direction:column;gap:16px;margin:16px 0;}
+.step{display:flex;gap:15px;align-items:flex-start;}
+.step-num{flex:0 0 auto;width:32px;height:32px;border-radius:var(--r-pill);background:var(--lav);
+  color:var(--lav-ink);font-family:var(--font-head);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;}
+.step-content{flex:1;padding-top:3px;}
+.step-content strong{display:inline-block;margin-bottom:2px;}
+.step-content p{font-size:14px;color:var(--ink-soft);margin:2px 0 0;}
 
-  /* BUTTONS */
-  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s; text-decoration: none; }
-  .btn-primary { background: var(--brand); color: #fff; }
-  .btn-primary:hover { background: var(--brand-dark); }
-  .btn-secondary { background: var(--gray-100); color: var(--gray-700); }
-  .btn-secondary:hover { background: var(--gray-200); }
-  .btn-danger { background: var(--red-light); color: var(--red); }
-  .btn-danger:hover { background: #fee2e2; }
-  .btn-sm { padding: 5px 12px; font-size: 13px; }
+/* ---------- ACCORDION ---------- */
+.accordion{border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:9px;background:var(--white);overflow:hidden;}
+.accordion-header{
+  padding:13px 16px;font-weight:600;font-size:14.5px;cursor:pointer;font-family:var(--font);
+  display:flex;justify-content:space-between;align-items:center;gap:12px;transition:.13s;color:var(--ink);
+}
+.accordion-header:hover{background:var(--cream);}
+.acc-arrow{color:var(--ink-mute);font-size:11px;transition:transform .2s;flex:0 0 auto;}
+.accordion.open .acc-arrow{transform:rotate(180deg);color:var(--lav-ink);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height .26s ease;color:var(--ink-soft);font-size:14px;}
+.accordion-body-inner{padding:14px 16px 15px;}
+.accordion-body-inner > *{margin-bottom:9px;}
+.accordion-body-inner > *:last-child{margin-bottom:0;}
+.accordion-body-inner ul,.accordion-body-inner ol{padding-left:18px;}
+.accordion.open .accordion-header{border-bottom:1px solid var(--line-soft);}
 
-  /* USER BADGE */
-  .user-badge { display: flex; align-items: center; gap: 8px; margin-left: 12px; }
-  .user-email { font-size: 13px; color: var(--gray-500); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .role-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; white-space: nowrap; flex-shrink: 0; }
-  .role-admin { background: #fde8d8; color: #9a3412; }
-  .role-editor { background: #d1fae5; color: #065f46; }
-  .role-viewer { background: var(--gray-100); color: var(--gray-500); }
+/* ---------- TABLE ---------- */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-card);margin:16px 0;background:var(--white);}
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+thead th{background:var(--beige-card);text-align:left;font-family:var(--font-head);font-weight:700;color:var(--ink);
+  padding:12px 15px;border-bottom:1px solid var(--line);white-space:nowrap;}
+tbody td{padding:12px 15px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--cream);}
 
-  /* PAGE HEADER with edit button */
-  .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--gray-200); position: relative; }
-  .edit-page-btn { display: none; flex-shrink: 0; }
+/* ---------- TAG (category) ---------- */
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--r-pill);
+  letter-spacing:.03em;vertical-align:middle;font-family:var(--font);}
+.tag.sale{background:var(--blue);color:var(--blue-ink);}
+.tag.cskh{background:var(--green);color:var(--green-ink);}
+.tag.mh{background:var(--peach);color:var(--peach-ink);}
+.tag.kho{background:var(--lav);color:var(--lav-ink);}
 
-  /* EDIT MODAL */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: #fff; border-radius: 12px; width: 100%; max-width: 900px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-  .modal-header { padding: 14px 20px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-  .modal-header h2 { font-size: 16px; font-weight: 700; }
-  .modal-header .modal-subtitle { font-size: 12px; color: var(--gray-400); margin-bottom: 2px; }
-  .modal-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
-  .modal-footer { padding: 12px 20px; border-top: 1px solid var(--gray-200); display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
-  /* WYSIWYG toolbar */
-  .wysiwyg-toolbar { padding: 6px 10px; background: #f8f9fa; border-bottom: 1px solid var(--gray-200); display: flex; flex-wrap: wrap; gap: 1px; align-items: center; flex-shrink: 0; }
-  .wysiwyg-btn { background: none; border: 1px solid transparent; border-radius: 4px; padding: 0 7px; cursor: pointer; font-size: 13px; color: var(--gray-700); height: 28px; min-width: 28px; display: inline-flex; align-items: center; justify-content: center; }
-  .wysiwyg-btn:hover { background: #e9ecef; border-color: #ced4da; }
-  .wysiwyg-btn.active { background: #dbeafe; border-color: #93c5fd; color: #1d4ed8; }
-  .wysiwyg-sep { width: 1px; height: 20px; background: var(--gray-200); margin: 0 3px; align-self: center; }
-  .wysiwyg-select { border: 1px solid var(--gray-200); border-radius: 4px; padding: 0 6px; font-size: 13px; background: #fff; height: 28px; cursor: pointer; color: var(--gray-700); }
-  .wysiwyg-color { width: 28px; height: 28px; border: 1px solid var(--gray-200); border-radius: 4px; padding: 2px; cursor: pointer; }
-  .wysiwyg-editor { flex: 1; overflow-y: auto; padding: 20px 28px; outline: none; font-size: 15px; line-height: 1.75; color: var(--gray-800); min-height: 0; }
-  .wysiwyg-editor:empty::before { content: 'Bắt đầu nhập nội dung...'; color: var(--gray-400); pointer-events: none; }
-  .wysiwyg-editor h1 { font-size: 1.8em; font-weight: 700; margin: .6em 0 .3em; }
-  .wysiwyg-editor h2 { font-size: 1.4em; font-weight: 700; margin: .6em 0 .3em; }
-  .wysiwyg-editor h3 { font-size: 1.15em; font-weight: 700; margin: .5em 0 .3em; }
-  .wysiwyg-editor ul, .wysiwyg-editor ol { padding-left: 1.8em; margin: .4em 0; }
-  .wysiwyg-editor li { margin: .2em 0; }
-  .wysiwyg-editor a { color: var(--primary); text-decoration: underline; }
-  .wysiwyg-editor blockquote { border-left: 4px solid var(--gray-200); margin: .5em 0; padding: 4px 16px; color: var(--gray-500); font-style: italic; }
-  .wysiwyg-editor table { border-collapse: collapse; width: 100%; margin: .5em 0; }
-  .wysiwyg-editor td, .wysiwyg-editor th { border: 1px solid var(--gray-300); padding: 6px 10px; }
-  .wysiwyg-editor hr { border: none; border-top: 2px solid var(--gray-200); margin: 1em 0; }
-  .wysiwyg-editor pre, .wysiwyg-editor code { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; padding: 2px 6px; }
-  .wysiwyg-editor pre { padding: 12px; display: block; white-space: pre-wrap; }
-  .wysiwyg-editor img { max-width: 100%; height: auto; border-radius: 4px; margin: 4px 0; }
-  .wysiwyg-source { flex: 1; border: none; padding: 16px; font-family: 'Courier New', monospace; font-size: 12.5px; resize: none; outline: none; background: #fff; line-height: 1.5; display: none; min-height: 0; }
-  .wysiwyg-source.visible { display: block; }
+/* ---------- BADGE ---------- */
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+  padding:5px 12px;border-radius:var(--r-pill);background:var(--cream-2);color:var(--ink-soft);margin-top:8px;border:1px solid var(--line);}
+.time-badge{background:var(--peach);color:var(--peach-ink);border-color:transparent;}
 
-  /* SETTINGS */
-  .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .settings-card { border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; background: #fff; }
-  .settings-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-  .settings-card p { font-size: 13px; color: var(--gray-500); margin-bottom: 14px; }
-  .email-list { list-style: none; padding: 0; min-height: 40px; }
-  .email-list li { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-radius: 6px; background: var(--gray-50); margin-bottom: 5px; font-size: 13px; color: var(--gray-700); }
-  .email-list .empty-msg { color: var(--gray-400); font-style: italic; justify-content: center; background: none; }
-  .btn-remove { background: none; border: none; color: var(--gray-400); cursor: pointer; padding: 1px 5px; border-radius: 4px; font-size: 16px; line-height: 1; }
-  .btn-remove:hover { background: var(--red-light); color: var(--red); }
-  .email-input-row { display: flex; gap: 8px; margin-top: 12px; }
-  .email-input-row input { flex: 1; border: 1px solid var(--gray-200); border-radius: 6px; padding: 7px 12px; font-size: 13px; outline: none; }
-  .email-input-row input:focus { border-color: var(--brand); }
+/* ---------- CHECKLIST ---------- */
+.checklist{list-style:none;margin:12px 0;display:flex;flex-direction:column;gap:9px;}
+.checklist li{position:relative;padding-left:30px;font-size:14px;color:var(--ink-soft);}
+.checklist li::before{content:"✓";position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:var(--r-xs);
+  background:var(--green);color:var(--green-ink);font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;}
 
-  /* TOAST */
-  .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; z-index: 999; pointer-events: none; transition: opacity 0.3s; }
-  .toast-success { background: var(--green-light); color: #065f46; border: 1px solid #a7f3d0; }
-  .toast-error { background: var(--red-light); color: #991b1b; border: 1px solid #fecaca; }
+/* ---------- FAQ CATEGORY ---------- */
+.faq-category{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-mute);margin:28px 0 10px;}
+
+/* ---------- BUTTONS (pill, Atlas) ---------- */
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;border-radius:var(--r-btn);
+  padding:10px 18px;font-family:var(--font-head);font-size:14px;font-weight:600;cursor:pointer;transition:.16s;
+  background:var(--btn);color:#fff;}
+.btn:hover{background:#000;transform:translateY(-1px);}
+.btn .arr{display:inline-flex;width:18px;height:18px;border-radius:50%;background:#fff;color:#000;align-items:center;justify-content:center;font-size:11px;}
+.btn-primary{background:var(--btn);color:#fff;}
+.btn-secondary{background:transparent;color:var(--ink);border-color:var(--line);}
+.btn-secondary:hover{background:var(--white);border-color:var(--ink);transform:none;}
+.btn-danger{background:var(--red-ink);color:#fff;}
+.btn-danger:hover{filter:brightness(.93);background:var(--red-ink);}
+.btn-sm{padding:8px 14px;font-size:13px;}
+
+/* ---------- EMPTY STATE ---------- */
+.empty-state{text-align:center;padding:64px 20px;color:var(--ink-mute);
+  background:var(--white);border:1px solid var(--line);border-radius:var(--r-card);margin-top:8px;}
+.empty-state .es-ico{width:56px;height:56px;border-radius:16px;background:var(--brown-soft);color:var(--brown-ink);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+.empty-state .es-ico svg{width:28px;height:28px;}
+.empty-state h3{font-family:var(--font-head);font-size:19px;color:var(--ink);margin-bottom:8px;border:none;padding:0;}
+.empty-state p{font-size:14px;max-width:44ch;margin:0 auto;color:var(--ink-soft);}
+
+/* ---------- SETTINGS ---------- */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.settings-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-card);padding:24px;box-shadow:var(--shadow-sm);}
+.settings-card h3{font-size:17px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:9px;}
+.settings-card p{font-size:13.5px;color:var(--ink-soft);margin-bottom:16px;}
+.email-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.email-list li{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:var(--cream);border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 14px;font-size:13.5px;}
+.email-list .empty-msg{color:var(--ink-mute);font-style:italic;justify-content:center;background:none;border-style:dashed;}
+.btn-remove{border:none;background:none;color:var(--ink-mute);cursor:pointer;font-size:15px;line-height:1;padding:3px;border-radius:6px;}
+.btn-remove:hover{color:var(--danger-ink);background:var(--danger-bg);}
+.email-input-row{display:flex;gap:8px;margin-top:12px;}
+.email-input-row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:var(--r-pill);padding:8px 14px;
+  font-size:13px;font-family:var(--font);outline:none;background:var(--white);color:var(--ink);transition:.15s;}
+.email-input-row input:focus{border-color:var(--lav-ink);box-shadow:0 0 0 3px var(--lav-soft);}
+
+/* ---------- TOAST ---------- */
+.toast{position:fixed;bottom:calc(26px + env(safe-area-inset-bottom, 0px));left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:#fff;padding:12px 22px;border-radius:var(--r-pill);font-size:14px;font-weight:500;
+  opacity:0;pointer-events:none;transition:.25s;z-index:80;box-shadow:var(--shadow-md);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.error{background:var(--red-ink);}
+
+/* ---------- EDIT MODAL + WYSIWYG ---------- */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,25,22,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--cream);border-radius:var(--r-card);width:100%;max-width:900px;max-height:92vh;display:flex;flex-direction:column;box-shadow:var(--shadow-md);overflow:hidden;border:1px solid var(--line);}
+.modal-header{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:12px;}
+.modal-header h2{font-size:16px;font-weight:700;}
+.modal-header .modal-subtitle{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:2px;}
+.modal-body{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;background:var(--white);}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-shrink:0;}
+.wysiwyg-toolbar{padding:6px 10px;background:var(--cream-2);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:1px;align-items:center;flex-shrink:0;}
+.wysiwyg-btn{background:none;border:1px solid transparent;border-radius:var(--r-xs);padding:0 7px;cursor:pointer;font-size:13px;color:var(--ink-soft);height:28px;min-width:28px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);}
+.wysiwyg-btn:hover{background:var(--cream);border-color:var(--line);}
+.wysiwyg-btn.active{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-ink);}
+.wysiwyg-sep{width:1px;height:20px;background:var(--line);margin:0 3px;align-self:center;}
+.wysiwyg-select{border:1px solid var(--line);border-radius:var(--r-xs);padding:0 6px;font-size:13px;background:var(--white);height:28px;cursor:pointer;color:var(--ink-soft);font-family:var(--font);}
+.wysiwyg-editor{flex:1;overflow-y:auto;padding:20px 28px;outline:none;font-size:15px;line-height:1.75;color:var(--ink);min-height:0;background:var(--white);}
+.wysiwyg-editor:empty::before{content:'Bắt đầu nhập nội dung...';color:var(--ink-mute);pointer-events:none;}
+.wysiwyg-editor h1{font-size:1.8em;font-weight:700;margin:.6em 0 .3em;}
+.wysiwyg-editor h2{font-size:1.4em;font-weight:700;margin:.6em 0 .3em;}
+.wysiwyg-editor h3{font-size:1.15em;font-weight:700;margin:.5em 0 .3em;}
+.wysiwyg-editor ul,.wysiwyg-editor ol{padding-left:1.8em;margin:.4em 0;}
+.wysiwyg-editor li{margin:.2em 0;}
+.wysiwyg-editor a{color:var(--lav-ink);text-decoration:underline;}
+.wysiwyg-editor blockquote{border-left:4px solid var(--line);margin:.5em 0;padding:4px 16px;color:var(--ink-mute);font-style:italic;}
+.wysiwyg-editor table{border-collapse:collapse;width:100%;margin:.5em 0;}
+.wysiwyg-editor td,.wysiwyg-editor th{border:1px solid var(--line);padding:6px 10px;}
+.wysiwyg-editor hr{border:none;border-top:2px solid var(--line);margin:1em 0;}
+.wysiwyg-editor pre,.wysiwyg-editor code{background:var(--cream);border:1px solid var(--line);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:13px;padding:2px 6px;}
+.wysiwyg-editor pre{padding:12px;display:block;white-space:pre-wrap;}
+.wysiwyg-editor img{max-width:100%;height:auto;border-radius:var(--r-xs);margin:4px 0;}
+.wysiwyg-source{flex:1;border:none;padding:16px;font-family:var(--font-mono);font-size:12.5px;resize:none;outline:none;background:var(--white);line-height:1.5;display:none;min-height:0;color:var(--ink);}
+.wysiwyg-source.visible{display:block;}
+
+/* ---------- responsive ---------- */
+@media(max-width:820px){
+  .sidebar{position:fixed;left:0;top:var(--nav-h);z-index:30;background:var(--cream);transform:translateX(-100%);transition:.2s;box-shadow:var(--shadow-md);}
+  .sidebar.open{transform:none;}
+  .block-grid,.settings-grid{grid-template-columns:1fr;}
+  .topnav-search{width:auto;flex:1;}
+  .topnav-title{display:none;}
+  .user-email{display:none;}
+  .page{padding:26px 20px calc(70px + env(safe-area-inset-bottom, 0px));}
+}
+.menu-toggle{display:none;border:none;background:none;font-size:20px;cursor:pointer;color:var(--ink);}
+@media(max-width:820px){.menu-toggle{display:block;}}
+
+/* ===========================================================
+   CONTENT-SURFACE STYLE VARIANTS  (body[data-cards=...])
+   =========================================================== */
+body[data-cards="gray"] .block-card,
+body[data-cards="gray"] .accordion,
+body[data-cards="gray"] .table-wrap,
+body[data-cards="gray"] .settings-card,
+body[data-cards="gray"] .empty-state{
+  background:var(--cream-2);
+  border-color:var(--line);
+  box-shadow:none;
+}
+body[data-cards="gray"] thead th{background:#E3DCCC;}
+body[data-cards="gray"] .accordion-header:hover{background:#E4DDCD;}
+body[data-cards="gray"] tbody tr:hover{background:#E7E0D1;}
+body[data-cards="gray"] .email-list li{background:var(--cream);}
+body[data-cards="gray"] .block-card:hover{border-color:var(--ink);box-shadow:var(--shadow);}
+
+body[data-cards="float"] .block-card,
+body[data-cards="float"] .accordion,
+body[data-cards="float"] .table-wrap,
+body[data-cards="float"] .settings-card,
+body[data-cards="float"] .empty-state{
+  background:#fff;
+  border-color:transparent;
+  box-shadow:0 16px 36px -22px rgba(40,36,20,.34), 0 3px 8px -4px rgba(40,36,20,.07);
+}
+body[data-cards="float"] .block-card{border-radius:20px;}
+body[data-cards="float"] .block-card:hover{transform:translateY(-3px);box-shadow:0 26px 50px -26px rgba(40,36,20,.42);border-color:transparent;}
+
+body[data-cards="outline"] .block-card,
+body[data-cards="outline"] .accordion,
+body[data-cards="outline"] .table-wrap,
+body[data-cards="outline"] .settings-card,
+body[data-cards="outline"] .empty-state{
+  background:#fff;
+  border-color:var(--line-soft);
+  box-shadow:none;
+}
+body[data-cards="outline"] .block-card:hover{border-color:var(--ink);box-shadow:none;}
+
+/* ---------- appearance picker (Settings page) ---------- */
+.style-card h3 [data-icon]{width:20px;height:20px;display:inline-flex;color:var(--ink-soft);}
+.style-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px;}
+.style-opt{text-align:left;border:1px solid var(--line);background:var(--cream);border-radius:14px;padding:12px;cursor:pointer;font-family:var(--font);transition:.14s;}
+.style-opt:hover{border-color:var(--ink-mute);}
+.style-opt.on{border-color:var(--brown-ink);box-shadow:0 0 0 2px var(--brown);}
+.so-prev{display:block;height:48px;border-radius:9px;margin-bottom:11px;}
+.so-prev.gray{background:var(--cream-2);border:1px solid var(--line);}
+.so-prev.float{background:#fff;box-shadow:0 9px 18px -10px rgba(40,36,20,.45);}
+.so-prev.outline{background:#fff;border:1px solid var(--line-soft);}
+.so-label{font-family:var(--font-head);font-weight:700;font-size:14px;display:block;}
+.so-desc{font-size:12px;color:var(--ink-mute);margin-top:2px;display:block;}
+@media(max-width:820px){.style-opts{grid-template-columns:1fr;}}
 </style>
 </head>
-<body>
+<body data-cards="outline">
 
 <!-- TOP NAV -->
 <nav class="topnav">
-  <div class="topnav-logo">🏢 Basso Wiki</div>
+  <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+  <div class="topnav-logo"><span class="logo-mark" data-icon="layers"></span> Basso Wiki</div>
   <div class="topnav-title">Trang nội bộ</div>
   <div class="topnav-search">
-    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" id="searchInput" placeholder="Tìm kiếm..." oninput="doSearch(this.value)">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+    <input type="text" id="searchInput" placeholder="Tìm kiếm trang…" oninput="doSearch(this.value)" autocomplete="off">
   </div>
   <div class="user-badge" id="userBadge">
-    <span style="font-size:13px;color:var(--gray-300);">...</span>
+    <span style="font-size:13px;color:var(--ink-mute);">…</span>
   </div>
 </nav>
 
+<div class="shell">
 <!-- SIDEBAR -->
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-section">
     <div class="sidebar-heading">Tổng quan</div>
-    <a class="sidebar-link active" onclick="navigate('home')">
-      <span class="icon">🏠</span> Trang chủ
-    </a>
+    <a class="sidebar-link" data-page="home"><span class="icon"></span> Trang chủ</a>
   </div>
   <div class="sidebar-section">
     <div class="sidebar-heading">Bắt đầu tại đây</div>
-    <a class="sidebar-link" onclick="navigate('tong-quan')"><span class="icon">📋</span> Tổng quan công ty</a>
-    <a class="sidebar-link" onclick="navigate('so-do')"><span class="icon">🗂️</span> Sơ đồ phòng ban</a>
-    <a class="sidebar-link" onclick="navigate('quy-dinh')"><span class="icon">📌</span> Quy định chung</a>
-    <a class="sidebar-link" onclick="navigate('cong-cu')"><span class="icon">🛠️</span> Tài khoản & Công cụ</a>
+    <a class="sidebar-link" data-page="tong-quan"><span class="icon"></span> Tổng quan công ty</a>
+    <a class="sidebar-link" data-page="so-do"><span class="icon"></span> Sơ đồ phòng ban</a>
+    <a class="sidebar-link" data-page="quy-dinh"><span class="icon"></span> Quy định chung</a>
+    <a class="sidebar-link" data-page="cong-cu"><span class="icon"></span> Tài khoản &amp; Công cụ</a>
   </div>
   <div class="sidebar-section">
     <div class="sidebar-heading">Quy trình CSKH</div>
-    <a class="sidebar-link" onclick="navigate('thuat-ngu')"><span class="icon">📖</span> Thuật ngữ</a>
-    <a class="sidebar-link" onclick="navigate('websites')"><span class="icon">🌐</span> Websites</a>
-    <a class="sidebar-link" onclick="navigate('bao-gia')"><span class="icon">💰</span> Báo giá</a>
-    <a class="sidebar-link" onclick="navigate('tao-don')"><span class="icon">📝</span> Tạo đơn</a>
-    <a class="sidebar-link" onclick="navigate('bao-hang-ve')"><span class="icon">📦</span> Báo hàng về</a>
-    <a class="sidebar-link" onclick="navigate('hang-stock')"><span class="icon">🏪</span> Hàng stock</a>
-    <a class="sidebar-link" onclick="navigate('khieu-nai')"><span class="icon">⚠️</span> Khiếu nại thường gặp</a>
-    <a class="sidebar-link" onclick="navigate('faq')"><span class="icon">❓</span> FAQ</a>
+    <a class="sidebar-link" data-page="thuat-ngu"><span class="icon"></span> Thuật ngữ</a>
+    <a class="sidebar-link" data-page="websites"><span class="icon"></span> Websites</a>
+    <a class="sidebar-link" data-page="bao-gia"><span class="icon"></span> Báo giá</a>
+    <a class="sidebar-link" data-page="tao-don"><span class="icon"></span> Tạo đơn</a>
+    <a class="sidebar-link" data-page="bao-hang-ve"><span class="icon"></span> Báo hàng về</a>
+    <a class="sidebar-link" data-page="hang-stock"><span class="icon"></span> Hàng stock</a>
+    <a class="sidebar-link" data-page="khieu-nai"><span class="icon"></span> Khiếu nại thường gặp</a>
+    <a class="sidebar-link" data-page="faq"><span class="icon"></span> FAQ</a>
   </div>
   <div class="sidebar-section">
     <div class="sidebar-heading">Nội quy nhân sự</div>
-    <a class="sidebar-link" onclick="navigate('noi-quy')"><span class="icon">📌</span> Nội quy chung</a>
-    <a class="sidebar-link" onclick="navigate('cach-lam-viec')"><span class="icon">💡</span> Cách làm việc</a>
-    <a class="sidebar-link" onclick="navigate('quyen-loi')"><span class="icon">🎁</span> Quyền lợi</a>
+    <a class="sidebar-link" data-page="noi-quy"><span class="icon"></span> Nội quy chung</a>
+    <a class="sidebar-link" data-page="cach-lam-viec"><span class="icon"></span> Cách làm việc</a>
+    <a class="sidebar-link" data-page="quyen-loi"><span class="icon"></span> Quyền lợi</a>
   </div>
-  <div class="sidebar-section">
-    <a class="sidebar-link" id="settingsSidebarLink" onclick="navigate('settings')" style="display:none">
-      <span class="icon">⚙️</span> Cài đặt
-    </a>
+  <div class="sidebar-section" id="settingsSection" style="display:none">
+    <div class="sidebar-heading">Hệ thống</div>
+    <a class="sidebar-link" data-page="settings" id="settingsSidebarLink"><span class="icon"></span> Cài đặt</a>
   </div>
 </aside>
 
 <!-- MAIN -->
-<main class="main">
+<main class="main" id="main">
 
-<!-- HOME -->
-<div id="page-home" class="page active">
+<!-- ===== HOME ===== -->
+<section class="page" data-page="home">
   <div class="home-hero">
-    <h1>👋 Chào mừng đến Wiki Nội Bộ</h1>
-    <p>Tài liệu hướng dẫn quy trình, nghiệp vụ dành cho toàn bộ nhân viên Basso / ShipUS.</p>
+    <span class="hero-badge" data-icon="sparkles"></span>
+    <h1>Chào mừng đến Wiki Nội Bộ</h1>
+    <p>Tài liệu hướng dẫn quy trình, nghiệp vụ dành cho toàn bộ nhân viên Basso / ShipUS. Mọi quy định, công cụ và checklist công việc đều được tập trung tại đây.</p>
   </div>
   <div class="block-grid">
-    <div class="block-card" onclick="navigate('tong-quan')">
-      <div class="block-card-icon">🚀</div>
+    <div class="block-card" data-go="tong-quan">
+      <div class="block-card-icon" data-icon="rocket"></div>
       <h2>Bắt đầu tại đây</h2>
       <p>Dành cho nhân viên mới — tổng quan công ty, quy định và công cụ cần thiết.</p>
       <div class="block-card-links">
-        <a onclick="navigate('tong-quan');event.stopPropagation()">Tổng quan công ty</a>
-        <a onclick="navigate('so-do');event.stopPropagation()">Sơ đồ phòng ban</a>
-        <a onclick="navigate('quy-dinh');event.stopPropagation()">Quy định chung</a>
-        <a onclick="navigate('cong-cu');event.stopPropagation()">Tài khoản & Công cụ</a>
+        <a data-go="tong-quan">Tổng quan công ty</a>
+        <a data-go="so-do">Sơ đồ phòng ban</a>
+        <a data-go="quy-dinh">Quy định chung</a>
       </div>
     </div>
-    <div class="block-card" onclick="navigate('thuat-ngu')">
-      <div class="block-card-icon">📦</div>
+    <div class="block-card" data-go="bao-gia">
+      <div class="block-card-icon" data-icon="bao-gia"></div>
       <h2>Quy trình CSKH</h2>
-      <p>Hướng dẫn đầy đủ quy trình chăm sóc khách hàng — từ báo giá đến giao hàng.</p>
+      <p>Báo giá, tạo đơn, báo hàng về và xử lý khiếu nại — quy trình chuẩn cho Sale &amp; CSKH.</p>
       <div class="block-card-links">
-        <a onclick="navigate('thuat-ngu');event.stopPropagation()">Thuật ngữ</a>
-        <a onclick="navigate('bao-gia');event.stopPropagation()">Báo giá</a>
-        <a onclick="navigate('tao-don');event.stopPropagation()">Tạo đơn</a>
-        <a onclick="navigate('faq');event.stopPropagation()">FAQ</a>
+        <a data-go="bao-gia">Báo giá</a>
+        <a data-go="tao-don">Tạo đơn</a>
+        <a data-go="khieu-nai">Khiếu nại thường gặp</a>
+      </div>
+    </div>
+    <div class="block-card" data-go="noi-quy">
+      <div class="block-card-icon" data-icon="noi-quy"></div>
+      <h2>Nội quy nhân sự</h2>
+      <p>Nội quy chung, cách làm việc hiệu quả và các quyền lợi dành cho nhân viên.</p>
+      <div class="block-card-links">
+        <a data-go="noi-quy">Nội quy chung</a>
+        <a data-go="cach-lam-viec">Cách làm việc</a>
+        <a data-go="quyen-loi">Quyền lợi</a>
+      </div>
+    </div>
+    <div class="block-card" data-go="faq">
+      <div class="block-card-icon" data-icon="faq"></div>
+      <h2>Câu hỏi thường gặp</h2>
+      <p>Giải đáp nhanh các thắc mắc phổ biến về quy trình và công cụ làm việc.</p>
+      <div class="block-card-links">
+        <a data-go="faq">Xem FAQ</a>
+        <a data-go="thuat-ngu">Thuật ngữ</a>
+        <a data-go="cong-cu">Tài khoản &amp; Công cụ</a>
       </div>
     </div>
   </div>
+</section>
 
-  <div class="callout info">
-    <strong>📌 Lưu ý:</strong> Tất cả nhân viên đều phải đọc và nắm rõ nội dung trong mục <strong>Bắt đầu tại đây</strong> trước khi bắt đầu làm việc.
+<!-- ===== TỔNG QUAN CÔNG TY ===== -->
+<section class="page" data-page="tong-quan">
+  <div class="page-header">
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Bắt đầu tại đây</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="tong-quan"></span> Tổng quan công ty</h1></div>
   </div>
+  <div class="callout info"><strong>📌 Lưu ý:</strong> Tất cả nhân viên đều phải đọc và nắm rõ nội dung trong mục <strong>Bắt đầu tại đây</strong> trước khi bắt đầu làm việc.</div>
 
   <div class="section mt-4">
     <h2>🔄 Quy trình đơn hàng tổng quan</h2>
@@ -372,7 +547,7 @@
         <div class="step-num">1</div>
         <div class="step-content">
           <strong>Báo giá <span class="tag sale">SALE</span></strong>
-          <p>Khách gửi link/hình sp → SALE tìm sp, tư vấn và báo giá → Yêu cầu khách ck cọc</p>
+          <p>Khách gửi link/hình sp → SALE tìm sp, tư vấn và báo giá → Yêu cầu khách ck cọc.</p>
           <div class="badge time-badge">⏱ Trả lời trong 15 phút</div>
         </div>
       </div>
@@ -380,89 +555,72 @@
         <div class="step-num">2</div>
         <div class="step-content">
           <strong>Tạo đơn <span class="tag cskh">CSKH</span></strong>
-          <p>Tạo đơn hàng trong hệ thống (thông tin khách, sp, giá, màu/size...) → Gửi email/link xác nhận đơn cho khách</p>
+          <p>Tạo đơn hàng trong hệ thống (thông tin khách, sp, giá, màu/size...) → Gửi email/link xác nhận đơn cho khách.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-content">
-          <strong>Check đơn <span class="tag mh">MUA HÀNG</span></strong>
-          <p>Mua đơn hàng nếu đúng giá, sp. Nếu sai giá / hết hàng / tăng rate → báo lại SALE</p>
-          <div class="badge time-badge">⏱ Trong 48h</div>
+          <strong>Check đơn &amp; mua hàng <span class="tag mh">MUA HÀNG</span></strong>
+          <p>Mua đơn hàng nếu đúng giá, sp → tạo đơn admin (có order #) → follow đơn đến khi ship về kho Mỹ.</p>
+          <div class="badge time-badge">⏱ 7–10 ngày đến kho Mỹ</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
         <div class="step-content">
-          <strong>Mua hàng <span class="tag mh">MUA HÀNG</span></strong>
-          <p>Tạo đơn admin (có order #) → Follow đơn đến khi ship về kho Mỹ</p>
-          <div class="badge time-badge">⏱ 7–10 ngày đến kho Mỹ</div>
+          <strong>Hàng về VN <span class="tag kho">KHO</span></strong>
+          <p>Kho nhận &amp; soạn hàng, update cân nặng. Hàng OK → CSKH báo khách. Hàng sai/thiếu/hỏng → lên issue.</p>
+          <div class="badge time-badge">⏱ 10–12 ngày về VN từ kho Mỹ</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">5</div>
         <div class="step-content">
-          <strong>Hàng về VN <span class="tag kho">KHO</span></strong>
-          <p>Kho nhận & soạn hàng, update cân nặng. Hàng OK → CSKH báo khách. Hàng sai/thiếu/hỏng → lên issue</p>
-          <div class="badge time-badge">⏱ 10–12 ngày về VN từ kho Mỹ</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">6</div>
-        <div class="step-content">
-          <strong>Báo hàng về <span class="tag cskh">CSKH</span></strong>
-          <p>Báo hàng về cho khách & phân phối giao hàng. Tham chiếu thanh toán đúng đủ</p>
+          <strong>Báo hàng về &amp; giao hàng <span class="tag cskh">CSKH</span></strong>
+          <p>Báo hàng về cho khách &amp; phân phối giao hàng. Tham chiếu thanh toán đúng đủ.</p>
           <div class="badge time-badge">⏱ 2–3 ngày giao hàng</div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- TỔNG QUAN CÔNG TY -->
-<div id="page-tong-quan" class="page">
-  <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Bắt đầu tại đây</div>
-    <h1>📋 Tổng quan công ty</h1>
-  </div>
-  <div class="callout info"><strong>Mục này dành để bổ sung nội dung.</strong> Quản trị viên vui lòng cập nhật thông tin tổng quan công ty, lịch sử, sứ mệnh, tầm nhìn tại đây.</div>
   <div class="section">
-    <h2>Giới thiệu</h2>
-    <p style="color:var(--gray-500);font-size:14px;">Nội dung đang được cập nhật...</p>
+    <h2>🏢 Về Basso / ShipUS</h2>
+    <p>Basso là dịch vụ mua hộ &amp; vận chuyển hàng từ Mỹ, Anh và Tây Ban Nha về Việt Nam. Khách gửi link hoặc hình sản phẩm, đội ngũ Sale báo giá trọn gói, sau đó hàng được mua, gom về kho nước ngoài và vận chuyển quốc tế về tay khách.</p>
+    <div class="callout success"><strong>Cam kết:</strong> Báo giá minh bạch, thời gian hàng về rõ ràng, và hỗ trợ khách xuyên suốt từ lúc chốt đơn đến khi nhận hàng.</div>
   </div>
-</div>
+</section>
 
-<!-- SƠ ĐỒ PHÒNG BAN -->
-<div id="page-so-do" class="page">
+<!-- ===== SƠ ĐỒ PHÒNG BAN ===== -->
+<section class="page" data-page="so-do">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Bắt đầu tại đây</div>
-    <h1>🗂️ Sơ đồ phòng ban</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Bắt đầu tại đây</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="so-do"></span> Sơ đồ phòng ban</h1></div>
   </div>
-  <div class="callout info"><strong>Mục này dành để bổ sung sơ đồ phòng ban.</strong> Quản trị viên vui lòng cập nhật cơ cấu tổ chức tại đây.</div>
-  <div class="section">
-    <h2>Các phòng ban</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Phòng ban</th><th>Vai trò</th><th>Trưởng nhóm</th></tr></thead>
-        <tbody>
-          <tr><td><span class="tag sale">SALE</span></td><td>Tư vấn & báo giá cho khách, post sale, tìm kiếm khách hàng</td><td>—</td></tr>
-          <tr><td><span class="tag cskh">CSKH</span></td><td>Tạo đơn, tham chiếu, báo hàng về, giao hàng, xử lý khiếu nại</td><td>—</td></tr>
-          <tr><td><span class="tag mh">MUA HÀNG</span></td><td>Mua đơn, follow tracking, xử lý sự cố</td><td>—</td></tr>
-          <tr><td><span class="tag kho">KHO</span></td><td>Nhận hàng, soạn hàng, giao hàng</td><td>—</td></tr>
-          <tr><td><span class="badge">KẾ TOÁN</span></td><td>Xử lý payment, duyệt đơn, hoàn tiền</td><td>—</td></tr>
-        </tbody>
-      </table>
-    </div>
+  <p class="section" style="margin-top:0;color:var(--ink-soft);">Các phòng ban phối hợp xuyên suốt vòng đời một đơn hàng — từ lúc tư vấn đến khi giao tận tay khách.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Phòng ban</th><th>Vai trò</th><th>Trưởng nhóm</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag sale">SALE</span></td><td>Tư vấn &amp; báo giá cho khách, post sale, tìm kiếm khách hàng</td><td>—</td></tr>
+        <tr><td><span class="tag cskh">CSKH</span></td><td>Tạo đơn, tham chiếu, báo hàng về, giao hàng, xử lý khiếu nại</td><td>—</td></tr>
+        <tr><td><span class="tag mh">MUA HÀNG</span></td><td>Mua đơn, follow tracking, xử lý sự cố</td><td>—</td></tr>
+        <tr><td><span class="tag kho">KHO</span></td><td>Nhận hàng, soạn hàng, giao hàng</td><td>—</td></tr>
+        <tr><td><span class="badge" style="margin-top:0">KẾ TOÁN</span></td><td>Xử lý payment, duyệt đơn, hoàn tiền</td><td>—</td></tr>
+      </tbody>
+    </table>
   </div>
-</div>
+  <div class="callout info"><strong>Mẹo:</strong> Mỗi tag màu đại diện cho một phòng ban — bạn sẽ thấy chúng lặp lại xuyên suốt các quy trình để biết bước nào do ai phụ trách.</div>
+</section>
 
-<!-- QUY ĐỊNH CHUNG -->
-<div id="page-quy-dinh" class="page">
+<!-- ===== QUY ĐỊNH CHUNG ===== -->
+<section class="page" data-page="quy-dinh">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Bắt đầu tại đây</div>
-    <h1>📌 Quy định chung</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Bắt đầu tại đây</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="quy-dinh"></span> Quy định chung</h1></div>
   </div>
-  <div class="section">
+  <div class="section" style="margin-top:6px;">
     <h2>⏱ Thời gian phản hồi</h2>
     <div class="table-wrap">
       <table>
@@ -480,31 +638,31 @@
     <h2>💬 Các group công ty</h2>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Asale - Must Read <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">Nội quy công ty, thay đổi quy định, cập nhật hệ thống... Sếp sẽ nhắn vào group này → <strong>Tất cả mọi người đều phải đọc và phản hồi.</strong></div>
+      <div class="accordion-body"><div class="accordion-body-inner">Nội quy công ty, thay đổi quy định, cập nhật hệ thống... Sếp sẽ nhắn vào group này → <strong>Tất cả mọi người đều phải đọc và phản hồi.</strong></div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Asale Team <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">Các thông tin liên quan đến công ty, công việc, quy trình, báo lỗi hệ thống, báo công nợ...</div>
+      <div class="accordion-body"><div class="accordion-body-inner">Các thông tin liên quan đến công ty, công việc, quy trình, báo lỗi hệ thống, báo công nợ...</div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Asale - Mua hàng <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">Các thông tin liên quan đến việc mua hàng: SALE hỏi đơn đã mua chưa, khách muốn hủy đơn, thay đổi sản phẩm... Khi hỏi về đơn hàng <strong>phải kèm theo mã đơn + tên khách</strong>.</div>
+      <div class="accordion-body"><div class="accordion-body-inner">Các thông tin liên quan đến việc mua hàng: SALE hỏi đơn đã mua chưa, khách muốn hủy đơn, thay đổi sản phẩm... Khi hỏi về đơn hàng <strong>phải kèm theo mã đơn + tên khách</strong>.</div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Asale - Payment <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">Các khoản payment hệ thống không tự động lấy sẽ được kế toán gửi vào group. Nhân viên sau khi tham chiếu xong phải báo vào group đã tham chiếu.</div>
+      <div class="accordion-body"><div class="accordion-body-inner">Các khoản payment hệ thống không tự động lấy sẽ được kế toán gửi vào group. Nhân viên sau khi tham chiếu xong phải báo vào group đã tham chiếu.</div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Asale - Kho hàng <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">Thông tin liên quan đến kho, vận chuyển. Khi hỏi kho về đơn hàng <strong>phải kèm mã đơn + tên khách</strong>.</div>
+      <div class="accordion-body"><div class="accordion-body-inner">Thông tin liên quan đến kho, vận chuyển. Khi hỏi kho về đơn hàng <strong>phải kèm mã đơn + tên khách</strong>.</div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Team SALE-CSKH <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">Cập nhật thông tin nội bộ, update tỷ giá, báo chỉnh tỷ giá riêng cho một đơn hàng...</div>
+      <div class="accordion-body"><div class="accordion-body-inner">Cập nhật thông tin nội bộ, update tỷ giá, báo chỉnh tỷ giá riêng cho một đơn hàng...</div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">KHO - Kênh X <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">Group riêng của mỗi kênh làm việc với KHO về hàng hoá khách của kênh đó.</div>
+      <div class="accordion-body"><div class="accordion-body-inner">Group riêng của mỗi kênh làm việc với KHO về hàng hoá khách của kênh đó.</div></div>
     </div>
   </div>
 
@@ -543,15 +701,15 @@
       </table>
     </div>
   </div>
-</div>
+</section>
 
-<!-- CÔNG CỤ -->
-<div id="page-cong-cu" class="page">
+<!-- ===== TÀI KHOẢN & CÔNG CỤ ===== -->
+<section class="page" data-page="cong-cu">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Bắt đầu tại đây</div>
-    <h1>🛠️ Tài khoản & Công cụ</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Bắt đầu tại đây</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="cong-cu"></span> Tài khoản &amp; Công cụ</h1></div>
   </div>
-  <div class="section">
+  <div class="section" style="margin-top:6px;">
     <h2>📦 Hệ thống Order</h2>
     <div class="callout info">Xem hướng dẫn sử dụng hệ thống ORDER đầy đủ tại tài liệu nội bộ (liên hệ quản lý để lấy link).</div>
     <h3>Các tab cần tạo để theo dõi đơn hàng:</h3>
@@ -587,15 +745,15 @@
     </div>
     <div class="callout success"><strong>Cú pháp CK để nạp ví khách:</strong> <code>DT[SĐT khách]</code> — luôn nhắc khách ck theo đúng cú pháp này để đỡ phải tham chiếu thủ công. Ghim tin nhắn cú pháp theo SĐT của từng khách riêng.</div>
   </div>
-</div>
+</section>
 
-<!-- THUẬT NGỮ -->
-<div id="page-thuat-ngu" class="page">
+<!-- ===== THUẬT NGỮ ===== -->
+<section class="page" data-page="thuat-ngu">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
-    <h1>📖 Thuật ngữ</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="thuat-ngu"></span> Thuật ngữ</h1></div>
   </div>
-  <div class="section">
+  <div class="section" style="margin-top:6px;">
     <h2>I. Thuật ngữ cơ bản</h2>
     <div class="table-wrap">
       <table>
@@ -632,53 +790,53 @@
     <h2>II. Các trường hợp phát sinh khi mua hàng</h2>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">1. Mua chậm <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p><strong>Lý do:</strong> Bên mình chưa thu được $ rate thấp, hoặc đơn gom chưa đủ để mua, hoặc bên mua hộ mua chậm...</p>
         <p><strong>Xử lý:</strong> SALE phải nắm được nguyên nhân mua chậm để thông báo kịp thời cho khách. Đối với một số khách có hàng low stock hoặc sắp hết sale cần push team Mua Hàng xử lý gấp.</p>
-      </div>
+      </div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">2. Sản phẩm bị tăng giá hoặc Sold-out <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Team MH sẽ thông báo với SALE về sp bị tăng giá/sold out — nguyên nhân chủ yếu là xử lý không kịp trong thời gian sale.</p>
         <p>Nếu deal hot dễ bị sold thì SALE cần follow sát để push team MH lấy thông tin tình trạng xử lý đơn.</p>
-      </div>
+      </div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">3. Mua không được do đơn gấp sát giờ hết sale / low stock <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>SALE phải đảm bảo đã warning khách tại thời điểm nhận đơn. SALE phải push team Mua Hàng xử lý ngay, không để chậm trễ.</p>
-      </div>
+      </div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">4. Đơn đã mua nhưng web cancel <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p><strong>Lý do web cancel:</strong> Web không chấp nhận thanh toán, web phát hiện mua số lượng lớn, web hết hàng sau khi đặt...</p>
         <p><strong>Xử lý:</strong> Thông báo cho khách theo mẫu câu: <em>"Em chào anh/chị, đơn [xxx] của anh/chị bên em đã mua nhưng vì lý do [xxx] web/seller đã cancel đơn ạ..."</em></p>
         <p>Sau khi báo khách và hủy đơn → vào File Orders → Sheet Request Refund → nhập đủ thông tin để kế toán hoàn tiền.</p>
-      </div>
+      </div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">5. Đơn đã báo cancel nhưng vẫn về hàng <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p><strong>Nguyên nhân:</strong> Kho làm lạc đã tìm ra hàng / Acc die nên mua hộ rf trước, hàng về nhờ lấy giúp</p>
         <p><strong>Xử lý:</strong> Báo sếp để được hướng dẫn xử lý từng trường hợp cụ thể.</p>
-      </div>
+      </div></div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- WEBSITES -->
-<div id="page-websites" class="page">
+<!-- ===== WEBSITES ===== -->
+<section class="page" data-page="websites">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
-    <h1>🌐 Websites</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="websites"></span> Websites</h1></div>
   </div>
   <div class="callout info"><strong>Lưu ý:</strong> Cột "Code Ngoài" chỉ áp dụng cho CTV và khách Sỉ.</div>
-  <div class="section">
+  <div class="section" style="margin-top:6px;">
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Website</th><th>Ghi chú & Chính sách</th></tr></thead>
+        <thead><tr><th>Website</th><th>Ghi chú &amp; Chính sách</th></tr></thead>
         <tbody>
           <tr>
             <td><strong>Amazon / Ebay</strong></td>
@@ -736,103 +894,96 @@
       </table>
     </div>
   </div>
-</div>
+</section>
 
-<!-- BÁO GIÁ -->
-<div id="page-bao-gia" class="page">
+<!-- ===== BÁO GIÁ ===== -->
+<section class="page" data-page="bao-gia">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
-    <h1>💰 Báo giá</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="bao-gia"></span> Báo giá</h1></div>
   </div>
 
-  <div class="section">
+  <div class="section" style="margin-top:6px;">
     <h2>1. Nhận đơn từ khách</h2>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Khách gửi link sản phẩm <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><p>SALE chỉ cần check và báo giá + tư vấn cho khách.</p></div>
+      <div class="accordion-body"><div class="accordion-body-inner">SALE chỉ cần check và báo giá + tư vấn cho khách.</div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Khách gửi hình ảnh sản phẩm <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><p>Dùng Google Lens hoặc tìm kiếm hình ảnh để tìm sản phẩm tương tự trên web.</p></div>
+      <div class="accordion-body"><div class="accordion-body-inner">Dùng Google Lens hoặc tìm kiếm hình ảnh để tìm sản phẩm tương tự trên web.</div></div>
     </div>
-    <div class="callout warn"><strong>Thời gian phản hồi:</strong> Fanpage/Zalo/FB cá nhân → <strong>15 phút</strong> | Email → <strong>30 phút</strong></div>
-    <div class="callout info">
-      <strong>Quy định Sale/CSKH:</strong><br>
-      1. Với khách cũ, SALE mới cần đọc lại các đoạn chat trước với khách để biết cách tư vấn phù hợp.<br>
-      2. Luôn screenshot giá sp + seller khi báo giá Amazon/Walmart/Ebay (giá hay thay đổi).
+    <div class="badge time-badge">⏱ Phản hồi: Fanpage/Zalo/FB cá nhân → 15 phút · Email → 30 phút</div>
+    <div class="callout info"><strong>Quy định Sale/CSKH:</strong>
+      <ol style="margin:8px 0 0 18px;font-size:14px;">
+        <li>Với khách cũ, SALE mới cần đọc lại các đoạn chat trước với khách để biết cách tư vấn phù hợp.</li>
+        <li>Luôn screenshot giá sp + seller khi báo giá Amazon/Walmart/Ebay (giá hay thay đổi).</li>
+      </ol>
     </div>
   </div>
 
   <div class="section">
     <h2>2. Phí ship web</h2>
-    <p style="font-size:14px;color:var(--gray-700);margin-bottom:12px;">Phí ship web là phí ship từ địa chỉ người bán đến địa chỉ kho của mình ở Mỹ/Anh/Tây Ban Nha. Cần check phí ship web trước khi báo giá.</p>
-    <div class="callout info">Địa chỉ các kho — xem ở sheet Note file Orders.</div>
+    <p>Phí ship web là phí ship từ địa chỉ người bán đến địa chỉ kho của mình ở Mỹ/Anh/Tây Ban Nha. Cần check phí ship web <strong>trước khi báo giá</strong>.</p>
+    <p>Địa chỉ các kho — xem ở sheet <strong>Note</strong> file Orders.</p>
   </div>
 
   <div class="section">
     <h2>3. Cách check promotion</h2>
-    <ul style="font-size:14px;color:var(--gray-700);padding-left:20px;">
-      <li style="margin-bottom:6px;">Thông tin sale có ở <strong>đầu trang web hoặc Homepage</strong></li>
-      <li style="margin-bottom:6px;">Nhập code giảm giá mới: code có ở trong chi tiết sản phẩm hoặc khi checkout</li>
+    <ul class="checklist">
+      <li>Thông tin sale có ở đầu trang web hoặc Homepage.</li>
+      <li>Nhập code giảm giá mới: code có ở trong chi tiết sản phẩm hoặc khi checkout.</li>
     </ul>
   </div>
 
   <div class="section">
     <h2>4. Truy cập web US</h2>
-    <div class="callout warn">Các brand khi vào web bằng IP VN thường hiển thị location: Vietnam → phải đổi sang US mới xem được giá US.</div>
-    <p style="font-size:14px;color:var(--gray-700);">Tạo profile Chrome mới (đặt tên "Nordvpn") → set NordVPN vào profile này → chỉ dùng khi cần check web US vì load sẽ chậm hơn.</p>
+    <p>Các brand khi vào web bằng IP VN thường hiển thị location: <strong>Vietnam</strong> → phải đổi sang <strong>US</strong> mới xem được giá US.</p>
+    <div class="callout info">Tạo profile Chrome mới (đặt tên <code>Nordvpn</code>) → set NordVPN vào profile này → chỉ dùng khi cần check web US vì load sẽ chậm hơn.</div>
   </div>
 
   <div class="section">
     <h2>5. Các trường hợp đặc biệt</h2>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Web lạ (không phải brand nổi tiếng) <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
-        <ul>
-          <li>Không nhận web <strong>không có đuôi .com</strong></li>
-          <li>Check scamadviser.com — phải trên <strong>80%</strong> và chú ý dòng chữ xanh</li>
-          <li>Yêu cầu khách <strong>cọc 100%</strong></li>
+      <div class="accordion-body"><div class="accordion-body-inner">
+        <ul class="checklist" style="margin:0;">
+          <li>Không nhận web không có đuôi <code>.com</code></li>
+          <li>Check scamadviser.com — phải trên 80% và chú ý dòng chữ xanh</li>
+          <li>Yêu cầu khách cọc 100%</li>
         </ul>
-      </div>
+      </div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Deal giảm giá theo số tiền ($60 off $200) <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
-        <ul>
-          <li>Khách mua lẻ món, không đủ 1 đơn $200 → SALE lên đơn theo <strong>tỷ lệ giảm giá của web - 5%</strong> (ví dụ deal $60 off $200 = tỷ lệ 30% → tính 25%)</li>
-        </ul>
-      </div>
+      <div class="accordion-body"><div class="accordion-body-inner">Khách mua lẻ món, không đủ 1 đơn $200 → SALE lên đơn theo tỷ lệ giảm giá của web − 5% (ví dụ deal $60 off $200 = tỷ lệ 30% → tính 25%).</div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Deal sắp hết sale <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
-        <p>Bên mình chỉ nhận đơn <strong>&gt; 1 giờ</strong> trước khi hết sale. Trường hợp đơn cần mua kịp sale khi còn ít hơn 1h thì sẽ không nhận.</p>
-      </div>
+      <div class="accordion-body"><div class="accordion-body-inner">Bên mình chỉ nhận đơn &gt; 1 giờ trước khi hết sale. Trường hợp đơn cần mua kịp sale khi còn ít hơn 1h thì sẽ không nhận.</div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Hàng cấm nhận <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><p>Xem danh sách tại: basso.vn/tro-giup/39</p></div>
+      <div class="accordion-body"><div class="accordion-body-inner">Xem danh sách tại: <code>basso.vn/tro-giup/39</code></div></div>
     </div>
     <div class="accordion">
-      <div class="accordion-header" onclick="toggleAcc(this)">Hàng dễ vỡ (gốm, sứ, thủy tinh, chai lọ...) <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
-        <ul>
-          <li>Báo khách bên mình <strong>không chịu trách nhiệm</strong> nếu hàng vỡ trong quá trình vận chuyển</li>
-          <li>Yêu cầu khách đồng ý bằng văn bản trước khi nhận đơn</li>
+      <div class="accordion-header" onclick="toggleAcc(this)">Hàng dễ vỡ (gốm, sứ, thủy tinh, chai lọ…) <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body"><div class="accordion-body-inner">
+        <ul class="checklist" style="margin:0;">
+          <li>Báo khách bên mình không chịu trách nhiệm nếu hàng vỡ trong quá trình vận chuyển.</li>
+          <li>Yêu cầu khách đồng ý bằng văn bản trước khi nhận đơn.</li>
         </ul>
-      </div>
+      </div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Hàng pre-order <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><p>Xác nhận với khách thời gian web sẽ ship và yêu cầu khách thanh toán 100% trước khi nhận đơn.</p></div>
+      <div class="accordion-body"><div class="accordion-body-inner">Xác nhận với khách thời gian web sẽ ship và yêu cầu khách thanh toán 100% trước khi nhận đơn.</div></div>
     </div>
   </div>
 
   <div class="section">
     <h2>6. Công thức báo giá</h2>
-    <div class="callout success">
-      <strong>Công thức:</strong> <code>[Giá web + Ship web (nếu có)] × Tỷ giá + Phụ thu (nếu có) + Phí VC quốc tế (theo kg)</code>
-    </div>
+    <div class="callout success"><strong>Công thức:</strong> [Giá web + Ship web (nếu có)] × Tỷ giá + Phụ thu (nếu có) + Phí VC quốc tế (theo kg)</div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Nguồn</th><th>Tỷ giá USA</th><th>Phí VC US→VN</th><th>Tỷ giá UK</th><th>Phí VC UK→VN</th><th>Yêu cầu cọc</th></tr></thead>
@@ -843,20 +994,21 @@
         </tbody>
       </table>
     </div>
+
     <h3>Bảng phụ thu hàng Mỹ</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Mặt hàng</th><th>Phụ thu</th></tr></thead>
         <tbody>
-          <tr><td>Đồng hồ</td><td>&lt;$500: 70k/cái | &gt;$500: 3%/cái | Apple Watch: 200k/cái</td></tr>
-          <tr><td>Kính mắt</td><td>$50–$500: 50k/cái | &gt;$500: 3%/cái</td></tr>
+          <tr><td>Đồng hồ</td><td>&lt;$500: 70k/cái · &gt;$500: 3%/cái · Apple Watch: 200k/cái</td></tr>
+          <tr><td>Kính mắt</td><td>$50–$500: 50k/cái · &gt;$500: 3%/cái</td></tr>
           <tr><td>Nước hoa (≥30ml)</td><td>50k/chai</td></tr>
-          <tr><td>Trang sức</td><td>&gt;$50: 50k/cái | &gt;$300: 100k/cái</td></tr>
+          <tr><td>Trang sức</td><td>&gt;$50: 50k/cái · &gt;$300: 100k/cái</td></tr>
           <tr><td>Zippos</td><td>20k/cái</td></tr>
           <tr><td>Xe đạp</td><td>500k/cái</td></tr>
-          <tr><td>Laptop</td><td>&lt;$700: 1,000,000đ | $700–$1200: 1,200,000đ | &gt;$1200: 5%</td></tr>
-          <tr><td>Tai nghe / AirPods</td><td>&gt;$50: 50k/cái | AirPod: 50k/cái</td></tr>
-          <tr><td>Smartphone / Tablet / Máy ảnh / iPad / Printer</td><td>&lt;$300: 150k | $300–$500: 250k | &gt;$500: 3%/cái</td></tr>
+          <tr><td>Laptop</td><td>&lt;$700: 1,000,000đ · $700–$1200: 1,200,000đ · &gt;$1200: 5%</td></tr>
+          <tr><td>Tai nghe / AirPods</td><td>&gt;$50: 50k/cái · AirPod: 50k/cái</td></tr>
+          <tr><td>Smartphone / Tablet / Máy ảnh / iPad / Printer</td><td>&lt;$300: 150k · $300–$500: 250k · &gt;$500: 3%/cái</td></tr>
           <tr><td>Kindle / Fire Tablets / Máy vẽ</td><td>150k/cái</td></tr>
           <tr><td>Đồ điện tử, thiết bị khác</td><td>&gt;$500: 3%/cái</td></tr>
           <tr><td>Cigar</td><td>650,000/kg — min 0.5kg/đơn</td></tr>
@@ -865,13 +1017,14 @@
         </tbody>
       </table>
     </div>
-    <div class="callout info">
-      <strong>Lưu ý quan trọng:</strong><br>
-      • Tất cả sp &gt;$500: phụ thu 3% (tính theo từng item, không phải tổng đơn)<br>
-      • Đơn hàng &lt;$30: phụ thu 50k (không áp dụng cho khách sỉ/CTV)<br>
-      • Sp &gt;10kg: 240k/kg | Sp &gt;20kg: 230k/kg<br>
-      • Sp &gt;5kg: CSKH phải check kg dự tính và thu tiền kg cùng tiền hàng<br>
-      • Phụ thu 3% theo giá sp × tỷ giá 25,500 = phụ thu VNĐ
+    <div class="callout warn"><strong>Lưu ý quan trọng:</strong>
+      <ul style="margin:8px 0 0 18px;font-size:14px;">
+        <li>Tất cả sp &gt;$500: phụ thu 3% (tính theo từng item, không phải tổng đơn).</li>
+        <li>Đơn hàng &lt;$30: phụ thu 50k (không áp dụng cho khách sỉ/CTV).</li>
+        <li>Sp &gt;10kg: 240k/kg · Sp &gt;20kg: 230k/kg.</li>
+        <li>Sp &gt;5kg: CSKH phải check kg dự tính và thu tiền kg cùng tiền hàng.</li>
+        <li>Phụ thu 3% theo giá sp × tỷ giá 25,500 = phụ thu VNĐ.</li>
+      </ul>
     </div>
   </div>
 
@@ -880,38 +1033,32 @@
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-content">
-          <strong>Xin thông tin khách</strong>
-          <p>Email, số điện thoại (để tạo tài khoản hệ thống)</p>
-        </div>
+        <div class="step-content"><strong>Xin thông tin khách</strong>
+          <p>Email, số điện thoại (để tạo tài khoản hệ thống).</p></div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <div class="step-content">
-          <strong>Yêu cầu đặt cọc</strong>
-          <p>Tối thiểu 80% giá trị đơn hàng. Trường hợp khách sỉ hoặc khách quen có thể ck sau khi đơn được mua xong.</p>
-        </div>
+        <div class="step-content"><strong>Yêu cầu đặt cọc</strong>
+          <p>Tối thiểu 80% giá trị đơn hàng. Trường hợp khách sỉ hoặc khách quen có thể ck sau khi đơn được mua xong.</p></div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-content">
-          <strong>Đặt nickname khách</strong>
-          <p>Với khách mới, SALE đặt lại nickname cho fb/zalo để tiện theo dõi giữa SALE-CSKH.</p>
-        </div>
+        <div class="step-content"><strong>Đặt nickname khách</strong>
+          <p>Với khách mới, SALE đặt lại nickname cho fb/zalo để tiện theo dõi giữa SALE–CSKH.</p></div>
       </div>
     </div>
     <div class="callout success"><strong>Thời gian hàng về báo khách:</strong> "Hàng về dự kiến 2–3 tuần kể từ khi kho Mỹ nhận được hàng. Hàng Mỹ: 3–4 tuần, Hàng UK/TBN: 3 tuần kể từ ngày đặt hàng."</div>
   </div>
-</div>
+</section>
 
-<!-- TẠO ĐƠN -->
-<div id="page-tao-don" class="page">
+<!-- ===== TẠO ĐƠN ===== -->
+<section class="page" data-page="tao-don">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
-    <h1>📝 Tạo đơn</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="tao-don"></span> Tạo đơn</h1></div>
   </div>
 
-  <div class="section">
+  <div class="section" style="margin-top:6px;">
     <h2>1. Quy trình tạo đơn hàng</h2>
     <div class="steps">
       <div class="step">
@@ -938,7 +1085,7 @@
       <div class="step">
         <div class="step-num">4</div>
         <div class="step-content">
-          <strong>Tham chiếu payment & duyệt đơn</strong>
+          <strong>Tham chiếu payment &amp; duyệt đơn</strong>
           <p>Nhập payment vào đơn hàng → duyệt đơn → gửi sang Mua Hàng.</p>
         </div>
       </div>
@@ -950,14 +1097,13 @@
         </div>
       </div>
     </div>
-
     <div class="callout danger"><strong>Đơn GẤP:</strong> Các đơn cần mua gấp vì sp còn ít / sắp hết sale → phải nhắn vào group Mua Hàng và note rõ chữ "GẤP".</div>
   </div>
 
   <div class="section">
     <h2>2. Checklist review đơn hàng</h2>
     <ul class="checklist">
-      <li>Đúng thông tin KH & Brand & Chi nhánh hàng về</li>
+      <li>Đúng thông tin KH &amp; Brand &amp; Chi nhánh hàng về</li>
       <li>Đúng thông tin sp: hình ảnh, size, màu (đảm bảo tất cả sp đều có hình ảnh)</li>
       <li>Note thêm mã SKU/Item # cho sp đặc biệt (hàng kính số lượng...)</li>
       <li>Note mua hàng đầy đủ (code, gom đơn, thời hạn sale...)</li>
@@ -967,25 +1113,25 @@
 
   <div class="section">
     <h2>3. Tham chiếu payment</h2>
-    <div class="callout success"><strong>Cú pháp CK nạp ví khách: DT[SĐT]</strong> — Luôn nhắc khách ck đúng cú pháp để đỡ tham chiếu thủ công. Ghim tin nhắn cú pháp theo SĐT riêng từng khách.</div>
+    <div class="callout success"><strong>Cú pháp CK nạp ví khách: <code>DT[SĐT]</code></strong> — Luôn nhắc khách ck đúng cú pháp để đỡ tham chiếu thủ công. Ghim tin nhắn cú pháp theo SĐT riêng từng khách.</div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Kiểm tra SMS Payment <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <ul>
           <li>Khách mới hoặc khách cần cọc mới lên đơn → sau khi khách ck kiểm tra SMS Payment trước để tạo đơn ngay</li>
           <li>Nếu không thấy trong hệ thống sau 1h → hỏi kế toán</li>
           <li>Nếu khách đã gửi biên lai chuyển khoản mà hệ thống chưa có → vẫn được tạo đơn</li>
         </ul>
-        <p class="mt-4"><strong>Phân công:</strong><br>
+        <p style="margin-top:9px;"><strong>Phân công:</strong><br>
         Techcombank Nga Linh, ACB Nga Linh → Uyên<br>
         Techcombank Thùy Dương, Oceanbank Thùy Dương, VPBank → Chị Trang</p>
-      </div>
+      </div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Thời gian tham chiếu <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Tham chiếu tiền khách: <strong>2 lần/ngày vào lúc 10h và 16h</strong></p>
-      </div>
+      </div></div>
     </div>
   </div>
 
@@ -993,14 +1139,14 @@
     <h2>4. Tax</h2>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Cách tính và check tax <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <ul>
           <li>Mỹ có 50 bang, mỗi bang áp mức thuế 0–10% cố định theo địa chỉ kho</li>
           <li><strong>2 bang miễn thuế:</strong> Oregon (OR) và New Hampshire (NH)</li>
           <li>Khi khách đưa địa chỉ kho ngoài 2 bang miễn thuế → add bag thử 1 item và checkout thử để check tax</li>
           <li>Công thức: <strong>(tổng tiền hàng + phí ship) × % tax</strong></li>
         </ul>
-      </div>
+      </div></div>
     </div>
   </div>
 
@@ -1049,16 +1195,16 @@
     </div>
     <div class="callout danger">Không được lên đơn nếu tài khoản khách chưa được đổi nhóm khách hàng.</div>
   </div>
-</div>
+</section>
 
-<!-- BÁO HÀNG VỀ -->
-<div id="page-bao-hang-ve" class="page">
+<!-- ===== BÁO HÀNG VỀ ===== -->
+<section class="page" data-page="bao-hang-ve">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
-    <h1>📦 Báo hàng về</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="bao-hang-ve"></span> Báo hàng về</h1></div>
   </div>
 
-  <div class="section">
+  <div class="section" style="margin-top:6px;">
     <h2>1. Quy trình báo hàng về</h2>
     <div class="steps">
       <div class="step">
@@ -1078,7 +1224,7 @@
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-content">
-          <strong>Thu tiền & xếp lịch giao</strong>
+          <strong>Thu tiền &amp; xếp lịch giao</strong>
           <p>Yêu cầu khách ck trước khi nhận hàng. Phân phối giao hàng hợp lý.</p>
         </div>
       </div>
@@ -1094,13 +1240,13 @@
   </div>
 
   <div class="section">
-    <h2>2. Giao hàng & Phí ship nội địa</h2>
+    <h2>2. Giao hàng &amp; Phí ship nội địa</h2>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Điều kiện</th><th>Phí ship nội địa</th></tr></thead>
         <tbody>
-          <tr><td>Khách lẻ — Đơn order &gt; 2 triệu (nội thành HN & HCM)</td><td><strong>FREE SHIP</strong></td></tr>
-          <tr><td>Khách lẻ — Đơn stock &gt; 1 triệu (nội thành HN & HCM)</td><td><strong>FREE SHIP</strong></td></tr>
+          <tr><td>Khách lẻ — Đơn order &gt; 2 triệu (nội thành HN &amp; HCM)</td><td><strong>FREE SHIP</strong></td></tr>
+          <tr><td>Khách lẻ — Đơn stock &gt; 1 triệu (nội thành HN &amp; HCM)</td><td><strong>FREE SHIP</strong></td></tr>
           <tr><td>Ship tỉnh</td><td>Hỗ trợ 20k, khách chịu phần còn lại</td></tr>
           <tr><td>Đơn freeship nhưng hàng nặng</td><td>Hỗ trợ 30k (không free hoàn toàn)</td></tr>
         </tbody>
@@ -1116,23 +1262,23 @@
     <div class="callout danger"><strong>Quan trọng:</strong> Phải xin lỗi khách hàng trong MỌI trường hợp khi khách có complain dù không phải lỗi của bên mình.</div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Quy trình xử lý khiếu nại <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <ul>
           <li>Xin lỗi khách trước. Nếu không phải lỗi của mình → xin lỗi đã mang lại trải nghiệm không tốt và giải thích nguyên nhân</li>
           <li>Giải quyết vấn đề cho khách theo đúng policy</li>
           <li>Chỉ xử lý khiếu nại trong <strong>24h</strong> kể từ khi giao hàng thành công</li>
           <li>Những khách đang complain đa phần là đang tức giận → bình tĩnh xử lý, không tranh cãi</li>
         </ul>
-      </div>
+      </div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Quy trình yêu cầu hỗ trợ thêm <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <ul>
           <li>Xử lý issue → đền bù đúng theo policy → báo khách</li>
           <li>Nếu khách yêu cầu hỗ trợ thêm hoặc SALE thấy cần thiết → báo sếp xin ý kiến (chỉ dành cho khách VIP có trong list)</li>
         </ul>
-      </div>
+      </div></div>
     </div>
   </div>
 
@@ -1140,13 +1286,13 @@
     <h2>4. Báo refund</h2>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Quy trình hoàn tiền <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <ul>
           <li>Xin thông tin chuyển khoản của khách</li>
           <li>Báo khách kế toán sẽ chuyển khoản trong thời gian X</li>
           <li>Trường hợp khách chưa tạo đơn mà đã ck tiền, đổi ý không mua → lên Request Refund đính kèm ảnh tin nhắn của khách</li>
         </ul>
-      </div>
+      </div></div>
     </div>
   </div>
 
@@ -1156,16 +1302,16 @@
       <strong>Khách lẻ:</strong> Tối thiểu 1 lần hàng về là <strong>0.5kg</strong>. Khi khách đặt đơn hàng nhẹ → thông báo cho khách về cân nặng tối thiểu ngay từ đầu.
     </div>
   </div>
-</div>
+</section>
 
-<!-- HÀNG STOCK -->
-<div id="page-hang-stock" class="page">
+<!-- ===== HÀNG STOCK ===== -->
+<section class="page" data-page="hang-stock">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
-    <h1>🏪 Hàng Stock</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="hang-stock"></span> Hàng stock</h1></div>
   </div>
 
-  <div class="section">
+  <div class="section" style="margin-top:6px;">
     <h2>1. Giao hàng stock</h2>
     <ul class="checklist">
       <li>Trước khi cho hàng đi kho phải <strong>quay/chụp ảnh lại sp</strong> để đảm bảo sp không xước, vỡ hay có vấn đề</li>
@@ -1206,7 +1352,7 @@
       <table>
         <thead><tr><th>Loại ship</th><th>Phí</th></tr></thead>
         <tbody>
-          <tr><td>Trong Hà Nội & Hồ Chí Minh</td><td>30k/kiện</td></tr>
+          <tr><td>Trong Hà Nội &amp; Hồ Chí Minh</td><td>30k/kiện</td></tr>
           <tr><td>Ship HN ↔ HCM — 1kg</td><td>30k/kiện</td></tr>
           <tr><td>Ship HN ↔ HCM — 2kg</td><td>40k/kiện</td></tr>
           <tr><td>Ship HN ↔ HCM — 3kg</td><td>50k/kiện</td></tr>
@@ -1233,13 +1379,13 @@
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- KHIẾU NẠI -->
-<div id="page-khieu-nai" class="page">
+<!-- ===== KHIẾU NẠI ===== -->
+<section class="page" data-page="khieu-nai">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
-    <h1>⚠️ Khiếu nại thường gặp</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="khieu-nai"></span> Khiếu nại thường gặp</h1></div>
   </div>
 
   <div class="callout warn"><strong>Nguyên tắc:</strong> Luôn xin lỗi khách trước. Giữ bình tĩnh. Giải quyết theo đúng policy. Không tranh cãi với khách.</div>
@@ -1249,212 +1395,212 @@
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">🕐 Mua chậm <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p><strong>Nguyên nhân:</strong> Chưa thu được $ rate thấp / Đơn gom chưa đủ / Bên mua hộ chậm</p>
         <p><strong>Xử lý:</strong> SALE nắm nguyên nhân và thông báo kịp thời cho khách. Deal hot / low stock → push team MH xử lý gấp.</p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">📈 Sản phẩm tăng giá hoặc Sold-out <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p><strong>Nguyên nhân:</strong> Xử lý không kịp trong thời gian sale / Web hết hàng bất ngờ</p>
         <p><strong>Xử lý:</strong> Team MH thông báo với SALE. SALE thông báo ngay cho khách và hỏi khách có phương án thay thế không (hàng tương tự, đổi size/màu...).</p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">⏰ Không mua kịp do đơn gấp sát giờ hết sale <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>SALE phải đảm bảo đã warning khách ngay từ đầu khi nhận đơn sát giờ. Phải push team MH xử lý ngay, không để chậm trễ.</p>
-        <div class="callout warn">Bên mình chỉ nhận đơn <strong>&gt; 1 giờ</strong> trước khi hết sale.</div>
-      </div>
+        <div class="callout warn" style="margin:12px 0 0;">Bên mình chỉ nhận đơn <strong>&gt; 1 giờ</strong> trước khi hết sale.</div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">❌ Đơn đã mua nhưng web cancel <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p><strong>Nguyên nhân:</strong> Web không chấp nhận payment / Web phát hiện mua số lượng lớn / Web hết hàng sau khi đặt...</p>
         <p><strong>Mẫu câu thông báo:</strong><br><em>"Em chào anh/chị, đơn [xxx] của anh/chị bên em đã mua nhưng vì lý do [xxx] web/seller đã cancel đơn ạ. Em rất tiếc về sự việc này..."</em></p>
         <p>Sau khi báo khách → File Orders → Request Refund → kế toán hoàn tiền.</p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">📦 Đơn đã báo cancel nhưng vẫn về hàng <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p><strong>Nguyên nhân:</strong> Kho làm lạc đã tìm ra hàng / Acc die nên mua hộ rf trước</p>
         <p><strong>Xử lý:</strong> Báo sếp để được hướng dẫn cụ thể theo từng trường hợp.</p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">🔍 Hàng về sai / thiếu / hỏng <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <ul>
           <li>Kho lên issue trong hệ thống khi phát hiện hàng sai/thiếu/hỏng</li>
           <li>CSKH xử lý theo policy đền bù của từng brand</li>
           <li>Quy định đền bù: xem file Drive (liên hệ quản lý để lấy link)</li>
         </ul>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">📋 Khách đặt hàng 1 tuần rồi bị cancel <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p><em>"Dạ em chào anh/chị, đầu tiên em rất xin lỗi khi phải báo tới anh/chị là đơn hàng của mình bị cancel do hết hàng ạ. Ngay hôm mình order bên em pay thì web vẫn còn hàng nhưng sau đó web đã cancel đơn này vì hết hàng trong kho của họ ạ. Em rất tiếc về sự cố này..."</em></p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">💸 Hàng về lâu hơn 1 tháng do hải quan <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Hỏi lại sếp để cho phương án xử lý vì tuỳ từng trường hợp cụ thể.</p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">🔄 Hàng về không dùng được, khách đòi trả tiền <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p><em>"Đầu tiên em rất lấy làm tiếc vì hàng anh/chị mua về mà không sử dụng được. Đồng thời em cũng muốn chia sẻ với anh/chị bên em chỉ là bên mua hộ hàng cho anh/chị từ web [xxx], bên em không phải là nhà sản xuất nên không thể chịu trách nhiệm về chất lượng sản phẩm ạ. Tuy nhiên bên em sẽ hỗ trợ anh/chị liên hệ với web để giải quyết..."</em></p>
-      </div>
+      </div></div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- FAQ -->
-<div id="page-faq" class="page">
+<!-- ===== FAQ ===== -->
+<section class="page" data-page="faq">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Quy trình CSKH</div>
-    <h1>❓ FAQ — Câu hỏi thường gặp</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="faq"></span> FAQ — Câu hỏi thường gặp</h1></div>
   </div>
 
   <div class="faq-category">⏱ Thời gian</div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Lúc đặt hàng hỏi bao giờ hàng về? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><strong>Trả lời:</strong> Hàng Mỹ: 3–4 tuần. Hàng UK, TBN: 3 tuần (kể từ ngày đặt hàng và tùy thuộc vào web ship hàng nhanh hay chậm tới kho bên mình).</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><strong>Trả lời:</strong> Hàng Mỹ: 3–4 tuần. Hàng UK, TBN: 3 tuần (kể từ ngày đặt hàng và tùy thuộc vào web ship hàng nhanh hay chậm tới kho bên mình).</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Sau khi mua 1–2 tuần hỏi bao giờ hàng về? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Tìm đơn hàng trong hệ thống. Nếu đã có tracking number (chưa có delivered date) → kiện đó đang đến kho Mỹ, tầm 20 ngày sẽ về VN. Nếu chưa có tracking → đang trong quá trình mua.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Tìm đơn hàng trong hệ thống. Nếu đã có tracking number (chưa có delivered date) → kiện đó đang đến kho Mỹ, tầm 20 ngày sẽ về VN. Nếu chưa có tracking → đang trong quá trình mua.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Báo 3–4 tuần nhưng chưa về, khách hỏi? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Dạ như từ đầu em đã báo là hàng về dự kiến trong 3–4 tuần anh/chị ạ. Do vận chuyển là vận chuyển quốc tế qua nhiều khâu kiểm tra nên về mặt thời gian bên em chỉ ước tính được dự kiến thôi ạ. Bên em sẽ thông báo ngay khi hàng về ạ."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Dạ như từ đầu em đã báo là hàng về dự kiến trong 3–4 tuần anh/chị ạ. Do vận chuyển là vận chuyển quốc tế qua nhiều khâu kiểm tra nên về mặt thời gian bên em chỉ ước tính được dự kiến thôi ạ. Bên em sẽ thông báo ngay khi hàng về ạ."</em></p></div></div>
   </div>
 
-  <div class="faq-category">💰 Giá & Thanh toán</div>
+  <div class="faq-category">💰 Giá &amp; Thanh toán</div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Có mất phí vận chuyển khi nhận hàng không? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Free ship nội thành HN, SG đối với đơn hàng trên 2 triệu. Các tỉnh khác, ngoại thành và đơn dưới 2 triệu → khách tự thanh toán phí ship.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Free ship nội thành HN, SG đối với đơn hàng trên 2 triệu. Các tỉnh khác, ngoại thành và đơn dưới 2 triệu → khách tự thanh toán phí ship.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Khách mặc cả đặt cọc ít hơn 80%? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Đồng ý cho đặt cọc nhưng tối thiểu phải là 50% tiền hàng. Giải thích đây là đơn hàng đầu tiên nên ngoại lệ để khách tin tưởng dịch vụ.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Đồng ý cho đặt cọc nhưng tối thiểu phải là 50% tiền hàng. Giải thích đây là đơn hàng đầu tiên nên ngoại lệ để khách tin tưởng dịch vụ.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Khách thắc mắc giá cước vận chuyển quá cao? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Nếu hàng nặng trên 20kg có thể báo giảm còn 230k/kg. Nếu khách vẫn kêu đắt và so sánh thì giải thích: <em>"Dạ anh/chị ơi phí ship tụi em là theo kg thực tế chứ không chia nhỏ như bên khác ạ, nên anh/chị so sánh theo đơn giá/kg sẽ thấy tụi em cạnh tranh hơn đó ạ."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Nếu hàng nặng trên 20kg có thể báo giảm còn 230k/kg. Nếu khách vẫn kêu đắt và so sánh thì giải thích: <em>"Dạ anh/chị ơi phí ship tụi em là theo kg thực tế chứ không chia nhỏ như bên khác ạ, nên anh/chị so sánh theo đơn giá/kg sẽ thấy tụi em cạnh tranh hơn đó ạ."</em></p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Sao tỷ giá cao thế? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Tỷ giá bên em đã bao gồm thuế và các loại chi phí rồi ạ. Chị có thể tham khảo các bên đặt hàng khác, phí dịch vụ bên em luôn thấp hơn đấy ạ."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Tỷ giá bên em đã bao gồm thuế và các loại chi phí rồi ạ. Chị có thể tham khảo các bên đặt hàng khác, phí dịch vụ bên em luôn thấp hơn đấy ạ."</em></p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Khách lấy tỷ giá ngân hàng để so sánh? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Dạ bên em là bên mua hàng hộ tại các trang web tại Mỹ, nên khi mua hàng bên em cần thu những chi phí bắt buộc như: công mua, phí hải quan Mỹ–Việt, công vận chuyển... nên tỷ giá sẽ cao hơn tỷ giá ngân hàng ạ."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Dạ bên em là bên mua hàng hộ tại các trang web tại Mỹ, nên khi mua hàng bên em cần thu những chi phí bắt buộc như: công mua, phí hải quan Mỹ–Việt, công vận chuyển... nên tỷ giá sẽ cao hơn tỷ giá ngân hàng ạ."</em></p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Giá cao hơn hàng có sẵn tại shop trong nước? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Có thể giải thích: Shop ở VN nhập hàng đúng đợt sale nhiều hơn nên giá thành thấp hơn, hoặc có trường hợp hàng không chính hãng. Bên em đảm bảo 100% hàng chính hãng với bill đầy đủ.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Có thể giải thích: Shop ở VN nhập hàng đúng đợt sale nhiều hơn nên giá thành thấp hơn, hoặc có trường hợp hàng không chính hãng. Bên em đảm bảo 100% hàng chính hãng với bill đầy đủ.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Phát sinh phí nộp thuế hải quan, khách muốn chia sẻ? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Dạ anh/chị chi phí này là chi phí phát sinh với hải quan mà đến UK/US mới được thông báo ạ, anh/chị thông cảm giúp em, profit bên em cũng không có nhiều để chia sẻ thêm ạ."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Dạ anh/chị chi phí này là chi phí phát sinh với hải quan mà đến UK/US mới được thông báo ạ, anh/chị thông cảm giúp em, profit bên em cũng không có nhiều để chia sẻ thêm ạ."</em></p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Tính theo cân thực tế hay cân thể tích (hàng nhẹ nhưng to)? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Nếu cân nặng thực tế nhỏ hơn cân nặng thể tích → bên em tính theo <strong>cân nặng thể tích</strong>.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Nếu cân nặng thực tế nhỏ hơn cân nặng thể tích → bên em tính theo <strong>cân nặng thể tích</strong>.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Muốn lấy hóa đơn VAT? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Dạ giá bên em báo chưa bao gồm VAT, anh/chị muốn lấy hóa đơn VAT thì bên em tính thêm 15%/giá trị đơn hàng ạ. Trong đó 10% là theo quy định, 5% là phí xuất hóa đơn."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Dạ giá bên em báo chưa bao gồm VAT, anh/chị muốn lấy hóa đơn VAT thì bên em tính thêm 15%/giá trị đơn hàng ạ. Trong đó 10% là theo quy định, 5% là phí xuất hóa đơn."</em></p></div></div>
   </div>
 
   <div class="faq-category">📦 Sản phẩm</div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Khách yêu cầu có hóa đơn (bill), hộp mác đầy đủ? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Bên em mua hàng online trên web nên có những sp về không có bill giấy, chỉ có bill online khi mua hàng. Hàng sẽ được repack hoặc giữ nguyên kiện gửi về.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Bên em mua hàng online trên web nên có những sp về không có bill giấy, chỉ có bill online khi mua hàng. Hàng sẽ được repack hoặc giữ nguyên kiện gửi về.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Hàng có đảm bảo chất lượng không? (lo sợ hàng fake) <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Bên em cam kết 100% hàng chính hãng có bill đầy đủ ạ. Bên em chỉ order khi khách đặt thôi chứ không bán hàng có sẵn nên chị yên tâm là hàng nhập trực tiếp từ web chính hãng ạ."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Bên em cam kết 100% hàng chính hãng có bill đầy đủ ạ. Bên em chỉ order khi khách đặt thôi chứ không bán hàng có sẵn nên chị yên tâm là hàng nhập trực tiếp từ web chính hãng ạ."</em></p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Hàng Made in Vietnam / China / Indonesia? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Thường các hãng lớn đặt nhà máy sản xuất ở các nước thứ 3 nhưng không vì thế mà ảnh hưởng tới chất lượng sản phẩm. Hàng vẫn là chính hãng 100%.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Thường các hãng lớn đặt nhà máy sản xuất ở các nước thứ 3 nhưng không vì thế mà ảnh hưởng tới chất lượng sản phẩm. Hàng vẫn là chính hãng 100%.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Bảo hành sản phẩm như thế nào? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Các sản phẩm mua ở Mỹ chỉ bảo hành được ở Mỹ. Trường hợp cần bảo hành phải gửi lại sản phẩm về Mỹ. Đồng hồ mua ở Mỹ chỉ bảo hành ở Mỹ vì đây là hàng xách tay, không có bảo hành tại VN.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Các sản phẩm mua ở Mỹ chỉ bảo hành được ở Mỹ. Trường hợp cần bảo hành phải gửi lại sản phẩm về Mỹ. Đồng hồ mua ở Mỹ chỉ bảo hành ở Mỹ vì đây là hàng xách tay, không có bảo hành tại VN.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Khách yêu cầu kiểm tra hàng tại kho Mỹ trước khi gửi? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Phí kiểm hàng từ $5–$10/kiện (tuỳ sản phẩm). Khách cần kiểm hàng khi nhận thì báo trước khi đặt đơn.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Phí kiểm hàng từ $5–$10/kiện (tuỳ sản phẩm). Khách cần kiểm hàng khi nhận thì báo trước khi đặt đơn.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Cho kiểm hàng trước khi giao tiền? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Dạ vì đây là hàng order, trước khi giao cho chị thì bên em đã kiểm tra qua đúng thông tin hàng gồm tên, màu sắc, kích thước, hình dáng nên chị thanh toán trước rồi nhận hàng ạ. Nếu có bất kỳ vấn đề gì về hàng, bên em sẽ xử lý ngay cho chị."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Dạ vì đây là hàng order, trước khi giao cho chị thì bên em đã kiểm tra qua đúng thông tin hàng gồm tên, màu sắc, kích thước, hình dáng nên chị thanh toán trước rồi nhận hàng ạ. Nếu có bất kỳ vấn đề gì về hàng, bên em sẽ xử lý ngay cho chị."</em></p></div></div>
   </div>
 
-  <div class="faq-category">🏛️ Chính sách & Hỗ trợ</div>
+  <div class="faq-category">🏛️ Chính sách &amp; Hỗ trợ</div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Không muốn đặt cọc vì không tin tưởng, sợ lừa đảo? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Vì bên em là hàng order nên theo quy định của công ty khách hàng phải chuyển khoản trước bên em mới mua được hàng ạ. Do bên em cũng phải ứng tiền thanh toán với web Mỹ trước. Anh/chị có thể tham khảo review của bên em trên fanpage để yên tâm hơn ạ."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Vì bên em là hàng order nên theo quy định của công ty khách hàng phải chuyển khoản trước bên em mới mua được hàng ạ. Do bên em cũng phải ứng tiền thanh toán với web Mỹ trước. Anh/chị có thể tham khảo review của bên em trên fanpage để yên tâm hơn ạ."</em></p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Những hàng này có khai với hải quan không? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Dạ, bên em đi hàng tiểu ngạch nên các hàng nhập về đều phải khai báo với hải quan và có tính phụ thu cho nhập khẩu nếu có ạ. Chỉ cần không phải hàng cấm là bên em nhận ạ."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Dạ, bên em đi hàng tiểu ngạch nên các hàng nhập về đều phải khai báo với hải quan và có tính phụ thu cho nhập khẩu nếu có ạ. Chỉ cần không phải hàng cấm là bên em nhận ạ."</em></p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Khách yêu cầu nhờ thanh lý hàng hộ? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Vẫn giao hàng và thu tiền hàng bình thường, để hàng khách giữ, nói sẽ đăng bài để bán thanh lý giúp khách và khi nào có khách khác hỏi mua sẽ liên hệ lại.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Vẫn giao hàng và thu tiền hàng bình thường, để hàng khách giữ, nói sẽ đăng bài để bán thanh lý giúp khách và khi nào có khách khác hỏi mua sẽ liên hệ lại.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Khách hỏi vì sao cần cung cấp CCCD? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Dạ, bên em cần CCCD để khi nào bên phía hải quan cần cung cấp thông tin người mua của kiện hàng, bên em sẽ có thông tin để đưa luôn ạ. Ngoài ra bên em cũng dùng để xác minh danh tính khách hàng."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Dạ, bên em cần CCCD để khi nào bên phía hải quan cần cung cấp thông tin người mua của kiện hàng, bên em sẽ có thông tin để đưa luôn ạ. Ngoài ra bên em cũng dùng để xác minh danh tính khách hàng."</em></p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Khách có công nợ cũ, hàng đã về — có giao không? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p><em>"Chị ck giúp em hết công nợ cũ & mới, để kế toán bên em cho xuất hàng chị nha."</em></p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p><em>"Chị ck giúp em hết công nợ cũ &amp; mới, để kế toán bên em cho xuất hàng chị nha."</em></p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Không nhận được mail đơn hàng? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Nhắn khách check Spam, rồi move email đó ra inbox để lần sau email từ bên mình sẽ vào thẳng inbox (thường lần đầu dễ vào Spam).</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Nhắn khách check Spam, rồi move email đó ra inbox để lần sau email từ bên mình sẽ vào thẳng inbox (thường lần đầu dễ vào Spam).</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Khách mua nhiều item &lt;$30 nhưng tổng đơn &gt;$30 thì có phụ thu 50k? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body"><p>Tính theo <strong>tổng đơn hàng</strong>, không tính theo item. Chỉ phụ thu 50k khi tổng đơn hàng &lt;$30.</p></div>
+    <div class="accordion-body"><div class="accordion-body-inner"><p>Tính theo <strong>tổng đơn hàng</strong>, không tính theo item. Chỉ phụ thu 50k khi tổng đơn hàng &lt;$30.</p></div></div>
   </div>
   <div class="accordion">
     <div class="accordion-header" onclick="toggleAcc(this)">Đơn 3 link sp, tổng &lt;$30 — chọn danh mục như thế nào? <span class="acc-arrow">▼</span></div>
-    <div class="accordion-body">
+    <div class="accordion-body"><div class="accordion-body-inner">
       <ul>
         <li>Link sản phẩm thứ 1 → chọn danh mục <strong>"Items nhỏ hơn $30"</strong></li>
         <li>Link thứ 2 và thứ 3 → chọn <strong>"Hàng thông thường"</strong></li>
       </ul>
-    </div>
+    </div></div>
   </div>
-</div>
+</section>
 
-<!-- NỘI QUY CHUNG -->
-<div id="page-noi-quy" class="page">
+<!-- ===== NỘI QUY CHUNG ===== -->
+<section class="page" data-page="noi-quy">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Nội quy nhân sự</div>
-    <h1>📌 Nội quy chung</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Nội quy nhân sự</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="noi-quy"></span> Nội quy chung</h1></div>
   </div>
 
-  <div class="section">
+  <div class="section" style="margin-top:6px;">
     <h2>⏰ Thời gian làm việc</h2>
     <div class="table-wrap">
       <table>
@@ -1488,7 +1634,7 @@
     <h2>🛒 Xử lý sai phạm đơn hàng</h2>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Đơn mua sai do lỗi CSKH/Mua hàng <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Nhân sự có <strong>1 tháng</strong> để tự thanh lý hàng đó. Không nhập kho stock — giữ ở kho để thanh lý.</p>
         <p>Sau 1 tháng không thanh lý được, nhân sự làm sai sẽ nhận hàng về. Công ty hỗ trợ theo tỷ lệ mua (không phải rate báo khách):</p>
         <ul style="padding-left:18px;margin-top:6px;">
@@ -1496,13 +1642,13 @@
           <li>Các lần sau: công ty hỗ trợ <strong>20%</strong> thiệt hại</li>
           <li>Sai quá 3 lần: công ty <strong>không hỗ trợ</strong></li>
         </ul>
-      </div>
+      </div></div>
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Đơn không hoàn thành do khách không thanh toán <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>CSKH đòi khách, nếu không được sẽ xem xét nguyên nhân (lỗi khách hay lỗi CSKH không làm đúng quy định).</p>
-      </div>
+      </div></div>
     </div>
     <div class="callout danger"><strong>Quan trọng:</strong> Mức hỗ trợ của công ty chỉ áp dụng khi nhân sự <strong>thông báo với công ty ngay khi phát hiện lỗi sai</strong>. Nếu tự ý xử lý rồi mới báo, công ty sẽ không hỗ trợ và nhân sự tự chịu thiệt hại 100%.</div>
   </div>
@@ -1528,7 +1674,7 @@
   </div>
 
   <div class="section">
-    <h2>📱 Chấm công & Xin nghỉ</h2>
+    <h2>📱 Chấm công &amp; Xin nghỉ</h2>
     <div class="callout success">
       Sử dụng app: <strong>chamcong.basso.vn</strong><br>
       Tạo tài khoản và thực hiện chấm công, xin nghỉ, xin làm online, báo đi muộn trên app.<br>
@@ -1554,13 +1700,13 @@
       <li>Tuyệt đối không download bất kỳ thứ gì người khác gửi về máy làm việc</li>
     </ul>
   </div>
-</div>
+</section>
 
-<!-- CÁCH LÀM VIỆC -->
-<div id="page-cach-lam-viec" class="page">
+<!-- ===== CÁCH LÀM VIỆC ===== -->
+<section class="page" data-page="cach-lam-viec">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Nội quy nhân sự</div>
-    <h1>💡 Cách làm việc</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Nội quy nhân sự</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="cach-lam-viec"></span> Cách làm việc</h1></div>
   </div>
 
   <div class="callout info"><strong>Phong cách làm việc:</strong> Thẳng thắn – Bình đẳng – Hiệu quả. Mọi ý kiến, tranh cãi không tư thù cá nhân — chỉ vì một mục đích: <strong>Hiệu quả công việc</strong>.</div>
@@ -1568,8 +1714,8 @@
   <div class="section">
     <h2>1. Follow công việc đến cùng</h2>
     <div class="accordion">
-      <div class="accordion-header" onclick="toggleAcc(this)">Quy tắc hỏi & follow câu trả lời <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-header" onclick="toggleAcc(this)">Quy tắc hỏi &amp; follow câu trả lời <span class="acc-arrow">▼</span></div>
+      <div class="accordion-body"><div class="accordion-body-inner">
         <ul>
           <li>Việc không gấp: chờ câu trả lời trong <strong>1h</strong>. Nếu không thấy rep — nhắc lại.</li>
           <li>Việc gấp: trong <strong>15–30 phút</strong> chưa có câu trả lời — nhắc lại ngay hoặc gọi điện.</li>
@@ -1577,8 +1723,8 @@
           <li>Tất cả yêu cầu, hỏi thông tin đều phải xác định thời hạn/ngày giờ trả lời.</li>
           <li>Khi có việc cần hỏi thì hỏi ngay, không để sau vì sẽ quên.</li>
         </ul>
-        <div class="callout danger" style="margin-top:12px;"><strong>Không chấp nhận</strong> lý do "em hỏi mà sếp/bạn không trả lời nên cứ để đó" hoặc tự ý xử lý không đúng.</div>
-      </div>
+        <div class="callout danger" style="margin:12px 0 0;"><strong>Không chấp nhận</strong> lý do "em hỏi mà sếp/bạn không trả lời nên cứ để đó" hoặc tự ý xử lý không đúng.</div>
+      </div></div>
     </div>
   </div>
 
@@ -1608,7 +1754,7 @@
     <div class="callout success">
       Khi report vấn đề với sếp/đồng nghiệp, <strong>nói cụ thể trong 1 tin nhắn</strong> để người đọc không phải hỏi lại, tiết kiệm thời gian chat qua lại.
     </div>
-    <p style="font-size:14px;color:var(--gray-500);">Tham khảo ví dụ mẫu report tại các link hướng dẫn nội bộ (liên hệ quản lý).</p>
+    <p style="font-size:14px;color:var(--ink-mute);">Tham khảo ví dụ mẫu report tại các link hướng dẫn nội bộ (liên hệ quản lý).</p>
   </div>
 
   <div class="section">
@@ -1668,30 +1814,30 @@
       • Nếu không → report lại với sếp
     </div>
   </div>
-</div>
+</section>
 
-<!-- QUYỀN LỢI -->
-<div id="page-quyen-loi" class="page">
+<!-- ===== QUYỀN LỢI ===== -->
+<section class="page" data-page="quyen-loi">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span> / Nội quy nhân sự</div>
-    <h1>🎁 Quyền lợi</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Nội quy nhân sự</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="quyen-loi"></span> Quyền lợi</h1></div>
   </div>
 
-  <div class="section">
-    <h2>💰 Lương & Thưởng</h2>
+  <div class="section" style="margin-top:6px;">
+    <h2>💰 Lương &amp; Thưởng</h2>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Lương ngoài giờ <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Áp dụng cho nhân sự backend làm việc theo giờ hành chính:</p>
         <p><strong>Lương ngoài giờ = Thời gian làm ngoài giờ × Tiền lương thực trả theo công việc</strong></p>
         <p style="margin-top:8px;"><em>Lưu ý: Tối thiểu 30 phút làm ngoài giờ mới được tính. Thời gian làm ngoài giờ phải được xác nhận là hợp lý.</em></p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Thưởng Tết <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Việc thưởng và mức thưởng tùy theo quyết định của công ty theo từng năm. Tiêu chí xét thưởng:</p>
         <ul style="padding-left:18px;margin-top:8px;">
           <li><strong>Ý thức trong công việc (40%):</strong> thâm niên, chuyên cần, chấp hành nội quy, văn hoá, tự giác, thành thật, thẳng thắn, tử tế, giúp đỡ đồng nghiệp...</li>
@@ -1699,20 +1845,20 @@
           <li><strong>Vượt yêu cầu (20%):</strong> đóng góp ý kiến, tăng doanh số, chủ động làm việc mang lại hiệu quả cao khi chưa cần sếp yêu cầu, sẵn sàng hỗ trợ khi công ty cần...</li>
         </ul>
         <p style="margin-top:8px;">Nhân sự backend (lương cứng) sẽ được thưởng nhiều hơn vào cuối năm.</p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Thưởng góp ý hệ thống <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Thưởng thêm cho các góp ý cải thiện tính năng hoặc phát hiện lỗi:</p>
         <p><strong>50k – 500k/ý kiến</strong> (tùy mức độ quan trọng của tính năng/lỗi)</p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Xét tăng lương <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Công ty xét tăng lương dựa trên 3 tiêu chí:</p>
         <ol style="padding-left:18px;margin-top:8px;">
           <li>Thêm khối lượng công việc không?</li>
@@ -1720,14 +1866,14 @@
           <li>Tình hình kinh doanh của công ty và kinh tế nói chung đang tốt không?</li>
         </ol>
         <p style="margin-top:8px;">Nhân sự muốn tăng lương có thể đề xuất với sếp dựa trên các tiêu chí trên.</p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Lương thâm niên <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Nhân sự gắn bó <strong>từ 3 năm trở lên</strong> và có đóng góp trong công việc sẽ được tăng lương (mức tăng tùy năng lực và thái độ làm việc).</p>
-      </div>
+      </div></div>
     </div>
   </div>
 
@@ -1736,27 +1882,27 @@
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Bảo hiểm xã hội <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Nhân viên sau khi làm chính thức <strong>3 tháng</strong> sẽ được đóng Bảo hiểm (có thể thương lượng tùy theo năng lực).</p>
         <p>Nhân viên có thể <strong>chọn không đóng Bảo hiểm</strong> và được cộng thêm <strong>1,000,000đ/tháng</strong> vào lương cứng.</p>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Sinh nhật <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <ul style="padding-left:18px;">
           <li>Ngày sinh nhật: được về sớm <strong>2 tiếng</strong> + nhận <strong>500,000đ</strong> tiền sinh nhật + tổ chức sinh nhật tại văn phòng</li>
           <li>Ngày sinh nhật người thân (bố mẹ, chồng, con, anh chị em ruột): được về sớm <strong>2 tiếng</strong> — tối đa <strong>3 ngày/năm</strong></li>
         </ul>
-      </div>
+      </div></div>
     </div>
 
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Thưởng giới thiệu nhân sự <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Giới thiệu được nhân sự cho công ty: thưởng <strong>1,000,000đ</strong> khi nhân sự đó được tuyển (sau thời gian thử việc).</p>
-      </div>
+      </div></div>
     </div>
   </div>
 
@@ -1772,7 +1918,7 @@
     </div>
     <div class="accordion">
       <div class="accordion-header" onclick="toggleAcc(this)">Làm online khi trời mưa <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body">
+      <div class="accordion-body"><div class="accordion-body-inner">
         <p>Vào ngày mưa nặng hạt, nhân viên có thể làm online buổi đó:</p>
         <ul style="padding-left:18px;margin-top:6px;">
           <li>Mưa lúc sáng đi làm → sáng làm online. Chiều tạnh mưa → qua công ty</li>
@@ -1780,7 +1926,7 @@
           <li>Phải gửi video proof cho sếp khi xin làm online vì trời mưa</li>
         </ul>
         <p style="margin-top:6px;"><em>Không áp dụng cho bộ phận kho (kho có thể đi làm muộn khi mưa)</em></p>
-      </div>
+      </div></div>
     </div>
   </div>
 
@@ -1793,61 +1939,70 @@
       <li>Đơn hàng <strong>&gt; 5 triệu</strong>: đặt cọc tối thiểu <strong>50%</strong>. Tất cả đơn thanh toán 100% khi nhận hàng</li>
     </ul>
   </div>
-</div>
+</section>
 
-<!-- SETTINGS -->
-<div id="page-settings" class="page">
+<!-- ===== CÀI ĐẶT ===== -->
+<section class="page" data-page="settings">
   <div class="page-header">
-    <div class="breadcrumb"><span onclick="navigate('home')">Trang chủ</span></div>
-    <h1>⚙️ Cài đặt</h1>
+    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Hệ thống</div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="settings"></span> Cài đặt</h1></div>
+  </div>
+  <p class="section" style="margin-top:0;color:var(--ink-soft);">Quản lý giao diện và phân quyền tài khoản truy cập wiki nội bộ.</p>
+
+  <div class="settings-card style-card" style="margin-bottom:20px;">
+    <h3><span data-icon="sparkles"></span> Giao diện khung nội dung</h3>
+    <p>Chọn kiểu hiển thị cho các khung nội dung (thẻ, accordion, bảng) trên toàn wiki — áp dụng ngay.</p>
+    <div class="style-opts">
+      <button class="style-opt" data-style="gray" onclick="setCardStyle('gray')">
+        <span class="so-prev gray"></span>
+        <span class="so-label">Xám nhạt</span>
+        <span class="so-desc">Phẳng, ấm, dịu mắt</span>
+      </button>
+      <button class="style-opt" data-style="float" onclick="setCardStyle('float')">
+        <span class="so-prev float"></span>
+        <span class="so-label">Nổi</span>
+        <span class="so-desc">Trắng, đổ bóng mềm</span>
+      </button>
+      <button class="style-opt" data-style="outline" onclick="setCardStyle('outline')">
+        <span class="so-prev outline"></span>
+        <span class="so-label">Viền mảnh</span>
+        <span class="so-desc">Trắng, tối giản</span>
+      </button>
+    </div>
   </div>
 
-  <div class="section">
-    <h2>🔌 Cách xác thực người dùng</h2>
-    <div class="callout info">
-      Wiki nhận diện người dùng qua <strong>HTTP header</strong> mà dashboard của bạn gửi khi proxy request.<br><br>
-      Tên header mặc định: <code>X-User-Email: email_nhan_vien@company.com</code><br><br>
-      Có thể đổi tên header bằng biến môi trường <code>USER_EMAIL_HEADER</code> trong file <code>.env</code>.
-    </div>
-    <div class="callout warn">
-      <strong>Test nhanh (chỉ dùng khi dev):</strong> Thêm <code>?user_email=your@email.com</code> vào URL để giả lập email đăng nhập.
-    </div>
-  </div>
-
-  <div id="settings-loading" class="callout info" style="margin-bottom:24px;">⏳ Đang tải cài đặt...</div>
-  <div id="settings-forbidden" class="callout danger" style="display:none; margin-bottom:24px;">
-    ⛔ Chỉ <strong>Admin</strong> mới có quyền truy cập trang này. Email hiện tại của bạn không có quyền.
+  <div id="settings-loading" class="callout info">⏳ Đang tải cài đặt...</div>
+  <div id="settings-forbidden" class="callout danger" style="display:none;">
+    ⛔ Chỉ <strong>Admin</strong> mới có quyền quản lý tài khoản. Email hiện tại của bạn không có quyền.
   </div>
 
   <div id="settings-content" style="display:none">
-    <div class="section">
-      <div class="settings-grid">
-        <div class="settings-card">
-          <h3>👑 Admin <span class="role-tag role-admin">Quản trị viên</span></h3>
-          <p>Có quyền chỉnh sửa nội dung wiki <strong>và</strong> quản lý danh sách tài khoản.</p>
-          <ul class="email-list" id="adminList"></ul>
-          <div class="email-input-row">
-            <input type="email" id="adminInput" placeholder="email@company.com" onkeydown="if(event.key==='Enter')addEmail('admin')">
-            <button class="btn btn-secondary btn-sm" onclick="addEmail('admin')">+ Thêm</button>
-          </div>
+    <div class="settings-grid">
+      <div class="settings-card">
+        <h3>👑 Admin <span class="role-tag role-admin">Quản trị viên</span></h3>
+        <p>Có quyền chỉnh sửa nội dung wiki <strong>và</strong> quản lý danh sách tài khoản.</p>
+        <ul class="email-list" id="adminList"></ul>
+        <div class="email-input-row">
+          <input type="email" id="adminInput" placeholder="email@company.com" onkeydown="if(event.key==='Enter')addEmail('admin')">
+          <button class="btn btn-secondary btn-sm" onclick="addEmail('admin')">+ Thêm</button>
         </div>
-        <div class="settings-card">
-          <h3>✏️ Editor <span class="role-tag role-editor">Biên tập viên</span></h3>
-          <p>Chỉ có quyền chỉnh sửa nội dung các trang wiki, không xem được cài đặt.</p>
-          <ul class="email-list" id="editorList"></ul>
-          <div class="email-input-row">
-            <input type="email" id="editorInput" placeholder="email@company.com" onkeydown="if(event.key==='Enter')addEmail('editor')">
-            <button class="btn btn-secondary btn-sm" onclick="addEmail('editor')">+ Thêm</button>
-          </div>
+      </div>
+      <div class="settings-card">
+        <h3>✏️ Editor <span class="role-tag role-editor">Biên tập</span></h3>
+        <p>Có quyền chỉnh sửa nội dung các trang wiki nhưng không quản lý tài khoản.</p>
+        <ul class="email-list" id="editorList"></ul>
+        <div class="email-input-row">
+          <input type="email" id="editorInput" placeholder="email@company.com" onkeydown="if(event.key==='Enter')addEmail('editor')">
+          <button class="btn btn-secondary btn-sm" onclick="addEmail('editor')">+ Thêm</button>
         </div>
       </div>
     </div>
-    <div style="display:flex;gap:12px;align-items:center;">
-      <button class="btn btn-primary" onclick="saveSettings()">💾 Lưu cài đặt</button>
-      <span id="settingsSaveMsg" style="font-size:13px;color:var(--green);display:none;font-weight:600;">✓ Đã lưu thành công</span>
+    <div style="display:flex;gap:12px;align-items:center;margin-top:20px;">
+      <button class="btn" onclick="saveSettings()">💾 Lưu cài đặt</button>
+      <span id="settingsSaveMsg" style="font-size:13px;color:var(--green-ink);display:none;font-weight:600;">✓ Đã lưu thành công</span>
     </div>
 
-    <div class="section" style="margin-top:40px;">
+    <div class="section">
       <h2>📋 Bảng phân quyền</h2>
       <div class="table-wrap">
         <table>
@@ -1856,23 +2011,30 @@
             <tr><td>Xem toàn bộ nội dung wiki</td><td>✓</td><td>✓</td><td>✓</td></tr>
             <tr><td>Chỉnh sửa nội dung trang</td><td>✓</td><td>✓</td><td>—</td></tr>
             <tr><td>Reset nội dung về mặc định</td><td>✓</td><td>✓</td><td>—</td></tr>
-            <tr><td>Xem & quản lý trang Cài đặt</td><td>✓</td><td>—</td><td>—</td></tr>
+            <tr><td>Xem &amp; quản lý trang Cài đặt</td><td>✓</td><td>—</td><td>—</td></tr>
           </tbody>
         </table>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- SEARCH RESULTS -->
-<div id="page-search" class="page">
-  <div class="page-header">
-    <h1>🔍 Kết quả tìm kiếm</h1>
+    <div class="section">
+      <h2>🔌 Cách xác thực người dùng</h2>
+      <div class="callout info">
+        Wiki nhận diện người dùng qua <strong>HTTP header</strong> mà dashboard gửi khi proxy request.<br><br>
+        Tên header mặc định: <code>X-User-Email: email_nhan_vien@company.com</code><br><br>
+        Có thể đổi tên header bằng biến môi trường <code>USER_EMAIL_HEADER</code> trong file <code>.env</code>.
+      </div>
+      <div class="callout warn">
+        <strong>Test nhanh (chỉ dùng khi dev):</strong> Thêm <code>?user_email=your@email.com</code> vào URL để giả lập email đăng nhập.
+      </div>
+    </div>
   </div>
-  <div id="searchResults"></div>
-</div>
+</section>
 
 </main>
+</div>
+
+<div class="toast" id="toastEl"></div>
 
 <!-- EDIT MODAL -->
 <div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
@@ -1931,16 +2093,48 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-danger btn-sm" onclick="resetPageContent()" title="Về nội dung mặc định">↩ Về mặc định</button>
-      <div style="flex:1;font-size:12px;color:var(--gray-400)" id="editLastSaved"></div>
+      <div style="flex:1;font-size:12px;color:var(--ink-mute)" id="editLastSaved"></div>
       <button class="btn btn-secondary" onclick="closeEditModal()">Hủy</button>
-      <button class="btn btn-primary" onclick="saveEditModal()">💾 Lưu</button>
+      <button class="btn" onclick="saveEditModal()">💾 Lưu</button>
     </div>
   </div>
 </div>
 
-<div id="toastEl" class="toast" style="display:none"></div>
-
 <script>
+// ─── Icons (Lucide-style line icons) ─────────────────────────
+const ICONS = {
+  'home':'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/>',
+  'tong-quan':'<path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17"/><path d="M3 21h18"/><path d="M9.5 7h2M9.5 11h2M9.5 15h2M14 7h.8M14 11h.8M14 15h.8"/>',
+  'so-do':'<circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="19" r="2.4"/><path d="M12 7.4v3.1M5 16.6v-2.1h14v2.1M12 10.5v4"/>',
+  'quy-dinh':'<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v14H6.5A1.5 1.5 0 0 0 5 18.5z"/><path d="M5 18.5A1.5 1.5 0 0 1 6.5 17H19v4H6.5A1.5 1.5 0 0 1 5 19.5z"/>',
+  'cong-cu':'<path d="M14.6 6.1a3.8 3.8 0 0 0-5 5L4 16.7 7.3 20l5.6-5.6a3.8 3.8 0 0 0 5-5l-2.3 2.3-2-2z"/>',
+  'thuat-ngu':'<path d="M12 7.5v13"/><path d="M3.5 5.2h5a2 2 0 0 1 2 2v12a2.3 2.3 0 0 0-2.3-1.9H3.5z"/><path d="M20.5 5.2h-5a2 2 0 0 0-2 2v12a2.3 2.3 0 0 1 2.3-1.9h4.7z"/>',
+  'websites':'<circle cx="12" cy="12" r="9"/><path d="M3.5 9.5h17M3.5 14.5h17"/><path d="M12 3a13 13 0 0 1 0 18 13 13 0 0 1 0-18z"/>',
+  'bao-gia':'<circle cx="12" cy="12" r="9"/><path d="M12 6.5v11"/><path d="M14.5 9a2.2 2.2 0 0 0-2-1.2h-1a2 2 0 0 0 0 4h1a2 2 0 0 1 0 4h-1a2.2 2.2 0 0 1-2-1.2"/>',
+  'tao-don':'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 11.5v5M9.5 14h5"/>',
+  'bao-hang-ve':'<path d="m3 8 9-5 9 5v8l-9 5-9-5z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v9"/><path d="m7.5 5.5 9 5"/>',
+  'hang-stock':'<path d="M4 9 5.2 4h13.6L20 9"/><path d="M4.5 9v10.5h15V9"/><path d="M4 9h16"/><path d="M9 19.5v-5h6v5"/>',
+  'khieu-nai':'<path d="M12 3.5 2.8 19.5h18.4z"/><path d="M12 9.5v4.5M12 17h.01"/>',
+  'faq':'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.6 1.3c0 1.6-2.2 2-2.2 3.6M12 17h.01"/>',
+  'noi-quy':'<rect x="6" y="4" width="12" height="17" rx="2.2"/><path d="M9.2 4V3h5.6v1"/><path d="m9.3 12.3 1.9 1.9 3.6-3.8"/>',
+  'cach-lam-viec':'<path d="M9.3 18h5.4M10 21h4"/><path d="M12 3a6 6 0 0 0-3.8 10.6c.7.6 1 1.4 1.1 2.4h5.4c.1-1 .4-1.8 1.1-2.4A6 6 0 0 0 12 3z"/>',
+  'quyen-loi':'<rect x="3.5" y="8" width="17" height="4.2" rx="1"/><path d="M5.2 12.2V21h13.6v-8.8"/><path d="M12 8v13"/><path d="M12 8S10.6 3.2 8.1 4.6 9.2 8 12 8zM12 8s1.4-4.8 3.9-3.4S14.8 8 12 8z"/>',
+  'settings':'<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M5.1 5.1l2.1 2.1M16.8 16.8l2.1 2.1M2.5 12h3M18.5 12h3M5.1 18.9l2.1-2.1M16.8 7.2l2.1-2.1"/>',
+  'layers':'<path d="m12 3 8.5 4.5L12 12 3.5 7.5z"/><path d="m3.5 12 8.5 4.5 8.5-4.5"/><path d="m3.5 16.5 8.5 4.5 8.5-4.5"/>',
+  'sparkles':'<path d="M12 3.5l1.7 4.6 4.6 1.7-4.6 1.7L12 16.1l-1.7-4.6L5.7 9.8l4.6-1.7z"/><path d="M18.5 14.5l.8 2.1 2.1.8-2.1.8-.8 2.1-.8-2.1-2.1-.8 2.1-.8z"/>',
+  'rocket':'<path d="M9 13c1.8-5 4.8-8.2 10.5-9C18.7 9.7 15.5 12.7 11 14.5z"/><path d="M9 13c-1.6 1-2.2 3.5-2.2 4.2C7.5 17.2 10 16.6 11 15"/><path d="m9.3 13.3 1.9 1.9"/><circle cx="15" cy="9" r="1.3"/>',
+};
+function iconSvg(p,sw){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.7)+'" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';}
+function paintIcons(root){
+  root=root||document;
+  root.querySelectorAll('.sidebar-link').forEach(l=>{
+    const ic=l.querySelector('.icon'); if(ic && ICONS[l.dataset.page]) ic.innerHTML=iconSvg(ICONS[l.dataset.page]);
+  });
+  root.querySelectorAll('[data-icon]').forEach(el=>{
+    if(ICONS[el.dataset.icon]) el.innerHTML=iconSvg(ICONS[el.dataset.icon]);
+  });
+}
+
 // ─── State ───────────────────────────────────────────────────
 let currentUser = { email: null, isAdmin: false, isEditor: false };
 let settingsData = { admins: [], editors: [] };
@@ -1954,6 +2148,79 @@ function apiUrl(path) {
   const email = currentUser.email || localStorage.getItem('wiki_user_email');
   const sep = path.includes('?') ? '&' : '?';
   return email ? `${path}${sep}user_email=${encodeURIComponent(email)}` : path;
+}
+
+// ─── Navigation (hash routing) ───────────────────────────────
+function navigate(id) {
+  let page = document.querySelector(`.page[data-page="${id}"]`);
+  if (!page) { id = 'home'; page = document.querySelector('.page[data-page="home"]'); }
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.toggle('active', l.dataset.page === id));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  page.classList.add('active');
+  document.getElementById('main').scrollTop = 0;
+  document.getElementById('sidebar').classList.remove('open');
+  history.replaceState(null, '', '#' + id);
+
+  if (id === 'settings') loadSettings();
+  refreshEditBtn(id);
+}
+
+function bindGo(root) {
+  root.querySelectorAll('[data-go]').forEach(a => {
+    if (a.__bound) return; a.__bound = true;
+    a.addEventListener('click', e => { e.stopPropagation(); navigate(a.dataset.go); });
+  });
+}
+
+// ─── Accordion (animated max-height) ─────────────────────────
+function toggleAcc(h) {
+  const acc = h.closest('.accordion');
+  const body = acc.querySelector('.accordion-body');
+  const open = acc.classList.toggle('open');
+  body.style.maxHeight = open ? body.scrollHeight + 'px' : null;
+}
+window.addEventListener('resize', () => {
+  document.querySelectorAll('.accordion.open .accordion-body').forEach(b => b.style.maxHeight = b.scrollHeight + 'px');
+});
+
+// ─── Search (filter sidebar links) ───────────────────────────
+function doSearch(q) {
+  q = (q || '').trim().toLowerCase();
+  document.querySelectorAll('.sidebar-link').forEach(l => {
+    const txt = l.textContent.toLowerCase();
+    l.style.display = (!q || txt.includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.sidebar-heading').forEach(h => {
+    const sec = h.parentElement;
+    const any = [...sec.querySelectorAll('.sidebar-link')].some(l => l.style.display !== 'none');
+    h.style.display = any ? '' : 'none';
+  });
+  if (q) document.getElementById('sidebar').classList.add('open');
+}
+
+// ─── Content-surface style (persisted) ───────────────────────
+function setCardStyle(s) {
+  document.body.dataset.cards = s;
+  try { localStorage.setItem('bassoCards', s); } catch (e) {}
+  document.querySelectorAll('.style-opt').forEach(o => o.classList.toggle('on', o.dataset.style === s));
+  if (window.__cardsReady) showToast('Đã đổi giao diện: ' + ({ gray: 'Xám nhạt', float: 'Nổi', outline: 'Viền mảnh' }[s] || s));
+}
+(function () {
+  let saved = 'outline';
+  try { saved = localStorage.getItem('bassoCards') || 'outline'; } catch (e) {}
+  setCardStyle(saved);
+  window.__cardsReady = true;
+})();
+
+// ─── Toast ───────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toastEl');
+  t.textContent = msg;
+  t.classList.toggle('error', !!isError);
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
 // ─── Init ─────────────────────────────────────────────────────
@@ -1970,17 +2237,19 @@ window.addEventListener('DOMContentLoaded', async () => {
   renderUserBadge();
   updateRoleUI();
   loadAllCustomContent();
-
-  // Live preview trong edit modal
-  document.getElementById('editTextarea').addEventListener('input', updatePreview);
 });
+
+document.querySelectorAll('.sidebar-link').forEach(l => l.addEventListener('click', () => navigate(l.dataset.page)));
+bindGo(document);
+paintIcons(document);
+navigate((location.hash || '#home').slice(1));
 
 // ─── User badge ───────────────────────────────────────────────
 function renderUserBadge() {
   const el = document.getElementById('userBadge');
   if (!el) return;
   if (!currentUser.email) {
-    el.innerHTML = '<span style="font-size:12px;color:var(--gray-300);">Viewer</span>';
+    el.innerHTML = '<span class="role-tag role-viewer">Viewer</span>';
     return;
   }
   const role = currentUser.isAdmin ? 'Admin' : currentUser.isEditor ? 'Editor' : 'Viewer';
@@ -1990,54 +2259,26 @@ function renderUserBadge() {
 }
 
 function updateRoleUI() {
-  // Settings link — chỉ admin
-  const sl = document.getElementById('settingsSidebarLink');
-  if (sl) sl.style.display = currentUser.isAdmin ? 'flex' : 'none';
-  // Refresh edit button cho trang đang active
+  // Mục Cài đặt — chỉ admin
+  const sec = document.getElementById('settingsSection');
+  if (sec) sec.style.display = currentUser.isAdmin ? '' : 'none';
+  // Refresh nút edit cho trang đang active
   const activePage = document.querySelector('.page.active');
-  if (activePage) refreshEditBtn(activePage.id.replace('page-', ''));
-}
-
-// ─── Navigation ───────────────────────────────────────────────
-function navigate(pageId) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-  const page = document.getElementById('page-' + pageId);
-  if (page) page.classList.add('active');
-  const link = document.querySelector(`[onclick="navigate('${pageId}')"]`);
-  if (link) link.classList.add('active');
-  const mainEl = document.querySelector('.main');
-  if (mainEl) mainEl.scrollTop = 0;
-
-  if (pageId === 'settings') loadSettings();
-  refreshEditBtn(pageId);
+  if (activePage) refreshEditBtn(activePage.dataset.page);
 }
 
 function refreshEditBtn(pageId) {
-  // Xóa nút cũ
   document.querySelectorAll('.edit-page-btn').forEach(b => b.remove());
-  // Không show nút edit cho home / search / settings
   if (!currentUser.isEditor) return;
-  if (['home','search','settings'].includes(pageId)) return;
-  const page = document.getElementById('page-' + pageId);
-  const header = page && page.querySelector('.page-header');
-  if (!header) return;
+  if (!CONTENT_PAGES.includes(pageId)) return;
+  const page = document.querySelector(`.page[data-page="${pageId}"]`);
+  const row = page && page.querySelector('.page-header-row');
+  if (!row) return;
   const btn = document.createElement('button');
   btn.className = 'btn btn-secondary btn-sm edit-page-btn';
   btn.innerHTML = '✏️ Chỉnh sửa';
-  btn.style.display = 'inline-flex';
   btn.onclick = () => openEditModal(pageId);
-  // Đặt nút cạnh h1 bằng flex wrapper
-  const h1 = header.querySelector('h1');
-  if (h1) {
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:12px;';
-    h1.parentNode.insertBefore(wrapper, h1);
-    wrapper.appendChild(h1);
-    wrapper.appendChild(btn);
-  } else {
-    header.appendChild(btn);
-  }
+  row.appendChild(btn);
 }
 
 // ─── Custom content load/save ─────────────────────────────────
@@ -2055,31 +2296,45 @@ async function loadCustomContent(pageId) {
 }
 
 function getPageBody(pageId) {
-  const page = document.getElementById('page-' + pageId);
+  const page = document.querySelector(`.page[data-page="${pageId}"]`);
   if (!page) return '';
   const header = page.querySelector('.page-header');
   if (!header) return page.innerHTML;
   let html = '';
   let el = header.nextElementSibling;
   while (el) {
-    if (!el.classList.contains('edit-page-btn')) html += el.outerHTML;
+    html += el.outerHTML;
     el = el.nextElementSibling;
   }
   return html;
 }
 
 function setPageBody(pageId, html) {
-  const page = document.getElementById('page-' + pageId);
+  const page = document.querySelector(`.page[data-page="${pageId}"]`);
   if (!page) return;
   const header = page.querySelector('.page-header');
-  // Xóa tất cả element sau header (trừ edit button)
   let el = header ? header.nextElementSibling : null;
   while (el) {
     const next = el.nextElementSibling;
-    if (!el.classList.contains('edit-page-btn')) el.remove();
+    el.remove();
     el = next;
   }
   header ? header.insertAdjacentHTML('afterend', html) : (page.innerHTML = html);
+  normalizeAccordions(page);
+}
+
+// Nội dung lưu từ bản cũ có thể thiếu lớp .accordion-body-inner (dùng cho padding)
+function normalizeAccordions(root) {
+  root.querySelectorAll('.accordion-body').forEach(body => {
+    body.classList.remove('open');
+    body.style.maxHeight = '';
+    if (!body.querySelector(':scope > .accordion-body-inner')) {
+      const inner = document.createElement('div');
+      inner.className = 'accordion-body-inner';
+      while (body.firstChild) inner.appendChild(body.firstChild);
+      body.appendChild(inner);
+    }
+  });
 }
 
 // ─── WYSIWYG helpers ──────────────────────────────────────────
@@ -2136,7 +2391,6 @@ function toggleSourceMode() {
     toolbar.style.opacity = '0.4';
     toolbar.style.pointerEvents = 'none';
     btn.textContent = '✎ WYSIWYG';
-    btn.classList.add('active');
   } else {
     editor.innerHTML = source.value;
     editor.style.display = '';
@@ -2144,7 +2398,6 @@ function toggleSourceMode() {
     toolbar.style.opacity = '';
     toolbar.style.pointerEvents = '';
     btn.textContent = '</> HTML';
-    btn.classList.remove('active');
   }
   wysiwygSourceMode = !wysiwygSourceMode;
 }
@@ -2162,11 +2415,10 @@ async function openEditModal(pageId) {
   toolbar.style.opacity = '';
   toolbar.style.pointerEvents = '';
   btn.textContent = '</> HTML';
-  btn.classList.remove('active');
 
-  const page = document.getElementById('page-' + pageId);
+  const page = document.querySelector(`.page[data-page="${pageId}"]`);
   const titleEl = page && page.querySelector('h1');
-  document.getElementById('editModalTitle').textContent = titleEl ? titleEl.textContent : pageId;
+  document.getElementById('editModalTitle').textContent = titleEl ? titleEl.textContent.trim() : pageId;
 
   let html = getPageBody(pageId);
   document.getElementById('editLastSaved').textContent = '';
@@ -2256,7 +2508,7 @@ function renderList(listId, emails, type) {
     ? emails.map(email => `
         <li>
           <span>${email}</span>
-          <button class="btn-remove" onclick="removeEmail('${type}','${email}')" title="Xóa">×</button>
+          <button class="btn-remove" onclick="removeEmail('${type}','${email}')" title="Xóa">✕</button>
         </li>`).join('')
     : '<li class="empty-msg">Chưa có tài khoản nào</li>';
 }
@@ -2290,65 +2542,12 @@ async function saveSettings() {
       const msg = document.getElementById('settingsSaveMsg');
       msg.style.display = 'inline';
       setTimeout(() => msg.style.display = 'none', 3000);
+      showToast('✓ Đã lưu cài đặt');
     } else {
       const err = await res.json();
       showToast(err.error || 'Lỗi khi lưu', true);
     }
   } catch { showToast('Không kết nối được server', true); }
-}
-
-// ─── Toast ────────────────────────────────────────────────────
-function showToast(msg, isError = false) {
-  const el = document.getElementById('toastEl');
-  el.textContent = msg;
-  el.className = 'toast ' + (isError ? 'toast-error' : 'toast-success');
-  el.style.display = 'block';
-  el.style.opacity = '1';
-  clearTimeout(el._t);
-  el._t = setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.style.display = 'none', 300); }, 2500);
-}
-
-// ─── Accordion ───────────────────────────────────────────────
-function toggleAcc(header) {
-  const body = header.nextElementSibling;
-  const isOpen = body.classList.contains('open');
-  header.classList.toggle('open', !isOpen);
-  body.classList.toggle('open', !isOpen);
-}
-
-// ─── Search ───────────────────────────────────────────────────
-let searchTimeout;
-function doSearch(q) {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    q = q.trim();
-    if (!q) { navigate('home'); return; }
-    navigate('search');
-    const resultsEl = document.getElementById('searchResults');
-    const pages = document.querySelectorAll('.page:not(#page-search):not(#page-home)');
-    const results = [];
-    const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-    pages.forEach(page => {
-      const title = page.querySelector('h1') ? page.querySelector('h1').textContent : '';
-      const text = page.innerText;
-      if (re.test(text)) {
-        const pageId = page.id.replace('page-', '');
-        const snippet = text.replace(/\n+/g, ' ').substring(0, 300);
-        results.push({ id: pageId, title, snippet: snippet.replace(re, m => `<mark>${m}</mark>`) });
-      }
-    });
-    resultsEl.innerHTML = results.length === 0
-      ? '<p style="color:var(--gray-500);font-size:14px;">Không tìm thấy kết quả nào.</p>'
-      : results.map(r => `
-          <div class="accordion" style="margin-bottom:12px;">
-            <div class="accordion-header" onclick="navigate('${r.id}')" style="cursor:pointer;">
-              ${r.title}<span style="font-size:12px;color:var(--brand);font-weight:400;margin-left:8px;">Xem →</span>
-            </div>
-            <div class="accordion-body open" style="display:block;">
-              <p style="color:var(--gray-500);">${r.snippet}...</p>
-            </div>
-          </div>`).join('');
-  }, 300);
 }
 </script>
 </body>
