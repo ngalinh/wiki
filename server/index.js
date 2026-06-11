@@ -8,10 +8,12 @@ const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname, 'data');
 const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 const CONTENT_DIR = path.join(DATA_DIR, 'content');
+const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
 
 // Bootstrap data dirs
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
+if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 if (!fs.existsSync(CONFIG_FILE)) {
   const bootstrapAdmins = (process.env.ADMIN_EMAILS || '')
     .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
@@ -19,6 +21,7 @@ if (!fs.existsSync(CONFIG_FILE)) {
 }
 
 app.use(express.json({ limit: '2mb' }));
+app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d' }));
 app.use(express.static(path.join(__dirname, '..'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('index.html')) {
@@ -110,6 +113,20 @@ app.post('/api/content/:pageId', (req, res) => {
     content, updatedBy: email, updatedAt: new Date().toISOString()
   }, null, 2));
   res.json({ success: true });
+});
+
+// POST /api/upload  — upload ảnh từ máy tính, editor only
+const IMAGE_EXTS = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp' };
+app.post('/api/upload', express.raw({ type: 'image/*', limit: '10mb' }), (req, res) => {
+  const email = getUserEmail(req);
+  if (!isEditor(email)) return res.status(403).json({ error: 'Không có quyền chỉnh sửa' });
+  const ext = IMAGE_EXTS[(req.headers['content-type'] || '').split(';')[0].trim()];
+  if (!ext) return res.status(400).json({ error: 'Chỉ hỗ trợ ảnh PNG, JPG, GIF, WebP' });
+  if (!Buffer.isBuffer(req.body) || req.body.length === 0)
+    return res.status(400).json({ error: 'File ảnh rỗng' });
+  const name = `img-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  fs.writeFileSync(path.join(UPLOAD_DIR, name), req.body);
+  res.json({ success: true, url: `uploads/${name}` });
 });
 
 // DELETE /api/content/:pageId  — reset về mặc định, editor only

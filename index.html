@@ -2321,7 +2321,9 @@ tbody tr:hover{background:var(--cream);}
       <div class="wysiwyg-sep"></div>
       <button class="wysiwyg-btn" onclick="insertLink()" title="Chèn liên kết">&#128279;</button>
       <button class="wysiwyg-btn" onclick="fmt('unlink')" title="Xóa liên kết">&#128280;</button>
-      <button class="wysiwyg-btn" onclick="insertImage()" title="Chèn hình ảnh">&#128247;</button>
+      <button class="wysiwyg-btn" onclick="insertImage()" title="Chèn hình ảnh từ URL">&#128247;</button>
+      <button class="wysiwyg-btn" onclick="document.getElementById('imageFileInput').click()" title="Tải ảnh lên từ máy tính">&#128228;</button>
+      <input type="file" id="imageFileInput" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" onchange="uploadImageFile(this)">
       <button class="wysiwyg-btn" onclick="insertTable()" title="Chèn bảng">&#9783;</button>
       <button class="wysiwyg-btn" onclick="fmt('insertHorizontalRule')" title="Đường kẻ ngang">&#9135;</button>
       <div class="wysiwyg-sep"></div>
@@ -2622,6 +2624,27 @@ function insertImage() {
   const alt = prompt('Mô tả hình ảnh (alt text):', '') || '';
   document.getElementById('wysiwygEditor').focus();
   document.execCommand('insertHTML', false, `<img src="${url}" alt="${alt}" style="max-width:100%;height:auto;">`);
+}
+
+async function uploadImageFile(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { showToast('Ảnh quá lớn (tối đa 10MB)', true); return; }
+  showToast('Đang tải ảnh lên...');
+  try {
+    const res = await fetch(apiUrl('./api/upload'), {
+      method: 'POST',
+      headers: { 'Content-Type': file.type },
+      body: file
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { showToast(data.error || 'Lỗi khi tải ảnh lên', true); return; }
+    const alt = file.name.replace(/"/g, '&quot;');
+    document.getElementById('wysiwygEditor').focus();
+    document.execCommand('insertHTML', false, `<img src="${data.url}" alt="${alt}" style="max-width:100%;height:auto;">`);
+    showToast('✓ Đã chèn ảnh');
+  } catch { showToast('Không kết nối được server', true); }
 }
 
 function insertTable() {
