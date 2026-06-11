@@ -142,8 +142,11 @@ strong{font-weight:700;color:var(--ink);}
 .main{flex:1;height:calc(100vh - var(--nav-h));overflow-y:auto;}
 .page{max-width:880px;margin:0 auto;padding:40px 44px calc(90px + env(safe-area-inset-bottom, 0px));display:none;}
 .page img{max-width:100%;height:auto;}
-.h2-ico{display:inline-flex;width:30px;height:30px;border-radius:9px;background:var(--brown-soft);color:var(--brown-ink);align-items:center;justify-content:center;margin-right:10px;vertical-align:-8px;}
+.h2-ico{display:inline-flex;width:30px;height:30px;flex:0 0 auto;border-radius:9px;background:var(--brown-soft);color:var(--brown-ink);align-items:center;justify-content:center;margin-right:10px;vertical-align:middle;}
 .h2-ico svg{width:17px;height:17px;}
+/* Tiêu đề có icon: dùng flex để icon luôn thẳng hàng giữa với chữ */
+h2:has(> .h2-ico),h3:has(> .h2-ico){display:flex;align-items:center;}
+.page-updated{font-size:12px;color:var(--ink-mute);margin-top:6px;}
 .page.active{display:block;}
 /* entrance: base state is fully visible; animation only enhances when motion is allowed */
 @media (prefers-reduced-motion: no-preference){
@@ -2492,7 +2495,10 @@ const EMOJI_H_ICONS = {
   '🚀':'rocket','✨':'sparkles','📖':'quy-dinh','❓':'hoi-dap',
 };
 function themeHeadingIcons(root){
-  (root||document).querySelectorAll('.page h2, .page h3').forEach(h=>{
+  // Không truyền root → quét các trang; truyền root (trang hoặc editor) → quét trong đó
+  const scope=root||document;
+  const sel=root?'h2, h3':'.page h2, .page h3';
+  scope.querySelectorAll(sel).forEach(h=>{
     if(h.querySelector('.h2-ico')) return;
     const tn=h.firstChild;
     if(!tn || tn.nodeType!==3) return;
@@ -2690,8 +2696,28 @@ async function loadCustomContent(pageId) {
     const res = await fetch(`./api/content/${pageId}`);
     if (!res.ok) return;
     const data = await res.json();
-    if (data && data.content) setPageBody(pageId, data.content);
+    if (data && data.content) {
+      setPageBody(pageId, data.content);
+      setPageUpdated(pageId, data);
+    }
   } catch {}
+}
+
+// Dòng "Cập nhật ... bởi ..." nhỏ ngay dưới tiêu đề trang (chỉ trang có nội dung đã sửa)
+function setPageUpdated(pageId, info) {
+  const page = document.querySelector(`.page[data-page="${pageId}"]`);
+  if (!page) return;
+  const header = page.querySelector('.page-header');
+  if (!header) return;
+  let el = header.querySelector('.page-updated');
+  if (!el) {
+    el = document.createElement('div');
+    el.className = 'page-updated';
+    header.appendChild(el);
+  }
+  const d = new Date(info.updatedAt);
+  el.textContent = `Cập nhật ${d.toLocaleDateString('vi')} ${d.toLocaleTimeString('vi', { hour: '2-digit', minute: '2-digit' })}` +
+    (info.updatedBy ? ` bởi ${info.updatedBy}` : '');
 }
 
 function getPageBody(pageId) {
@@ -3098,6 +3124,7 @@ async function openEditModal(pageId) {
   } catch {}
 
   editor.innerHTML = html;
+  themeHeadingIcons(editor);
   document.getElementById('editModal').classList.add('open');
   document.execCommand('styleWithCSS', false, true);
   setTimeout(() => editor.focus(), 100);
@@ -3124,6 +3151,7 @@ async function saveEditModal() {
     });
     if (res.ok) {
       setPageBody(editingPageId, content);
+      setPageUpdated(editingPageId, { updatedAt: new Date().toISOString(), updatedBy: currentUser.email });
       closeEditModal();
       showToast('✓ Đã lưu thành công');
     } else {
