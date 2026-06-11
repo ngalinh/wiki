@@ -141,6 +141,7 @@ strong{font-weight:700;color:var(--ink);}
 
 .main{flex:1;height:calc(100vh - var(--nav-h));overflow-y:auto;}
 .page{max-width:880px;margin:0 auto;padding:40px 44px calc(90px + env(safe-area-inset-bottom, 0px));display:none;}
+.page img{max-width:100%;height:auto;}
 .page.active{display:block;}
 /* entrance: base state is fully visible; animation only enhances when motion is allowed */
 @media (prefers-reduced-motion: no-preference){
@@ -355,6 +356,21 @@ tbody tr:hover{background:var(--cream);}
 .wysiwyg-editor img{max-width:100%;height:auto;border-radius:var(--r-xs);margin:4px 0;}
 .wysiwyg-source{flex:1;border:none;padding:16px;font-family:var(--font-mono);font-size:12.5px;resize:none;outline:none;background:var(--white);line-height:1.5;display:none;min-height:0;color:var(--ink);}
 .wysiwyg-source.visible{display:block;}
+.wysiwyg-dd{position:relative;display:inline-flex;}
+.wysiwyg-menu{display:none;position:absolute;top:30px;left:0;background:var(--white);border:1px solid var(--line);border-radius:var(--r-xs);box-shadow:var(--shadow-md);padding:5px;z-index:210;min-width:150px;}
+.wysiwyg-menu.open{display:block;}
+.wysiwyg-mi{display:block;width:100%;text-align:left;background:none;border:none;border-radius:var(--r-xs);padding:6px 10px;font-size:13px;color:var(--ink-soft);cursor:pointer;font-family:var(--font);white-space:nowrap;}
+.wysiwyg-mi:hover{background:var(--cream);}
+.wysiwyg-mi.danger{color:var(--red-ink);}
+.color-grid{display:grid;grid-template-columns:repeat(8,22px);gap:4px;padding:4px;}
+.color-cell{width:22px;height:22px;border-radius:4px;cursor:pointer;border:1px solid rgba(0,0,0,.15);padding:0;}
+.color-cell:hover{transform:scale(1.15);}
+.img-bubble{position:fixed;z-index:220;background:var(--ink);border-radius:var(--r-pill);padding:4px 8px;display:none;gap:2px;align-items:center;box-shadow:var(--shadow-md);}
+.img-bubble.show{display:inline-flex;}
+.img-bubble button{background:none;border:none;color:#fff;font-size:12px;padding:4px 7px;cursor:pointer;border-radius:var(--r-xs);font-family:var(--font);white-space:nowrap;}
+.img-bubble button:hover{background:rgba(255,255,255,.18);}
+.img-bubble .bub-sep{width:1px;height:16px;background:rgba(255,255,255,.3);margin:0 2px;}
+.wysiwyg-editor img.img-selected{outline:2px solid var(--lav);outline-offset:2px;}
 
 /* ---------- HỎI ĐÁP AI (chat) ---------- */
 .chat-card{background:var(--white);border:1px solid var(--line-soft);border-radius:var(--r-card);
@@ -2293,7 +2309,10 @@ tbody tr:hover{background:var(--cream);}
       </div>
     </div>
     <div class="wysiwyg-toolbar" id="wysiwygToolbar">
-      <select class="wysiwyg-select" id="blockSelect" onchange="fmtBlock(this.value)">
+      <button class="wysiwyg-btn" onclick="fmt('undo')" title="Hoàn tác (Ctrl+Z)">&#8630;</button>
+      <button class="wysiwyg-btn" onclick="fmt('redo')" title="Làm lại (Ctrl+Y)">&#8631;</button>
+      <div class="wysiwyg-sep"></div>
+      <select class="wysiwyg-select" id="blockSelect" onchange="fmtBlock(this.value)" title="Kiểu đoạn">
         <option value="p">Đoạn văn</option>
         <option value="h1">Tiêu đề 1</option>
         <option value="h2">Tiêu đề 2</option>
@@ -2302,20 +2321,55 @@ tbody tr:hover{background:var(--cream);}
         <option value="pre">Code</option>
         <option value="blockquote">Trích dẫn</option>
       </select>
+      <select class="wysiwyg-select" onchange="fmtFont(this.value)" title="Phông chữ">
+        <option value="">Phông chữ</option>
+        <option value="Arial" style="font-family:Arial">Arial</option>
+        <option value="Times New Roman" style="font-family:'Times New Roman'">Times New Roman</option>
+        <option value="Georgia" style="font-family:Georgia">Georgia</option>
+        <option value="Verdana" style="font-family:Verdana">Verdana</option>
+        <option value="Tahoma" style="font-family:Tahoma">Tahoma</option>
+        <option value="Courier New" style="font-family:'Courier New'">Courier New</option>
+      </select>
+      <select class="wysiwyg-select" onchange="fmtSize(this.value)" title="Cỡ chữ">
+        <option value="">Cỡ chữ</option>
+        <option value="1">10</option>
+        <option value="2">13</option>
+        <option value="3">16</option>
+        <option value="4">18</option>
+        <option value="5">24</option>
+        <option value="6">32</option>
+        <option value="7">48</option>
+      </select>
       <div class="wysiwyg-sep"></div>
       <button class="wysiwyg-btn" onclick="fmt('bold')" title="In đậm (Ctrl+B)"><b>B</b></button>
       <button class="wysiwyg-btn" onclick="fmt('italic')" title="In nghiêng (Ctrl+I)"><i style="font-style:italic">I</i></button>
       <button class="wysiwyg-btn" onclick="fmt('underline')" title="Gạch dưới (Ctrl+U)"><u>U</u></button>
       <button class="wysiwyg-btn" onclick="fmt('strikeThrough')" title="Gạch ngang"><s>S</s></button>
-      <div class="wysiwyg-sep"></div>
-      <button class="wysiwyg-btn" onclick="fmt('insertUnorderedList')" title="Danh sách dấu chấm">&#8226;&#9135;</button>
-      <button class="wysiwyg-btn" onclick="fmt('insertOrderedList')" title="Danh sách số">1&#9135;</button>
+      <div class="wysiwyg-dd">
+        <button class="wysiwyg-btn" onmousedown="event.preventDefault()" onclick="ddToggle('ddColor')" title="Màu chữ" style="color:var(--red-ink)"><b>A</b></button>
+        <div class="wysiwyg-menu" id="ddColor"><div class="color-grid" data-cmd="foreColor"></div></div>
+      </div>
+      <div class="wysiwyg-dd">
+        <button class="wysiwyg-btn" onmousedown="event.preventDefault()" onclick="ddToggle('ddHilite')" title="Màu nền chữ (highlight)" style="background:#fff3a0">&#9998;</button>
+        <div class="wysiwyg-menu" id="ddHilite"><div class="color-grid" data-cmd="hiliteColor"></div></div>
+      </div>
       <div class="wysiwyg-sep"></div>
       <button class="wysiwyg-btn" onclick="fmt('justifyLeft')" title="Căn trái">&#8676;</button>
       <button class="wysiwyg-btn" onclick="fmt('justifyCenter')" title="Căn giữa">&#8677;</button>
       <button class="wysiwyg-btn" onclick="fmt('justifyRight')" title="Căn phải">&#8680;</button>
       <button class="wysiwyg-btn" onclick="fmt('justifyFull')" title="Căn đều">&#8644;</button>
+      <div class="wysiwyg-dd">
+        <button class="wysiwyg-btn" onmousedown="event.preventDefault()" onclick="ddToggle('ddSpacing')" title="Giãn dòng">&#8645;</button>
+        <div class="wysiwyg-menu" id="ddSpacing">
+          <button class="wysiwyg-mi" onclick="lineSpacing('1.2')">Đơn (1.2)</button>
+          <button class="wysiwyg-mi" onclick="lineSpacing('1.5')">1.5</button>
+          <button class="wysiwyg-mi" onclick="lineSpacing('1.75')">Mặc định (1.75)</button>
+          <button class="wysiwyg-mi" onclick="lineSpacing('2.2')">Đôi (2.2)</button>
+        </div>
+      </div>
       <div class="wysiwyg-sep"></div>
+      <button class="wysiwyg-btn" onclick="fmt('insertUnorderedList')" title="Danh sách dấu chấm">&#8226;&#9135;</button>
+      <button class="wysiwyg-btn" onclick="fmt('insertOrderedList')" title="Danh sách số">1&#9135;</button>
       <button class="wysiwyg-btn" onclick="fmt('indent')" title="Thụt vào">&#8677;</button>
       <button class="wysiwyg-btn" onclick="fmt('outdent')" title="Thụt ra">&#8676;</button>
       <div class="wysiwyg-sep"></div>
@@ -2324,11 +2378,20 @@ tbody tr:hover{background:var(--cream);}
       <button class="wysiwyg-btn" onclick="insertImage()" title="Chèn hình ảnh từ URL">&#128247;</button>
       <button class="wysiwyg-btn" onclick="document.getElementById('imageFileInput').click()" title="Tải ảnh lên từ máy tính">&#128228;</button>
       <input type="file" id="imageFileInput" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" onchange="uploadImageFile(this)">
-      <button class="wysiwyg-btn" onclick="insertTable()" title="Chèn bảng">&#9783;</button>
+      <div class="wysiwyg-dd">
+        <button class="wysiwyg-btn" onmousedown="event.preventDefault()" onclick="ddToggle('ddTable')" title="Bảng">&#9783; Bảng &#9662;</button>
+        <div class="wysiwyg-menu" id="ddTable">
+          <button class="wysiwyg-mi" onclick="insertTable()">&#10133; Chèn bảng mới…</button>
+          <button class="wysiwyg-mi" onclick="tableInsertRow(false)">Thêm hàng phía trên</button>
+          <button class="wysiwyg-mi" onclick="tableInsertRow(true)">Thêm hàng phía dưới</button>
+          <button class="wysiwyg-mi" onclick="tableInsertCol(false)">Thêm cột bên trái</button>
+          <button class="wysiwyg-mi" onclick="tableInsertCol(true)">Thêm cột bên phải</button>
+          <button class="wysiwyg-mi danger" onclick="tableDeleteRow()">Xóa hàng hiện tại</button>
+          <button class="wysiwyg-mi danger" onclick="tableDeleteCol()">Xóa cột hiện tại</button>
+          <button class="wysiwyg-mi danger" onclick="tableDeleteTable()">Xóa cả bảng</button>
+        </div>
+      </div>
       <button class="wysiwyg-btn" onclick="fmt('insertHorizontalRule')" title="Đường kẻ ngang">&#9135;</button>
-      <div class="wysiwyg-sep"></div>
-      <button class="wysiwyg-btn" onclick="fmt('undo')" title="Hoàn tác (Ctrl+Z)">&#8630;</button>
-      <button class="wysiwyg-btn" onclick="fmt('redo')" title="Làm lại (Ctrl+Y)">&#8631;</button>
       <div class="wysiwyg-sep"></div>
       <button class="wysiwyg-btn" onclick="fmt('removeFormat')" title="Xóa định dạng">T&#x0336;</button>
     </div>
@@ -2343,6 +2406,21 @@ tbody tr:hover{background:var(--cream);}
       <button class="btn" onclick="saveEditModal()">💾 Lưu</button>
     </div>
   </div>
+</div>
+
+<!-- Bubble chỉnh kích thước/căn lề ảnh — hiện khi click vào ảnh trong editor -->
+<div class="img-bubble" id="imgBubble">
+  <button onclick="imgSetWidth('25%')">25%</button>
+  <button onclick="imgSetWidth('50%')">50%</button>
+  <button onclick="imgSetWidth('75%')">75%</button>
+  <button onclick="imgSetWidth('100%')">100%</button>
+  <button onclick="imgSetWidth('')" title="Kích thước gốc của ảnh">Gốc</button>
+  <span class="bub-sep"></span>
+  <button onclick="imgAlign('left')" title="Ảnh bên trái, chữ bao quanh">&#8676;</button>
+  <button onclick="imgAlign('center')" title="Căn giữa">&#8677;</button>
+  <button onclick="imgAlign('right')" title="Ảnh bên phải, chữ bao quanh">&#8680;</button>
+  <span class="bub-sep"></span>
+  <button onclick="imgDelete()" title="Xóa ảnh">&#128465;</button>
 </div>
 
 <script>
@@ -2626,10 +2704,13 @@ function insertImage() {
   document.execCommand('insertHTML', false, `<img src="${url}" alt="${alt}" style="max-width:100%;height:auto;">`);
 }
 
-async function uploadImageFile(input) {
-  const file = input.files && input.files[0];
-  input.value = '';
+// Upload 1 file ảnh lên server rồi chèn vào vị trí con trỏ.
+// Dùng chung cho nút 📤, dán (Ctrl+V) và kéo-thả ảnh vào editor.
+async function uploadAndInsertImage(file) {
   if (!file) return;
+  if (!/^image\/(png|jpe?g|gif|webp)$/.test(file.type)) {
+    showToast('Chỉ hỗ trợ ảnh PNG, JPG, GIF, WebP', true); return;
+  }
   if (file.size > 10 * 1024 * 1024) { showToast('Ảnh quá lớn (tối đa 10MB)', true); return; }
   showToast('Đang tải ảnh lên...');
   try {
@@ -2640,14 +2721,92 @@ async function uploadImageFile(input) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) { showToast(data.error || 'Lỗi khi tải ảnh lên', true); return; }
-    const alt = file.name.replace(/"/g, '&quot;');
+    const alt = (file.name || 'ảnh').replace(/"/g, '&quot;');
     document.getElementById('wysiwygEditor').focus();
     document.execCommand('insertHTML', false, `<img src="${data.url}" alt="${alt}" style="max-width:100%;height:auto;">`);
-    showToast('✓ Đã chèn ảnh');
+    showToast('✓ Đã chèn ảnh — click vào ảnh để chỉnh kích thước');
   } catch { showToast('Không kết nối được server', true); }
 }
 
+function uploadImageFile(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  uploadAndInsertImage(file);
+}
+
+function fmtFont(v) {
+  if (!v) return;
+  document.getElementById('wysiwygEditor').focus();
+  document.execCommand('styleWithCSS', false, true);
+  document.execCommand('fontName', false, v);
+}
+
+function fmtSize(v) {
+  if (!v) return;
+  document.getElementById('wysiwygEditor').focus();
+  document.execCommand('styleWithCSS', false, true);
+  document.execCommand('fontSize', false, v);
+}
+
+// ─── Dropdown toolbar ─────────────────────────────────────────
+function ddToggle(id) {
+  const m = document.getElementById(id);
+  const wasOpen = m.classList.contains('open');
+  ddCloseAll();
+  if (!wasOpen) m.classList.add('open');
+}
+function ddCloseAll() {
+  document.querySelectorAll('.wysiwyg-menu.open').forEach(m => m.classList.remove('open'));
+}
+
+const WYSIWYG_COLORS = ['#1a1916','#5f5b54','#9a958c','#ffffff','#c0392b','#e67e22','#b7950b','#27ae60',
+  '#2980b9','#8e44ad','#d81b60','#795548','#fadbd8','#fdebd0','#fff3a0','#d5f5e3',
+  '#d6eaf8','#e8daef','#fce4ec','#eceff1'];
+
+function fmtColor(cmd, color) {
+  ddCloseAll();
+  document.getElementById('wysiwygEditor').focus();
+  document.execCommand('styleWithCSS', false, true);
+  document.execCommand(cmd, false, color);
+}
+
+// ─── Giãn dòng: áp lên các khối giao với vùng chọn ────────────
+function lineSpacing(v) {
+  ddCloseAll();
+  const editor = document.getElementById('wysiwygEditor');
+  const sel = window.getSelection();
+  if (!sel.rangeCount || !editor.contains(sel.anchorNode)) {
+    showToast('Đặt con trỏ vào đoạn cần giãn dòng trước', true); return;
+  }
+  const range = sel.getRangeAt(0);
+  let applied = false;
+  editor.querySelectorAll('p,h1,h2,h3,h4,li,blockquote,pre,div').forEach(b => {
+    if (range.intersectsNode(b)) { b.style.lineHeight = v; applied = true; }
+  });
+  if (!applied) editor.style.lineHeight = v;
+}
+
+// ─── Công cụ bảng ─────────────────────────────────────────────
+function closestCell() {
+  const editor = document.getElementById('wysiwygEditor');
+  const sel = window.getSelection();
+  let n = sel.anchorNode;
+  while (n && n !== editor) {
+    if (n.nodeType === 1 && (n.tagName === 'TD' || n.tagName === 'TH')) return n;
+    n = n.parentNode;
+  }
+  return null;
+}
+
+function needCell() {
+  ddCloseAll();
+  const cell = closestCell();
+  if (!cell) showToast('Đặt con trỏ vào một ô trong bảng trước', true);
+  return cell;
+}
+
 function insertTable() {
+  ddCloseAll();
   const rows = parseInt(prompt('Số hàng:', '3')) || 3;
   const cols = parseInt(prompt('Số cột:', '3')) || 3;
   let html = '<table><thead><tr>' + Array(cols).fill('<th>Tiêu đề</th>').join('') + '</tr></thead><tbody>';
@@ -2659,7 +2818,161 @@ function insertTable() {
   document.execCommand('insertHTML', false, html);
 }
 
+function tableInsertRow(below) {
+  const cell = needCell();
+  if (!cell) return;
+  const row = cell.parentNode;
+  const newRow = document.createElement('tr');
+  for (let i = 0; i < row.cells.length; i++) {
+    const td = document.createElement('td');
+    td.innerHTML = '&nbsp;';
+    newRow.appendChild(td);
+  }
+  // Thêm "phía dưới" hàng tiêu đề (thead) → đưa vào đầu tbody để không thành hàng tiêu đề
+  const table = cell.closest('table');
+  if (below && row.parentNode.tagName === 'THEAD' && table.tBodies[0]) {
+    table.tBodies[0].insertBefore(newRow, table.tBodies[0].firstChild);
+  } else {
+    row.parentNode.insertBefore(newRow, below ? row.nextSibling : row);
+  }
+}
+
+function tableInsertCol(after) {
+  const cell = needCell();
+  if (!cell) return;
+  const idx = cell.cellIndex;
+  const table = cell.closest('table');
+  for (const row of table.rows) {
+    const ref = row.cells[Math.min(idx, row.cells.length - 1)];
+    if (!ref) continue;
+    const t = document.createElement(ref.tagName === 'TH' ? 'th' : 'td');
+    t.innerHTML = '&nbsp;';
+    row.insertBefore(t, after ? ref.nextSibling : ref);
+  }
+}
+
+function tableDeleteRow() {
+  const cell = needCell();
+  if (!cell) return;
+  const table = cell.closest('table');
+  cell.parentNode.remove();
+  if (table.rows.length === 0) table.remove();
+}
+
+function tableDeleteCol() {
+  const cell = needCell();
+  if (!cell) return;
+  const idx = cell.cellIndex;
+  const table = cell.closest('table');
+  for (const row of [...table.rows]) {
+    if (row.cells[idx]) row.deleteCell(idx);
+  }
+  if (!table.rows.length || [...table.rows].every(r => r.cells.length === 0)) table.remove();
+}
+
+function tableDeleteTable() {
+  const cell = needCell();
+  if (!cell) return;
+  if (confirm('Xóa cả bảng này?')) cell.closest('table').remove();
+}
+
+// ─── Chỉnh ảnh: click vào ảnh → bubble resize/căn lề/xóa ─────
+let selectedImg = null;
+
+function imgSelect(img) {
+  imgDeselect();
+  selectedImg = img;
+  img.classList.add('img-selected');
+  document.getElementById('imgBubble').classList.add('show');
+  imgBubblePosition();
+}
+
+function imgDeselect() {
+  if (selectedImg) selectedImg.classList.remove('img-selected');
+  selectedImg = null;
+  document.getElementById('imgBubble').classList.remove('show');
+}
+
+function imgBubblePosition() {
+  if (!selectedImg) return;
+  const r = selectedImg.getBoundingClientRect();
+  const bubble = document.getElementById('imgBubble');
+  bubble.style.left = Math.max(8, r.left + r.width / 2 - 160) + 'px';
+  bubble.style.top = (r.top > 110 ? r.top - 40 : r.top + 8) + 'px';
+}
+
+function imgSetWidth(w) {
+  if (!selectedImg) return;
+  selectedImg.style.width = w;
+  selectedImg.style.maxWidth = '100%';
+  selectedImg.style.height = 'auto';
+  imgBubblePosition();
+}
+
+function imgAlign(mode) {
+  if (!selectedImg) return;
+  const s = selectedImg.style;
+  s.float = ''; s.display = ''; s.margin = '4px 0';
+  if (mode === 'left') { s.float = 'left'; s.margin = '4px 14px 4px 0'; }
+  else if (mode === 'right') { s.float = 'right'; s.margin = '4px 0 4px 14px'; }
+  else if (mode === 'center') { s.display = 'block'; s.margin = '8px auto'; }
+  imgBubblePosition();
+}
+
+function imgDelete() {
+  if (!selectedImg) return;
+  selectedImg.remove();
+  imgDeselect();
+}
+
+// ─── Khởi tạo editor: bảng màu, dán/kéo-thả ảnh, chọn ảnh ────
+(function initWysiwyg() {
+  const editor = document.getElementById('wysiwygEditor');
+
+  document.querySelectorAll('.color-grid').forEach(grid => {
+    const cmd = grid.dataset.cmd;
+    const colors = cmd === 'hiliteColor' ? ['transparent', ...WYSIWYG_COLORS] : WYSIWYG_COLORS;
+    colors.forEach(c => {
+      const b = document.createElement('button');
+      b.className = 'color-cell';
+      b.title = c === 'transparent' ? 'Bỏ màu nền' : c;
+      b.style.background = c === 'transparent'
+        ? 'repeating-linear-gradient(45deg,#fff 0 4px,#ddd 4px 8px)' : c;
+      b.onclick = () => fmtColor(cmd, c);
+      grid.appendChild(b);
+    });
+  });
+
+  // Giữ vùng chọn trong editor khi bấm vào menu/bảng màu
+  document.querySelectorAll('.wysiwyg-menu').forEach(m =>
+    m.addEventListener('mousedown', e => e.preventDefault()));
+  document.getElementById('imgBubble').addEventListener('mousedown', e => e.preventDefault());
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.wysiwyg-dd')) ddCloseAll();
+    if (!e.target.closest('#imgBubble') && e.target.tagName !== 'IMG') imgDeselect();
+  });
+
+  editor.addEventListener('click', e => {
+    if (e.target.tagName === 'IMG') imgSelect(e.target);
+    else imgDeselect();
+  });
+  editor.addEventListener('scroll', imgBubblePosition);
+
+  // Dán hoặc kéo-thả ảnh → tự upload lên server (không nhúng base64 làm phình nội dung)
+  editor.addEventListener('paste', e => {
+    const file = [...(e.clipboardData && e.clipboardData.files || [])].find(f => f.type.startsWith('image/'));
+    if (file) { e.preventDefault(); uploadAndInsertImage(file); }
+  });
+  editor.addEventListener('drop', e => {
+    const file = [...(e.dataTransfer && e.dataTransfer.files || [])].find(f => f.type.startsWith('image/'));
+    if (file) { e.preventDefault(); uploadAndInsertImage(file); }
+  });
+})();
+
 function toggleSourceMode() {
+  imgDeselect();
+  ddCloseAll();
   const editor = document.getElementById('wysiwygEditor');
   const source = document.getElementById('editTextarea');
   const btn = document.getElementById('sourceToggleBtn');
@@ -2715,16 +3028,20 @@ async function openEditModal(pageId) {
 
   editor.innerHTML = html;
   document.getElementById('editModal').classList.add('open');
+  document.execCommand('styleWithCSS', false, true);
   setTimeout(() => editor.focus(), 100);
 }
 
 function closeEditModal() {
+  imgDeselect();
+  ddCloseAll();
   document.getElementById('editModal').classList.remove('open');
   editingPageId = null;
 }
 
 async function saveEditModal() {
   if (!editingPageId) return;
+  imgDeselect();
   const editor = document.getElementById('wysiwygEditor');
   const source = document.getElementById('editTextarea');
   const content = wysiwygSourceMode ? source.value : editor.innerHTML;
