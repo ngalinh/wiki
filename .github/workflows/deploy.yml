@@ -25,9 +25,36 @@ jobs:
             # cwd /app/data/bots/<id>/server) — pkill theo tên không trúng được.
             # Tìm đúng process theo cwd chứa id bot rồi kill; manager tự respawn
             # với code mới. (Xác minh 2026-06-11 qua log chẩn đoán deploy #36-#38)
-            for pid in $(pgrep node); do
+            for pid in $(pgrep node || true); do
               cwd=$(sudo readlink /proc/$pid/cwd 2>/dev/null) || true
               case "$cwd" in *e9778bedc4f9f670*) echo "restart wiki pid=$pid"; sudo kill $pid || true;; esac
             done
-            sleep 5
-            sudo git log --oneline -1
+            # Xác minh production THẬT SỰ chạy commit mới: poll /api/version
+            # (endpoint trả về SHA đọc lúc process khởi động). Port 4105 nằm trong
+            # network namespace của container nên phải nsenter vào netns của chính
+            # process wiki. Không khớp sau 60s → in chẩn đoán và FAIL deploy.
+            EXPECTED=$(sudo git rev-parse HEAD)
+            OK=""
+            for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
+              sleep 5
+              WIKI_PID=""
+              for pid in $(pgrep node || true); do
+                cwd=$(sudo readlink /proc/$pid/cwd 2>/dev/null) || true
+                case "$cwd" in *e9778bedc4f9f670*) WIKI_PID=$pid;; esac
+              done
+              if [ -z "$WIKI_PID" ]; then echo "verify $i: chưa thấy process wiki (đợi manager respawn)"; continue; fi
+              GOT=$(sudo nsenter -t "$WIKI_PID" -n curl -s -m 5 http://127.0.0.1:4105/api/version 2>/dev/null) || true
+              echo "verify $i: pid=$WIKI_PID version=$GOT"
+              case "$GOT" in *"$EXPECTED"*) OK=1; break;; esac
+            done
+            if [ -n "$OK" ]; then
+              echo "✅ Production đang chạy đúng commit $EXPECTED"
+            else
+              echo "❌ Production KHÔNG chạy commit $EXPECTED — chẩn đoán:"
+              for pid in $(pgrep node || true); do
+                echo "  node pid=$pid cwd=$(sudo readlink /proc/$pid/cwd 2>/dev/null || echo '?')"
+              done
+              echo "  Nội dung trang tùy chỉnh (đè lên mặc định trong index.html):"
+              sudo ls -la server/data/content/ 2>/dev/null || echo "  (không có)"
+              exit 1
+            fi

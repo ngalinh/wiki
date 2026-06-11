@@ -63,6 +63,30 @@ function isEditor(email) {
   return c.admins.includes(email) || c.editors.includes(email) || getEnvAdmins().includes(email);
 }
 
+// Đọc commit SHA từ .git lúc khởi động (không cần git binary trong container).
+// Giá trị nằm trong RAM của process → /api/version chứng minh process đang chạy
+// được khởi động với code của commit nào (dùng cho bước xác minh deploy).
+function getGitSha() {
+  try {
+    const gitDir = path.join(__dirname, '..', '.git');
+    const head = fs.readFileSync(path.join(gitDir, 'HEAD'), 'utf8').trim();
+    if (!head.startsWith('ref:')) return head;
+    const ref = head.slice(4).trim();
+    const refFile = path.join(gitDir, ...ref.split('/'));
+    if (fs.existsSync(refFile)) return fs.readFileSync(refFile, 'utf8').trim();
+    const packed = fs.readFileSync(path.join(gitDir, 'packed-refs'), 'utf8');
+    const line = packed.split('\n').find(l => l.trim().endsWith(' ' + ref));
+    return line ? line.trim().split(' ')[0] : 'unknown';
+  } catch { return 'unknown'; }
+}
+const STARTED_SHA = getGitSha();
+const STARTED_AT = new Date().toISOString();
+
+// GET /api/version — public, dùng để xác minh deploy
+app.get('/api/version', (req, res) => {
+  res.json({ sha: STARTED_SHA, startedAt: STARTED_AT });
+});
+
 // GET /api/me
 app.get('/api/me', (req, res) => {
   const email = getUserEmail(req);
