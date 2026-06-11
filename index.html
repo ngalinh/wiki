@@ -2119,12 +2119,11 @@ tbody tr:hover{background:var(--cream);}
     <div class="section">
       <h2>🔌 Cách xác thực người dùng</h2>
       <div class="callout info">
-        Wiki nhận diện người dùng qua <strong>HTTP header</strong> mà dashboard gửi khi proxy request.<br><br>
-        Tên header mặc định: <code>X-User-Email: email_nhan_vien@company.com</code><br><br>
-        Có thể đổi tên header bằng biến môi trường <code>USER_EMAIL_HEADER</code> trong file <code>.env</code>.
+        Wiki tự nhận diện nhân viên qua <strong>phiên đăng nhập hệ thống</strong> (dashboard lưu <code>ai_chat_user</code> khi nhân viên login — dùng chung cho mọi ứng dụng trên dashboard). Nhân viên chỉ cần đăng nhập dashboard một lần, mở wiki là tự có đúng quyền.<br><br>
+        Ngoài ra wiki vẫn nhận <strong>HTTP header</strong> <code>X-User-Email</code> nếu hệ thống proxy gửi kèm (đổi tên header bằng biến <code>USER_EMAIL_HEADER</code> trong <code>.env</code>).
       </div>
       <div class="callout warn">
-        <strong>Test nhanh (chỉ dùng khi dev):</strong> Thêm <code>?user_email=your@email.com</code> vào URL để giả lập email đăng nhập.
+        <strong>Test nhanh (chỉ dùng khi dev):</strong> Thêm <code>?user_email=your@email.com</code> vào URL để giả lập email đăng nhập — cách này được ưu tiên hơn phiên đăng nhập.
       </div>
     </div>
   </div>
@@ -2245,9 +2244,39 @@ const CONTENT_PAGES = ['tong-quan','so-do','quy-dinh','cong-cu',
   'noi-quy','cach-lam-viec','quyen-loi'];
 
 function apiUrl(path) {
-  const email = currentUser.email || localStorage.getItem('wiki_user_email');
+  const email = authEmail || currentUser.email;
   const sep = path.includes('?') ? '&' : '?';
   return email ? `${path}${sep}user_email=${encodeURIComponent(email)}` : path;
+}
+
+// ─── Nhận diện người dùng ─────────────────────────────────────
+// Ưu tiên: ?user_email= (dev/test) → phiên đăng nhập hệ thống (ai_chat_user,
+// do dashboard lưu khi nhân viên login — dùng chung mọi /b/{id}/)
+// → email đã lưu từ trước (wiki_user_email)
+let authEmail = null;
+
+function getDashboardEmail() {
+  try {
+    const raw = localStorage.getItem('ai_chat_user') || sessionStorage.getItem('ai_chat_user');
+    if (!raw) return null;
+    const u = JSON.parse(raw);
+    if (u && u.expires_at) {
+      const exp = new Date(u.expires_at);
+      if (!isNaN(exp.getTime()) && exp < new Date()) return null; // phiên hết hạn
+    }
+    return u && u.username ? String(u.username).trim().toLowerCase() : null;
+  } catch { return null; }
+}
+
+function resolveUserEmail() {
+  const urlEmail = new URLSearchParams(window.location.search).get('user_email');
+  if (urlEmail) {
+    try { localStorage.setItem('wiki_user_email', urlEmail); } catch {}
+    return urlEmail.trim().toLowerCase();
+  }
+  const dashEmail = getDashboardEmail();
+  if (dashEmail) return dashEmail;
+  try { return localStorage.getItem('wiki_user_email'); } catch { return null; }
 }
 
 // ─── Navigation (hash routing) ───────────────────────────────
@@ -2311,12 +2340,9 @@ function showToast(msg, isError = false) {
 
 // ─── Init ─────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
-  // Lưu email từ URL vào localStorage để dùng lại
-  const urlEmail = new URLSearchParams(window.location.search).get('user_email');
-  if (urlEmail) localStorage.setItem('wiki_user_email', urlEmail);
-  const savedEmail = localStorage.getItem('wiki_user_email');
+  authEmail = resolveUserEmail();
   try {
-    const url = savedEmail ? `./api/me?user_email=${encodeURIComponent(savedEmail)}` : './api/me';
+    const url = authEmail ? `./api/me?user_email=${encodeURIComponent(authEmail)}` : './api/me';
     const res = await fetch(url);
     currentUser = await res.json();
   } catch { /* server chưa chạy — chạy như static file */ }
@@ -2335,7 +2361,7 @@ function renderUserBadge() {
   const el = document.getElementById('userBadge');
   if (!el) return;
   if (!currentUser.email) {
-    el.innerHTML = '<span class="role-tag role-viewer">Viewer</span>';
+    el.innerHTML = '<a href="/login.html" title="Đăng nhập hệ thống để được nhận diện và phân quyền"><span class="role-tag role-viewer">Đăng nhập</span></a>';
     return;
   }
   const role = currentUser.isAdmin ? 'Admin' : currentUser.isEditor ? 'Editor' : 'Viewer';
