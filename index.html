@@ -370,62 +370,18 @@ tbody tr:hover{background:var(--cream);}
 @media(max-width:820px){.menu-toggle{display:block;}}
 
 /* ===========================================================
-   CONTENT-SURFACE STYLE VARIANTS  (body[data-cards=...])
+   CONTENT SURFACE — kiểu cố định "Viền mảnh" (outline):
+   trắng, viền hairline, không đổ bóng
    =========================================================== */
-body[data-cards="gray"] .block-card,
-body[data-cards="gray"] .accordion,
-body[data-cards="gray"] .table-wrap,
-body[data-cards="gray"] .settings-card,
-body[data-cards="gray"] .empty-state{
-  background:var(--cream-2);
-  border-color:var(--line);
-  box-shadow:none;
-}
-body[data-cards="gray"] thead th{background:#E3DCCC;}
-body[data-cards="gray"] .accordion-header:hover{background:#E4DDCD;}
-body[data-cards="gray"] tbody tr:hover{background:#E7E0D1;}
-body[data-cards="gray"] .email-list li{background:var(--cream);}
-body[data-cards="gray"] .block-card:hover{border-color:var(--ink);box-shadow:var(--shadow);}
-
-body[data-cards="float"] .block-card,
-body[data-cards="float"] .accordion,
-body[data-cards="float"] .table-wrap,
-body[data-cards="float"] .settings-card,
-body[data-cards="float"] .empty-state{
-  background:#fff;
-  border-color:transparent;
-  box-shadow:0 16px 36px -22px rgba(40,36,20,.34), 0 3px 8px -4px rgba(40,36,20,.07);
-}
-body[data-cards="float"] .block-card{border-radius:20px;}
-body[data-cards="float"] .block-card:hover{transform:translateY(-3px);box-shadow:0 26px 50px -26px rgba(40,36,20,.42);border-color:transparent;}
-
-body[data-cards="outline"] .block-card,
-body[data-cards="outline"] .accordion,
-body[data-cards="outline"] .table-wrap,
-body[data-cards="outline"] .settings-card,
-body[data-cards="outline"] .empty-state{
+.block-card,.accordion,.table-wrap,.settings-card,.empty-state{
   background:#fff;
   border-color:var(--line-soft);
   box-shadow:none;
 }
-body[data-cards="outline"] .block-card:hover{border-color:var(--ink);box-shadow:none;}
-
-/* ---------- appearance picker (Settings page) ---------- */
-.style-card h3 [data-icon]{width:20px;height:20px;display:inline-flex;color:var(--ink-soft);}
-.style-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px;}
-.style-opt{text-align:left;border:1px solid var(--line);background:var(--cream);border-radius:14px;padding:12px;cursor:pointer;font-family:var(--font);transition:.14s;}
-.style-opt:hover{border-color:var(--ink-mute);}
-.style-opt.on{border-color:var(--brown-ink);box-shadow:0 0 0 2px var(--brown);}
-.so-prev{display:block;height:48px;border-radius:9px;margin-bottom:11px;}
-.so-prev.gray{background:var(--cream-2);border:1px solid var(--line);}
-.so-prev.float{background:#fff;box-shadow:0 9px 18px -10px rgba(40,36,20,.45);}
-.so-prev.outline{background:#fff;border:1px solid var(--line-soft);}
-.so-label{font-family:var(--font-head);font-weight:700;font-size:14px;display:block;}
-.so-desc{font-size:12px;color:var(--ink-mute);margin-top:2px;display:block;}
-@media(max-width:820px){.style-opts{grid-template-columns:1fr;}}
+.block-card:hover{border-color:var(--ink);box-shadow:none;}
 </style>
 </head>
-<body data-cards="outline">
+<body>
 
 <!-- TOP NAV -->
 <nav class="topnav">
@@ -1947,29 +1903,7 @@ body[data-cards="outline"] .block-card:hover{border-color:var(--ink);box-shadow:
     <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Hệ thống</div>
     <div class="page-header-row"><h1><span class="h-ico" data-icon="settings"></span> Cài đặt</h1></div>
   </div>
-  <p class="section" style="margin-top:0;color:var(--ink-soft);">Quản lý giao diện và phân quyền tài khoản truy cập wiki nội bộ.</p>
-
-  <div class="settings-card style-card" style="margin-bottom:20px;">
-    <h3><span data-icon="sparkles"></span> Giao diện khung nội dung</h3>
-    <p>Chọn kiểu hiển thị cho các khung nội dung (thẻ, accordion, bảng) trên toàn wiki — áp dụng ngay.</p>
-    <div class="style-opts">
-      <button class="style-opt" data-style="gray" onclick="setCardStyle('gray')">
-        <span class="so-prev gray"></span>
-        <span class="so-label">Xám nhạt</span>
-        <span class="so-desc">Phẳng, ấm, dịu mắt</span>
-      </button>
-      <button class="style-opt" data-style="float" onclick="setCardStyle('float')">
-        <span class="so-prev float"></span>
-        <span class="so-label">Nổi</span>
-        <span class="so-desc">Trắng, đổ bóng mềm</span>
-      </button>
-      <button class="style-opt" data-style="outline" onclick="setCardStyle('outline')">
-        <span class="so-prev outline"></span>
-        <span class="so-label">Viền mảnh</span>
-        <span class="so-desc">Trắng, tối giản</span>
-      </button>
-    </div>
-  </div>
+  <p class="section" style="margin-top:0;color:var(--ink-soft);">Quản lý phân quyền tài khoản truy cập wiki nội bộ.</p>
 
   <div id="settings-loading" class="callout info">⏳ Đang tải cài đặt...</div>
   <div id="settings-forbidden" class="callout danger" style="display:none;">
@@ -2197,20 +2131,6 @@ function doSearch(q) {
   });
   if (q) document.getElementById('sidebar').classList.add('open');
 }
-
-// ─── Content-surface style (persisted) ───────────────────────
-function setCardStyle(s) {
-  document.body.dataset.cards = s;
-  try { localStorage.setItem('bassoCards', s); } catch (e) {}
-  document.querySelectorAll('.style-opt').forEach(o => o.classList.toggle('on', o.dataset.style === s));
-  if (window.__cardsReady) showToast('Đã đổi giao diện: ' + ({ gray: 'Xám nhạt', float: 'Nổi', outline: 'Viền mảnh' }[s] || s));
-}
-(function () {
-  let saved = 'outline';
-  try { saved = localStorage.getItem('bassoCards') || 'outline'; } catch (e) {}
-  setCardStyle(saved);
-  window.__cardsReady = true;
-})();
 
 // ─── Toast ───────────────────────────────────────────────────
 let toastTimer;
