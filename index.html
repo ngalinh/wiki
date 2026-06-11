@@ -409,6 +409,10 @@ tbody tr:hover{background:var(--cream);}
   box-shadow:none;
 }
 .block-card:hover{border-color:var(--ink);box-shadow:none;}
+
+/* ---------- FLOW DIAGRAM (tổng quan) ---------- */
+.flow-overview{overflow-x:auto;margin:18px 0 8px;}
+.flow-overview svg{min-width:540px;width:100%;display:block;}
 </style>
 </head>
 <body>
@@ -529,6 +533,108 @@ tbody tr:hover{background:var(--cream);}
 
   <div class="section mt-4">
     <h2>🔄 Quy trình đơn hàng tổng quan</h2>
+    <div class="flow-overview">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 174" role="img" aria-label="Quy trình đơn hàng 5 bước">
+
+        <!-- ── CARD 1: Báo giá · SALE (blue) ── -->
+        <g transform="translate(15,13)">
+          <rect width="126" height="148" rx="13" fill="#fff" stroke="#E7E3D8" stroke-width="1"/>
+          <circle cx="63" cy="38" r="18" fill="#D8E3F1"/>
+          <text x="63" y="44" text-anchor="middle" font-family="'Schibsted Grotesk',system-ui,sans-serif" font-size="14" font-weight="700" fill="#3F66A6">1</text>
+          <g transform="translate(51,56)" stroke="#3F66A6" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 3h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8l-5 5V4a1 1 0 0 1 1-1z"/>
+          </g>
+          <text x="63" y="95" text-anchor="middle" font-family="'Schibsted Grotesk',system-ui,sans-serif" font-size="12" font-weight="700" fill="#1A1916">Báo giá</text>
+          <rect x="27" y="103" width="72" height="18" rx="9" fill="#D8E3F1"/>
+          <text x="63" y="116" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9" font-weight="700" fill="#3F66A6">SALE</text>
+          <text x="63" y="132" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9.5" fill="#86837A">Nhận link/hình,</text>
+          <text x="63" y="143" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9.5" fill="#86837A">tư vấn &amp; báo giá</text>
+        </g>
+
+        <!-- arrow 1 -->
+        <path d="M143,87 H158 M158,82 L165,87 L158,92" stroke="#CECAB6" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- ── CARD 2: Tạo đơn · CSKH (green) ── -->
+        <g transform="translate(166,13)">
+          <rect width="126" height="148" rx="13" fill="#fff" stroke="#E7E3D8" stroke-width="1"/>
+          <circle cx="63" cy="38" r="18" fill="#D8ECD9"/>
+          <text x="63" y="44" text-anchor="middle" font-family="'Schibsted Grotesk',system-ui,sans-serif" font-size="14" font-weight="700" fill="#3F7A45">2</text>
+          <g transform="translate(51,56)" stroke="#3F7A45" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14,2 14,8 20,8"/>
+            <line x1="8" y1="13" x2="16" y2="13"/>
+            <line x1="8" y1="17" x2="13" y2="17"/>
+          </g>
+          <text x="63" y="95" text-anchor="middle" font-family="'Schibsted Grotesk',system-ui,sans-serif" font-size="12" font-weight="700" fill="#1A1916">Tạo đơn</text>
+          <rect x="27" y="103" width="72" height="18" rx="9" fill="#D8ECD9"/>
+          <text x="63" y="116" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9" font-weight="700" fill="#3F7A45">CSKH</text>
+          <text x="63" y="132" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9.5" fill="#86837A">Tạo đơn trong hệ</text>
+          <text x="63" y="143" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9.5" fill="#86837A">thống, xác nhận</text>
+        </g>
+
+        <!-- arrow 2 -->
+        <path d="M294,87 H309 M309,82 L316,87 L309,92" stroke="#CECAB6" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- ── CARD 3: Mua hàng · MUA HÀNG (peach) ── -->
+        <g transform="translate(317,13)">
+          <rect width="126" height="148" rx="13" fill="#fff" stroke="#E7E3D8" stroke-width="1"/>
+          <circle cx="63" cy="38" r="18" fill="#F3DECE"/>
+          <text x="63" y="44" text-anchor="middle" font-family="'Schibsted Grotesk',system-ui,sans-serif" font-size="14" font-weight="700" fill="#B5774A">3</text>
+          <g transform="translate(51,56)" stroke="#B5774A" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </g>
+          <text x="63" y="95" text-anchor="middle" font-family="'Schibsted Grotesk',system-ui,sans-serif" font-size="12" font-weight="700" fill="#1A1916">Mua hàng</text>
+          <rect x="9" y="103" width="108" height="18" rx="9" fill="#F3DECE"/>
+          <text x="63" y="116" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9" font-weight="700" fill="#B5774A">MUA HÀNG</text>
+          <text x="63" y="132" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9.5" fill="#86837A">Mua &amp; theo dõi</text>
+          <text x="63" y="143" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9.5" fill="#86837A">ship về kho Mỹ</text>
+        </g>
+
+        <!-- arrow 3 -->
+        <path d="M445,87 H460 M460,82 L467,87 L460,92" stroke="#CECAB6" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- ── CARD 4: Hàng về VN · KHO (lavender) ── -->
+        <g transform="translate(468,13)">
+          <rect width="126" height="148" rx="13" fill="#fff" stroke="#E7E3D8" stroke-width="1"/>
+          <circle cx="63" cy="38" r="18" fill="#DBD3F4"/>
+          <text x="63" y="44" text-anchor="middle" font-family="'Schibsted Grotesk',system-ui,sans-serif" font-size="14" font-weight="700" fill="#6657C6">4</text>
+          <g transform="translate(51,56)" stroke="#6657C6" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </g>
+          <text x="63" y="95" text-anchor="middle" font-family="'Schibsted Grotesk',system-ui,sans-serif" font-size="12" font-weight="700" fill="#1A1916">Hàng về VN</text>
+          <rect x="27" y="103" width="72" height="18" rx="9" fill="#DBD3F4"/>
+          <text x="63" y="116" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9" font-weight="700" fill="#6657C6">KHO</text>
+          <text x="63" y="132" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9.5" fill="#86837A">Kho nhận &amp; soạn,</text>
+          <text x="63" y="143" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9.5" fill="#86837A">CSKH báo khách</text>
+        </g>
+
+        <!-- arrow 4 -->
+        <path d="M596,87 H611 M611,82 L618,87 L611,92" stroke="#CECAB6" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- ── CARD 5: Giao hàng · CSKH (green) ── -->
+        <g transform="translate(619,13)">
+          <rect width="126" height="148" rx="13" fill="#fff" stroke="#E7E3D8" stroke-width="1"/>
+          <circle cx="63" cy="38" r="18" fill="#D8ECD9"/>
+          <text x="63" y="44" text-anchor="middle" font-family="'Schibsted Grotesk',system-ui,sans-serif" font-size="14" font-weight="700" fill="#3F7A45">5</text>
+          <g transform="translate(51,56)" stroke="#3F7A45" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13" rx="1"/>
+            <path d="M16 8h4l3 4v5h-7V8z"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </g>
+          <text x="63" y="95" text-anchor="middle" font-family="'Schibsted Grotesk',system-ui,sans-serif" font-size="12" font-weight="700" fill="#1A1916">Giao hàng</text>
+          <rect x="27" y="103" width="72" height="18" rx="9" fill="#D8ECD9"/>
+          <text x="63" y="116" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9" font-weight="700" fill="#3F7A45">CSKH</text>
+          <text x="63" y="132" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9.5" fill="#86837A">Phân phối giao,</text>
+          <text x="63" y="143" text-anchor="middle" font-family="'Hanken Grotesk',system-ui,sans-serif" font-size="9.5" fill="#86837A">hoàn tất thanh toán</text>
+        </g>
+
+      </svg>
+    </div>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
