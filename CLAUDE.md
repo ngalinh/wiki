@@ -72,12 +72,12 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 - Before creating a PR, always `git fetch origin main && git rebase origin/main` to avoid squash-merge divergence.
 - Create the PR as **ready-for-review** (not draft) so it can be merged immediately — this repo has no required CI checks.
 - **Merge immediately** after creating the PR (squash merge). Do not wait.
-- Pushing to `main` triggers the GitHub Actions deploy workflow (`.github/workflows/deploy.yml`) which SSH-deploys to the server and restarts PM2.
+- Pushing to `main` triggers the GitHub Actions deploy workflow (`.github/workflows/deploy.yml`) which SSH-deploys to the server (`git reset --hard origin/main`) and restarts the wiki process.
 - Never push directly to `main`; always use a PR.
 
 ### Server details (for context)
 - SSH: `vmadmin@103.140.249.232` (passwordless sudo)
 - Deploy path: `/opt/dashboard-bot/data/bots/e9778bedc4f9f670`
-- PM2 app: `bot-e9778bedc4f9f670` (managed by root PM2, use `sudo pm2 ...`)
+- Process wiki KHÔNG chạy bằng PM2 — do dashboard-bot manager (`node dist/app.js`) quản lý và tự respawn sau khi bị kill. Restart: `sudo pkill -u root -f "server/index.js"`. (Đã xác minh 2026-06-11 qua log deploy: `sudo pm2 list` của root trống, PM2 của vmadmin chỉ có app khác.)
 - Wiki runs on port `4105`, proxied by nginx at `/b/e9778bedc4f9f670/`
 - Admin email env var: `ADMIN_EMAILS` in the bot's `.env` file

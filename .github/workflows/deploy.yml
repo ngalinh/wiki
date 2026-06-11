@@ -21,8 +21,8 @@ jobs:
             sudo git fetch origin main
             sudo git reset --hard origin/main
             cd server && sudo npm install --omit=dev && cd ..
-            sudo pm2 restart bot-e9778bedc4f9f670 || sudo pkill -u root -f "server/index.js" || true
-            pm2 list || true
-            ps aux | grep -E "node|PM2" | grep -v grep || true
+            # Wiki do dashboard-bot manager quản lý (không phải PM2):
+            # kill process là manager tự khởi động lại với code mới
+            sudo pkill -u root -f "server/index.js" || true
             sleep 3
             sudo git log --oneline -1
