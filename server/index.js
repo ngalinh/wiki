@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const Anthropic = require('@anthropic-ai/sdk');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -122,9 +121,9 @@ app.delete('/api/content/:pageId', (req, res) => {
   res.json({ success: true });
 });
 
-// ─── Hỏi đáp AI ──────────────────────────────────────────────
-const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
-const AI_MODEL = process.env.ANTHROPIC_MODEL || 'claude-opus-4-8';
+// ─── Hỏi đáp AI (Google Gemini) ──────────────────────────────
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
+const AI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
 // Chuyển HTML của trang wiki thành văn bản thuần cho AI đọc
 function htmlToText(html) {
@@ -180,49 +179,61 @@ QUY TẮC BẮT BUỘC:
 
 // POST /api/ask — hỏi đáp AI dựa trên nội dung wiki
 app.post('/api/ask', async (req, res) => {
-  if (!anthropic) {
+  if (!GEMINI_API_KEY) {
     return res.status(503).json({
-      error: 'Chưa cấu hình ANTHROPIC_API_KEY trong file .env của server. Liên hệ Admin để bật tính năng này.'
+      error: 'Chưa cấu hình GEMINI_API_KEY trong file .env của server. Liên hệ Admin để bật tính năng này.'
     });
   }
   const { question, history } = req.body || {};
   if (typeof question !== 'string' || !question.trim() || question.length > 4000) {
     return res.status(400).json({ error: 'Câu hỏi không hợp lệ' });
   }
-  // Giữ tối đa 6 lượt hội thoại gần nhất để hỏi nối tiếp
-  const messages = (Array.isArray(history) ? history : [])
+  // Giữ tối đa 6 lượt hội thoại gần nhất để hỏi nối tiếp (Gemini dùng role "model" cho AI)
+  const contents = (Array.isArray(history) ? history : [])
     .filter(t => t && (t.role === 'user' || t.role === 'assistant') && typeof t.content === 'string')
     .slice(-6)
-    .map(t => ({ role: t.role, content: t.content.slice(0, 4000) }));
-  messages.push({ role: 'user', content: question.trim() });
+    .map(t => ({ role: t.role === 'assistant' ? 'model' : 'user', parts: [{ text: t.content.slice(0, 4000) }] }));
+  contents.push({ role: 'user', parts: [{ text: question.trim() }] });
 
   try {
-    const response = await anthropic.messages.create({
-      model: AI_MODEL,
-      max_tokens: 16000,
-      thinking: { type: 'adaptive' },
-      system: [
-        { type: 'text', text: AI_SYSTEM_PROMPT },
-        // Nội dung wiki lớn và ổn định — cache để các câu hỏi sau rẻ và nhanh hơn
-        { type: 'text', text: `NỘI DUNG WIKI:\n\n${getWikiContext()}`, cache_control: { type: 'ephemeral' } },
-      ],
-      messages,
-    });
-    if (response.stop_reason === 'refusal') {
+    const apiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(AI_MODEL)}:generateContent`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: `${AI_SYSTEM_PROMPT}\n\nNỘI DUNG WIKI:\n\n${getWikiContext()}` }]
+          },
+          contents,
+          generationConfig: { maxOutputTokens: 4096, temperature: 0.2 },
+        }),
+      }
+    );
+    const data = await apiRes.json().catch(() => ({}));
+
+    if (!apiRes.ok) {
+      console.error('Gemini API error:', apiRes.status, data && data.error && data.error.message);
+      const msg = apiRes.status === 400 || apiRes.status === 403
+        ? 'GEMINI_API_KEY không hợp lệ. Liên hệ Admin kiểm tra lại cấu hình.'
+        : apiRes.status === 429
+          ? 'AI đang quá tải hoặc hết hạn mức. Vui lòng thử lại sau ít phút.'
+          : 'Không gọi được AI lúc này. Vui lòng thử lại sau.';
+      return res.status(502).json({ error: msg });
+    }
+
+    const candidate = data.candidates && data.candidates[0];
+    const answer = candidate && candidate.content && Array.isArray(candidate.content.parts)
+      ? candidate.content.parts.map(p => p.text || '').join('').trim()
+      : '';
+    if (!answer) {
+      // Bị chặn bởi bộ lọc an toàn hoặc không có nội dung trả về
       return res.json({ answer: 'Xin lỗi, tôi không thể trả lời câu hỏi này. Bạn thử diễn đạt lại hoặc hỏi nội dung khác trong wiki nhé.' });
     }
-    const answer = response.content
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('\n')
-      .trim();
-    res.json({ answer: answer || 'Xin lỗi, tôi chưa tạo được câu trả lời. Bạn thử hỏi lại nhé.' });
+    res.json({ answer });
   } catch (err) {
     console.error('AI ask error:', err && err.message);
-    const msg = err && err.status === 401
-      ? 'ANTHROPIC_API_KEY không hợp lệ. Liên hệ Admin kiểm tra lại cấu hình.'
-      : 'Không gọi được AI lúc này. Vui lòng thử lại sau.';
-    res.status(502).json({ error: msg });
+    res.status(502).json({ error: 'Không gọi được AI lúc này. Vui lòng thử lại sau.' });
   }
 });
 
