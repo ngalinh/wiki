@@ -15,9 +15,12 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
+          script_stop: true
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
-            sudo git pull origin main
-            cd server && sudo npm install --production && cd ..
-            sudo pkill -u root -f "node server/index.js" 2>/dev/null || true
+            sudo git fetch origin main
+            sudo git reset --hard origin/main
+            cd server && sudo npm install --omit=dev && cd ..
+            sudo pm2 restart bot-e9778bedc4f9f670 || sudo pkill -u root -f "server/index.js" || true
             sleep 3
+            sudo git log --oneline -1
