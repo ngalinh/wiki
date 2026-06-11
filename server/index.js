@@ -22,7 +22,8 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.static(path.join(__dirname, '..'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('index.html')) {
-      res.setHeader('Cache-Control', 'no-cache');
+      // no-store: trình duyệt/PWA luôn tải bản mới, không giữ bản cũ sau deploy
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
     }
   }
 }));
@@ -238,6 +239,7 @@ app.post('/api/ask', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
