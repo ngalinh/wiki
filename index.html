@@ -2530,15 +2530,25 @@ function apiUrl(path) {
 // → email đã lưu từ trước (wiki_user_email)
 let authEmail = null;
 
+// expires_at của hệ thống là epoch GIÂY — new Date() hiểu số là mili-giây
+// nên từng đọc nhầm thành năm 1970 và coi mọi phiên là hết hạn
+function parseExpiresAt(raw) {
+  if (raw == null) return null;
+  if (/^\d+$/.test(String(raw))) {
+    const n = Number(raw);
+    return new Date(n < 1e12 ? n * 1000 : n);
+  }
+  const d = new Date(raw);
+  return isNaN(d.getTime()) ? null : d;
+}
+
 function getDashboardEmail() {
   try {
     const raw = localStorage.getItem('ai_chat_user') || sessionStorage.getItem('ai_chat_user');
     if (!raw) return null;
     const u = JSON.parse(raw);
-    if (u && u.expires_at) {
-      const exp = new Date(u.expires_at);
-      if (!isNaN(exp.getTime()) && exp < new Date()) return null; // phiên hết hạn
-    }
+    const exp = u && parseExpiresAt(u.expires_at);
+    if (exp && exp < new Date()) return null; // phiên hết hạn
     return u && u.username ? String(u.username).trim().toLowerCase() : null;
   } catch { return null; }
 }
@@ -2677,10 +2687,10 @@ async function showAuthDebug() {
     if (!raw) lines.push('Phiên ai_chat_user: KHÔNG CÓ');
     else {
       const u = JSON.parse(raw);
-      const exp = u && u.expires_at ? new Date(u.expires_at) : null;
-      const hetHan = exp && !isNaN(exp.getTime()) && exp < new Date();
+      const exp = u && parseExpiresAt(u.expires_at);
+      const hetHan = exp && exp < new Date();
       lines.push(`Phiên: username=${u && u.username}`);
-      lines.push(`  expires_at=${(u && u.expires_at) || '(không có)'} → ${hetHan ? '⛔ HẾT HẠN' : '✓ còn hiệu lực'}`);
+      lines.push(`  expires_at=${(u && u.expires_at) || '(không có)'} (${exp ? exp.toLocaleString('vi') : '?'}) → ${hetHan ? '⛔ HẾT HẠN' : '✓ còn hiệu lực'}`);
     }
   } catch (e) { lines.push('Phiên ai_chat_user: lỗi đọc ' + e.message); }
   lines.push(`Email app đang dùng: ${authEmail || currentUser.email || '(KHÔNG CÓ)'}`);
