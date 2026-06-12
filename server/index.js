@@ -199,7 +199,7 @@ app.post('/api/content/:pageId', (req, res) => {
   pushHistory(pageId, record);
   // Trích xuất trước nội dung hình và link mới trong trang (chạy ngầm cho AI hỏi-đáp)
   injectImageText(content).catch(() => {});
-  injectLinkText(content).catch(() => {});
+  injectLinkText(content, { cookie: req.headers.cookie || '', host: req.headers.host }).catch(() => {});
   res.json({ success: true });
 });
 
@@ -363,13 +363,21 @@ async function injectImageText(html) {
 
 // ─── Đọc nội dung trang web được gắn link cho AI ──────────────
 // Văn bản chính của trang được tải MỘT lần và cache 7 ngày vào
-// data/linktext/<md5(url)>.json; hết hạn thì tự tải lại ở lần hỏi kế tiếp.
+// data/linktext/; hết hạn thì tự tải lại ở lần hỏi kế tiếp.
+// Link nội bộ (cùng host với wiki hoặc host trong LINK_AUTH_HOSTS) được tải
+// kèm cookie đăng nhập của người đang hỏi → đọc được cả trang cần đăng nhập
+// như bảng tỉ giá/quản lý website.
 const LINK_CACHE_MS = 7 * 24 * 60 * 60 * 1000;
-const LINK_TEXT_MAX = 3000;
+const LINK_TEXT_MAX = 15000;
 const linkTextFailed = new Map(); // url -> timestamp lần fail gần nhất (chỉ trong RAM)
 
-async function describeLink(url) {
-  const cacheFile = path.join(LINKTEXT_DIR, crypto.createHash('md5').update(url).digest('hex') + '.json');
+function linkAuthHosts() {
+  return (process.env.LINK_AUTH_HOSTS || '').split(',').map(h => h.trim()).filter(Boolean);
+}
+
+async function describeLink(url, auth) {
+  // 'v2': đổi key để bỏ các bản cache cũ tải khi chưa gửi kèm cookie
+  const cacheFile = path.join(LINKTEXT_DIR, crypto.createHash('md5').update('v2|' + url).digest('hex') + '.json');
   let stale = null;
   try {
     const c = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
@@ -379,15 +387,20 @@ async function describeLink(url) {
   const failedAt = linkTextFailed.get(url);
   if (failedAt && Date.now() - failedAt < 10 * 60 * 1000) return stale;
   try {
+    const headers = { 'User-Agent': 'Mozilla/5.0 (compatible; BassoWikiBot/1.0)', 'Accept-Language': 'vi,en' };
+    try {
+      const host = new URL(url).host;
+      if (auth && auth.cookie && (host === auth.host || linkAuthHosts().includes(host))) headers.cookie = auth.cookie;
+    } catch {}
     const res = await fetch(url, {
       redirect: 'follow',
       signal: AbortSignal.timeout(10000),
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; BassoWikiBot/1.0)', 'Accept-Language': 'vi,en' },
+      headers,
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const ct = (res.headers.get('content-type') || '').split(';')[0].trim();
     if (ct !== 'text/html' && ct !== 'text/plain') throw new Error(`content-type ${ct}`);
-    let body = (await res.text()).slice(0, 1.5e6);
+    let body = (await res.text()).slice(0, 3e6);
     if (ct === 'text/html') body = body.replace(/<head[\s\S]*?<\/head>/gi, '').replace(/<(nav|footer|noscript)[\s\S]*?<\/\1>/gi, '');
     const text = htmlToText(body).slice(0, LINK_TEXT_MAX);
     if (!text) throw new Error('empty page');
@@ -403,11 +416,11 @@ async function describeLink(url) {
 
 // Chèn nội dung trang web ngay sau mỗi link http(s) trong HTML
 // (htmlToText vốn vứt bỏ thuộc tính href nên phải giữ lại địa chỉ ở đây)
-async function injectLinkText(html) {
+async function injectLinkText(html, auth) {
   const urls = [...new Set([...html.matchAll(/<a\b[^>]*?\shref=["'](https?:\/\/[^"']+)["']/gi)].map(m => m[1]))];
   const texts = new Map();
   for (let i = 0; i < urls.length; i += 4) {
-    await Promise.all(urls.slice(i, i + 4).map(async u => texts.set(u, await describeLink(u))));
+    await Promise.all(urls.slice(i, i + 4).map(async u => texts.set(u, await describeLink(u, auth))));
   }
   return html.replace(/<a\b[^>]*?\shref=["'](https?:\/\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (tag, url, label) => {
     const text = texts.get(url);
@@ -418,7 +431,7 @@ async function injectLinkText(html) {
 
 // Gom toàn bộ nội dung wiki: nội dung mặc định trong index.html,
 // thay bằng bản đã chỉnh sửa (data/content/*.json) nếu có
-async function getWikiContext() {
+async function getWikiContext(auth) {
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const sections = [];
   const re = /<section class="page" data-page="([a-z-]+)">([\s\S]*?)<\/section>/g;
@@ -437,7 +450,7 @@ async function getWikiContext() {
       } catch {}
     }
     contentHtml = await injectImageText(contentHtml);
-    contentHtml = await injectLinkText(contentHtml);
+    contentHtml = await injectLinkText(contentHtml, auth);
     sections.push(`# Trang: ${title}\n\n${htmlToText(contentHtml)}`);
   }
   return sections.join('\n\n---\n\n');
@@ -484,7 +497,7 @@ app.post('/api/ask', async (req, res) => {
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
         body: JSON.stringify({
           system_instruction: {
-            parts: [{ text: `${AI_SYSTEM_PROMPT}\n\nNỘI DUNG WIKI:\n\n${await getWikiContext()}` }]
+            parts: [{ text: `${AI_SYSTEM_PROMPT}\n\nNỘI DUNG WIKI:\n\n${await getWikiContext({ cookie: req.headers.cookie || '', host: req.headers.host })}` }]
           },
           contents,
           generationConfig: { maxOutputTokens: 4096, temperature: 0.2 },
