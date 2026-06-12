@@ -394,6 +394,9 @@ tbody tr:hover{background:var(--cream);}
 .img-bubble button{background:none;border:none;color:#fff;font-size:12px;padding:4px 7px;cursor:pointer;border-radius:var(--r-xs);font-family:var(--font);white-space:nowrap;}
 .img-bubble button:hover{background:rgba(255,255,255,.18);}
 .img-bubble .bub-sep{width:1px;height:16px;background:rgba(255,255,255,.3);margin:0 2px;}
+.wysiwyg-editor .accordion.acc-selected{outline:2px solid var(--lav);outline-offset:2px;}
+/* Khối gập rỗng/sót lại trong editor: vẫn nhìn thấy để bấm chọn và xóa */
+.wysiwyg-editor .accordion{min-height:22px;}
 .wysiwyg-editor img.img-selected{outline:2px solid var(--lav);outline-offset:2px;}
 
 /* ---------- HỎI ĐÁP AI (chat) ---------- */
@@ -2452,6 +2455,11 @@ tbody tr:hover{background:var(--cream);}
   <button onclick="imgDelete()" title="Xóa ảnh">&#128465;</button>
 </div>
 
+<!-- Bubble xóa khối gập — hiện khi click vào khối hỏi-đáp trong editor -->
+<div class="img-bubble" id="accBubble">
+  <button onclick="accDelete()" title="Xóa cả khối gập này khỏi nội dung">&#128465; Xóa khối gập</button>
+</div>
+
 <!-- Popup xem ảnh to (bấm vào ảnh trên trang) -->
 <div class="img-lightbox" id="imgLightbox" onclick="this.classList.remove('show')">
   <img id="imgLightboxImg" alt="">
@@ -3004,13 +3012,16 @@ function fmtSizePx(v) {
   if (!px || px < 6 || px > 200) { if (v) showToast('Cỡ chữ hợp lệ: 6–200', true); return; }
   fontSizeAppliedAt = Date.now();
   const editor = document.getElementById('wysiwygEditor');
-  editor.focus();
+  // Giữ nguyên vị trí cuộn: focus mặc định sẽ cuộn editor về chỗ con trỏ cũ
+  const scrollTop = editor.scrollTop;
+  editor.focus({ preventScroll: true });
   const sel = window.getSelection();
   if (savedEditorRange) {
     sel.removeAllRanges();
     sel.addRange(savedEditorRange);
     savedEditorRange = null;
   }
+  editor.scrollTop = scrollTop;
   if (sel.isCollapsed || !editor.contains(sel.anchorNode)) {
     showToast('Bôi đen đoạn chữ cần đổi cỡ trước', true);
     return;
@@ -3026,6 +3037,7 @@ function fmtSizePx(v) {
     while (f.firstChild) span.appendChild(f.firstChild);
     f.replaceWith(span);
   });
+  editor.scrollTop = scrollTop;
 }
 
 // ─── Dropdown toolbar ─────────────────────────────────────────
@@ -3224,6 +3236,37 @@ function imgDelete() {
   imgDeselect();
 }
 
+// ─── Chọn/xóa khối gập trong editor (giống bubble ảnh) ───────
+let selectedAcc = null;
+
+function accSelect(acc) {
+  accDeselect();
+  selectedAcc = acc;
+  acc.classList.add('acc-selected');
+  document.getElementById('accBubble').classList.add('show');
+  accBubblePosition();
+}
+
+function accDeselect() {
+  if (selectedAcc) selectedAcc.classList.remove('acc-selected');
+  selectedAcc = null;
+  document.getElementById('accBubble').classList.remove('show');
+}
+
+function accBubblePosition() {
+  if (!selectedAcc) return;
+  const r = selectedAcc.getBoundingClientRect();
+  const bubble = document.getElementById('accBubble');
+  bubble.style.left = Math.max(8, r.right - 150) + 'px';
+  bubble.style.top = (r.top > 110 ? r.top - 40 : r.top + 8) + 'px';
+}
+
+function accDelete() {
+  if (!selectedAcc) return;
+  selectedAcc.remove();
+  accDeselect();
+}
+
 // ─── Khởi tạo editor: bảng màu, dán/kéo-thả ảnh, chọn ảnh ────
 (function initWysiwyg() {
   const editor = document.getElementById('wysiwygEditor');
@@ -3255,17 +3298,22 @@ function imgDelete() {
   document.querySelectorAll('.wysiwyg-menu').forEach(m =>
     m.addEventListener('mousedown', e => e.preventDefault()));
   document.getElementById('imgBubble').addEventListener('mousedown', e => e.preventDefault());
+  document.getElementById('accBubble').addEventListener('mousedown', e => e.preventDefault());
 
   document.addEventListener('click', e => {
     if (!e.target.closest('.wysiwyg-dd')) ddCloseAll();
     if (!e.target.closest('#imgBubble') && e.target.tagName !== 'IMG') imgDeselect();
+    if (!e.target.closest('#accBubble') && !(e.target.closest('.accordion') && editor.contains(e.target))) accDeselect();
   });
 
   editor.addEventListener('click', e => {
     if (e.target.tagName === 'IMG') imgSelect(e.target);
     else imgDeselect();
+    const acc = e.target.closest('.accordion');
+    if (acc && editor.contains(acc)) accSelect(acc);
+    else accDeselect();
   });
-  editor.addEventListener('scroll', imgBubblePosition);
+  editor.addEventListener('scroll', () => { imgBubblePosition(); accBubblePosition(); });
 
   // Dán hoặc kéo-thả ảnh → tự upload lên server (không nhúng base64 làm phình nội dung)
   editor.addEventListener('paste', e => {
@@ -3280,6 +3328,7 @@ function imgDelete() {
 
 function toggleSourceMode() {
   imgDeselect();
+  accDeselect();
   ddCloseAll();
   const editor = document.getElementById('wysiwygEditor');
   const source = document.getElementById('editTextarea');
@@ -3343,6 +3392,7 @@ async function openEditModal(pageId) {
 
 function closeEditModal() {
   imgDeselect();
+  accDeselect();
   ddCloseAll();
   document.getElementById('editModal').classList.remove('open');
   editingPageId = null;
@@ -3351,6 +3401,7 @@ function closeEditModal() {
 async function saveEditModal() {
   if (!editingPageId) return;
   imgDeselect();
+  accDeselect();
   const editor = document.getElementById('wysiwygEditor');
   const source = document.getElementById('editTextarea');
   const content = wysiwygSourceMode ? source.value : editor.innerHTML;
