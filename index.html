@@ -149,7 +149,8 @@ strong{font-weight:700;color:var(--ink);}
 .page{max-width:880px;margin:0 auto;padding:40px 44px calc(90px + env(safe-area-inset-bottom, 0px));display:none;}
 .page img{max-width:100%;height:auto;cursor:zoom-in;}
 .expand-all-row{display:flex;justify-content:flex-end;margin:14px 0 8px;}
-h2 .expand-all-btn{float:right;margin-left:10px;}
+/* h2 có icon là flex (float bị bỏ qua) → margin-left:auto đẩy nút sang phải */
+h2 .expand-all-btn{float:right;margin-left:auto;font-family:var(--font);}
 .img-lightbox{position:fixed;inset:0;z-index:300;background:rgba(26,25,22,.88);display:none;align-items:center;justify-content:center;padding:18px;cursor:zoom-out;}
 .img-lightbox.show{display:flex;}
 .img-lightbox img{max-width:100%;max-height:calc(100vh - 36px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border-radius:10px;box-shadow:var(--shadow-md);}
@@ -2737,7 +2738,9 @@ function refreshExpandBtn(pageId) {
   const groups = new Map();
   let current = null;
   page.querySelectorAll('h2, .accordion').forEach(el => {
-    if (el.tagName === 'H2') { current = el; return; }
+    // h2 rỗng (sót lại sau chỉnh sửa, không nhìn thấy) không phải là mục —
+    // nếu tính sẽ nhận nút và nút hiện lơ lửng giữa trang
+    if (el.tagName === 'H2') { if (el.textContent.trim()) current = el; return; }
     if (!el.querySelector('.accordion-header') || !el.querySelector('.accordion-body')) return;
     if (!groups.has(current)) groups.set(current, []);
     groups.get(current).push(el);
