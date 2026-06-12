@@ -2667,10 +2667,34 @@ document.addEventListener('visibilitychange', async () => {
   updateRoleUI();
 });
 
-// Chẩn đoán nhận diện đăng nhập: gom những gì app thấy trong bộ nhớ
-// + những gì server nhận được, hiện trong alert để chụp màn hình gửi hỗ trợ
+// Chẩn đoán nhận diện đăng nhập: KẾT LUẬN trước (email, quyền, hạn phiên,
+// server trả gì), chi tiết bộ nhớ sau — 1 ảnh chụp màn hình là đủ thông tin
 async function showAuthDebug() {
-  const lines = ['— PHÍA APP (bộ nhớ của app/trình duyệt này) —'];
+  const lines = ['═══ KẾT LUẬN ═══'];
+  // Phân tích phiên ai_chat_user
+  try {
+    const raw = localStorage.getItem('ai_chat_user') || sessionStorage.getItem('ai_chat_user');
+    if (!raw) lines.push('Phiên ai_chat_user: KHÔNG CÓ');
+    else {
+      const u = JSON.parse(raw);
+      const exp = u && u.expires_at ? new Date(u.expires_at) : null;
+      const hetHan = exp && !isNaN(exp.getTime()) && exp < new Date();
+      lines.push(`Phiên: username=${u && u.username}`);
+      lines.push(`  expires_at=${(u && u.expires_at) || '(không có)'} → ${hetHan ? '⛔ HẾT HẠN' : '✓ còn hiệu lực'}`);
+    }
+  } catch (e) { lines.push('Phiên ai_chat_user: lỗi đọc ' + e.message); }
+  lines.push(`Email app đang dùng: ${authEmail || currentUser.email || '(KHÔNG CÓ)'}`);
+  lines.push(`Quyền hiện tại: ${currentUser.isAdmin ? 'Admin' : currentUser.isEditor ? 'Editor' : 'Viewer'}`);
+  try {
+    const r = await fetch(apiUrl('./api/debug-auth'));
+    const d = await r.json();
+    lines.push(`Server nhận email: ${d.emailServerNhanDuoc || '(KHÔNG)'}`);
+    lines.push(`Server xác nhận: admin=${d.laAdmin} editor=${d.laEditor}`);
+    lines.push(`DS admin: ${(d.danhSachAdmin || []).join(', ')} | env: ${(d.adminTuEnv || []).join(', ')}`);
+    lines.push(`DS editor: ${(d.danhSachEditor || []).join(', ')}`);
+    lines.push(`Header x-user-email: ${d.headerXUserEmail || '(không)'} | cookie: ${(d.tenCookie || []).join(',') || '(không)'}`);
+  } catch { lines.push('Server: KHÔNG GỌI ĐƯỢC'); }
+  lines.push('', '═══ CHI TIẾT BỘ NHỚ ═══');
   const dump = (store, label) => {
     try {
       if (!store.length) { lines.push(`${label}: (trống)`); return; }
@@ -2683,13 +2707,6 @@ async function showAuthDebug() {
   };
   dump(localStorage, 'local');
   dump(sessionStorage, 'session');
-  lines.push(`Email app đang dùng: ${authEmail || currentUser.email || '(chưa nhận diện được)'}`);
-  lines.push(`Quyền hiện tại: ${currentUser.isAdmin ? 'Admin' : currentUser.isEditor ? 'Editor' : 'Viewer'}`);
-  lines.push('', '— PHÍA SERVER —');
-  try {
-    const r = await fetch(apiUrl('./api/debug-auth'));
-    lines.push(JSON.stringify(await r.json(), null, 1));
-  } catch { lines.push('Không gọi được server'); }
   alert(lines.join('\n'));
 }
 
