@@ -2335,16 +2335,14 @@ tbody tr:hover{background:var(--cream);}
         <option value="Tahoma" style="font-family:Tahoma">Tahoma</option>
         <option value="Courier New" style="font-family:'Courier New'">Courier New</option>
       </select>
-      <select class="wysiwyg-select" onchange="fmtSize(this.value)" title="Cỡ chữ">
-        <option value="">Cỡ chữ</option>
-        <option value="1">10</option>
-        <option value="2">13</option>
-        <option value="3">16</option>
-        <option value="4">18</option>
-        <option value="5">24</option>
-        <option value="6">32</option>
-        <option value="7">48</option>
-      </select>
+      <input class="wysiwyg-select" id="fontSizeInput" list="fontSizeOptions" inputmode="numeric" placeholder="Cỡ chữ" style="width:72px;cursor:text"
+        title="Cỡ chữ (px): gõ số tùy ý rồi Enter, hoặc chọn từ danh sách"
+        onmousedown="saveEditorSelection()" onfocus="saveEditorSelection()"
+        onchange="fmtSizePx(this.value)">
+      <datalist id="fontSizeOptions">
+        <option value="10"><option value="13"><option value="16"><option value="18">
+        <option value="24"><option value="32"><option value="48"><option value="64">
+      </datalist>
       <div class="wysiwyg-sep"></div>
       <button class="wysiwyg-btn" onclick="fmt('bold')" title="In đậm (Ctrl+B)"><b>B</b></button>
       <button class="wysiwyg-btn" onclick="fmt('italic')" title="In nghiêng (Ctrl+I)"><i style="font-style:italic">I</i></button>
@@ -2791,13 +2789,16 @@ function refreshExpandBtn(pageId) {
   const page = document.querySelector(`.page[data-page="${pageId}"]`);
   if (!page) return;
   page.querySelectorAll('.expand-all-row, .expand-all-btn').forEach(b => b.remove());
-  // Gom khối hỏi-đáp theo mục: h2 cùng cấp gần nhất phía trước nó
+  // Gom khối hỏi-đáp theo mục: duyệt h2 và accordion theo thứ tự xuất hiện
+  // trên trang (không phụ thuộc cấu trúc lồng nhau). Chỉ tính accordion còn
+  // hoạt động — có đủ header + body; bỏ qua thẻ rỗng/sót lại sau chỉnh sửa.
   const groups = new Map();
-  page.querySelectorAll('.accordion').forEach(acc => {
-    let h = acc.previousElementSibling;
-    while (h && h.tagName !== 'H2') h = h.previousElementSibling;
-    if (!groups.has(h)) groups.set(h, []);
-    groups.get(h).push(acc);
+  let current = null;
+  page.querySelectorAll('h2, .accordion').forEach(el => {
+    if (el.tagName === 'H2') { current = el; return; }
+    if (!el.querySelector('.accordion-header') || !el.querySelector('.accordion-body')) return;
+    if (!groups.has(current)) groups.set(current, []);
+    groups.get(current).push(el);
   });
   groups.forEach((accs, heading) => {
     const btn = document.createElement('button');
@@ -2972,11 +2973,38 @@ function fmtFont(v) {
   document.execCommand('fontName', false, v);
 }
 
-function fmtSize(v) {
-  if (!v) return;
-  document.getElementById('wysiwygEditor').focus();
+// Giữ lại vùng chọn trong editor trước khi bấm vào ô nhập cỡ chữ
+let savedEditorRange = null;
+function saveEditorSelection() {
+  const editor = document.getElementById('wysiwygEditor');
+  const sel = window.getSelection();
+  if (sel.rangeCount && editor.contains(sel.anchorNode)) savedEditorRange = sel.getRangeAt(0).cloneRange();
+}
+
+// Cỡ chữ tự do theo px: execCommand('fontSize') chỉ nhận mức 1–7, nên dùng
+// mức 7 làm mốc rồi đổi các thẻ <font size="7"> mới sinh thành span px
+function fmtSizePx(v) {
+  const px = Math.round(parseFloat(v));
+  if (!px || px < 6 || px > 200) { if (v) showToast('Cỡ chữ hợp lệ: 6–200', true); return; }
+  const editor = document.getElementById('wysiwygEditor');
+  editor.focus();
+  if (savedEditorRange) {
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedEditorRange);
+    savedEditorRange = null;
+  }
+  const before = new Set(editor.querySelectorAll('font[size="7"]'));
+  document.execCommand('styleWithCSS', false, false);
+  document.execCommand('fontSize', false, '7');
   document.execCommand('styleWithCSS', false, true);
-  document.execCommand('fontSize', false, v);
+  editor.querySelectorAll('font[size="7"]').forEach(f => {
+    if (before.has(f)) return;
+    const span = document.createElement('span');
+    span.style.fontSize = px + 'px';
+    while (f.firstChild) span.appendChild(f.firstChild);
+    f.replaceWith(span);
+  });
 }
 
 // ─── Dropdown toolbar ─────────────────────────────────────────
