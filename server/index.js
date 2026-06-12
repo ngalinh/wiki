@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,6 +11,7 @@ const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 const CONTENT_DIR = path.join(DATA_DIR, 'content');
 const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
 const HISTORY_DIR = path.join(DATA_DIR, 'history');
+const IMGTEXT_DIR = path.join(DATA_DIR, 'imgtext');
 const MAX_HISTORY = 10;
 
 // Bootstrap data dirs
@@ -17,6 +19,7 @@ if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 if (!fs.existsSync(HISTORY_DIR)) fs.mkdirSync(HISTORY_DIR, { recursive: true });
+if (!fs.existsSync(IMGTEXT_DIR)) fs.mkdirSync(IMGTEXT_DIR, { recursive: true });
 if (!fs.existsSync(CONFIG_FILE)) {
   const bootstrapAdmins = (process.env.ADMIN_EMAILS || '')
     .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
@@ -192,6 +195,8 @@ app.post('/api/content/:pageId', (req, res) => {
   const record = { content, updatedBy: email, updatedAt: new Date().toISOString() };
   fs.writeFileSync(path.join(CONTENT_DIR, `${pageId}.json`), JSON.stringify(record, null, 2));
   pushHistory(pageId, record);
+  // Trích xuất trước nội dung các hình mới trong trang (chạy ngầm cho AI hỏi-đáp)
+  injectImageText(content).catch(() => {});
   res.json({ success: true });
 });
 
@@ -265,9 +270,95 @@ function htmlToText(html) {
     .trim();
 }
 
+// ─── Đọc nội dung hình minh họa cho AI ────────────────────────
+// Mỗi hình được Gemini (vision) trích xuất chữ/thông tin MỘT lần rồi cache
+// vào data/imgtext/<md5(src)>.json — hình mới upload tự được xử lý ở lần
+// hỏi tiếp theo (hoặc ngay sau khi lưu trang, chạy ngầm).
+const imgTextFailed = new Map(); // src -> timestamp lần fail gần nhất (chỉ trong RAM)
+
+async function loadImageBytes(src) {
+  const m = /^data:(image\/[\w+.-]+);base64,(.+)$/.exec(src);
+  if (m) return { mime: m[1], data: m[2] };
+  const up = /(?:^|\/)uploads\/([\w.-]+)$/.exec(src.split('?')[0]);
+  if (up) {
+    const file = path.join(UPLOAD_DIR, up[1]);
+    if (!fs.existsSync(file)) return null;
+    const mime = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp' }[path.extname(file).slice(1).toLowerCase()];
+    if (!mime) return null;
+    return { mime, data: fs.readFileSync(file).toString('base64') };
+  }
+  if (/^https?:\/\//.test(src)) {
+    try {
+      const res = await fetch(src);
+      if (!res.ok) return null;
+      const mime = (res.headers.get('content-type') || '').split(';')[0].trim();
+      if (!mime.startsWith('image/')) return null;
+      const buf = Buffer.from(await res.arrayBuffer());
+      if (buf.length === 0 || buf.length > 8 * 1024 * 1024) return null;
+      return { mime, data: buf.toString('base64') };
+    } catch { return null; }
+  }
+  return null;
+}
+
+async function describeImage(src) {
+  const cacheFile = path.join(IMGTEXT_DIR, crypto.createHash('md5').update(src).digest('hex') + '.json');
+  try { return JSON.parse(fs.readFileSync(cacheFile, 'utf8')).text; } catch {}
+  if (!GEMINI_API_KEY) return null;
+  // Hình từng fail (hỏng/không tải được): chỉ thử lại sau 10 phút
+  const failedAt = imgTextFailed.get(src);
+  if (failedAt && Date.now() - failedAt < 10 * 60 * 1000) return null;
+  try {
+    const img = await loadImageBytes(src);
+    if (!img) throw new Error('no image data');
+    const apiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(AI_MODEL)}:generateContent`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [
+            { inline_data: { mime_type: img.mime, data: img.data } },
+            { text: 'Đây là hình minh họa trong wiki nội bộ công ty. Hãy trích xuất TOÀN BỘ chữ và thông tin trong hình thành văn bản thuần (tiếng Việt giữ nguyên tiếng Việt), giữ đúng các con số, mức phí, công thức, các bước, nhãn sơ đồ. Trình bày theo cấu trúc của hình. Chỉ trả về nội dung trích xuất, không bình luận thêm.' },
+          ] }],
+          generationConfig: { maxOutputTokens: 2048, temperature: 0 },
+        }),
+      }
+    );
+    const data = await apiRes.json().catch(() => ({}));
+    if (!apiRes.ok) throw new Error(`Gemini ${apiRes.status}`);
+    const cand = data.candidates && data.candidates[0];
+    const text = cand && cand.content && Array.isArray(cand.content.parts)
+      ? cand.content.parts.map(p => p.text || '').join('').trim() : '';
+    if (!text) throw new Error('empty extraction');
+    fs.writeFileSync(cacheFile, JSON.stringify({ src: src.slice(0, 200), text, extractedAt: new Date().toISOString() }, null, 2));
+    imgTextFailed.delete(src);
+    return text;
+  } catch (err) {
+    console.error('Trích xuất hình lỗi:', src.slice(0, 80), err && err.message);
+    imgTextFailed.set(src, Date.now());
+    return null;
+  }
+}
+
+// Thay mỗi thẻ <img> trong HTML bằng nội dung chữ trích xuất từ hình đó
+async function injectImageText(html) {
+  const srcs = [...new Set([...html.matchAll(/<img\b[^>]*?\ssrc=["']([^"']+)["']/gi)].map(m => m[1]))];
+  const texts = new Map();
+  // Xử lý tuần tự từng nhóm 4 hình để không dồn quá nhiều request
+  for (let i = 0; i < srcs.length; i += 4) {
+    await Promise.all(srcs.slice(i, i + 4).map(async s => texts.set(s, await describeImage(s))));
+  }
+  return html.replace(/<img\b[^>]*?\ssrc=["']([^"']+)["'][^>]*>/gi, (tag, src) => {
+    const text = texts.get(src);
+    // Bỏ dấu < để htmlToText không nhầm nội dung trích xuất là thẻ HTML
+    return text ? `\n[HÌNH MINH HỌA — nội dung trong hình]\n${text.replace(/</g, '‹')}\n[HẾT HÌNH]\n` : '\n[Hình minh họa]\n';
+  });
+}
+
 // Gom toàn bộ nội dung wiki: nội dung mặc định trong index.html,
 // thay bằng bản đã chỉnh sửa (data/content/*.json) nếu có
-function getWikiContext() {
+async function getWikiContext() {
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const sections = [];
   const re = /<section class="page" data-page="([a-z-]+)">([\s\S]*?)<\/section>/g;
@@ -285,6 +376,7 @@ function getWikiContext() {
         if (custom && custom.content) contentHtml = custom.content;
       } catch {}
     }
+    contentHtml = await injectImageText(contentHtml);
     sections.push(`# Trang: ${title}\n\n${htmlToText(contentHtml)}`);
   }
   return sections.join('\n\n---\n\n');
@@ -325,7 +417,7 @@ app.post('/api/ask', async (req, res) => {
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
         body: JSON.stringify({
           system_instruction: {
-            parts: [{ text: `${AI_SYSTEM_PROMPT}\n\nNỘI DUNG WIKI:\n\n${getWikiContext()}` }]
+            parts: [{ text: `${AI_SYSTEM_PROMPT}\n\nNỘI DUNG WIKI:\n\n${await getWikiContext()}` }]
           },
           contents,
           generationConfig: { maxOutputTokens: 4096, temperature: 0.2 },
