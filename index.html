@@ -379,6 +379,9 @@ tbody tr:hover{background:var(--cream);}
 .emoji-grid{display:grid;grid-template-columns:repeat(8,28px);gap:2px;padding:4px;max-height:220px;overflow-y:auto;}
 .emoji-cell{background:none;border:none;border-radius:var(--r-xs);font-size:18px;line-height:1;padding:4px 0;cursor:pointer;}
 .emoji-cell:hover{background:var(--cream);}
+.history-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--white);border:1px solid var(--line);border-radius:var(--r-xs);margin-bottom:8px;font-size:13px;color:var(--ink-soft);}
+.history-item .hi-info{flex:1;min-width:0;overflow-wrap:break-word;}
+.history-item .hi-info b{color:var(--ink);}
 .color-cell{width:22px;height:22px;border-radius:4px;cursor:pointer;border:1px solid rgba(0,0,0,.15);padding:0;}
 .color-cell:hover{transform:scale(1.15);}
 .img-bubble{position:fixed;z-index:220;background:var(--ink);border-radius:var(--r-pill);padding:4px 8px;display:none;gap:2px;align-items:center;box-shadow:var(--shadow-md);}
@@ -2404,10 +2407,26 @@ tbody tr:hover{background:var(--cream);}
       <textarea id="editTextarea" class="wysiwyg-source" spellcheck="false" placeholder="Nội dung HTML..."></textarea>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-danger btn-sm" onclick="resetPageContent()" title="Về nội dung mặc định">↩ Về mặc định</button>
+      <button class="btn btn-secondary btn-sm" onclick="openHistoryModal()" title="Xem và khôi phục các bản đã lưu">🕘 Version history</button>
       <div style="flex:1;font-size:12px;color:var(--ink-mute)" id="editLastSaved"></div>
       <button class="btn btn-secondary" onclick="closeEditModal()">Hủy</button>
       <button class="btn" onclick="saveEditModal()">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- VERSION HISTORY MODAL -->
+<div class="modal-overlay" id="historyModal" style="z-index:300" onclick="if(event.target===this)closeHistoryModal()">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-subtitle">Version history</div>
+        <h2 id="historyModalTitle"></h2>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="closeHistoryModal()">✕ Đóng</button>
+    </div>
+    <div class="modal-body" style="overflow-y:auto;padding:12px 20px;background:var(--cream)">
+      <div id="historyList"></div>
     </div>
   </div>
 </div>
@@ -3288,13 +3307,70 @@ async function saveEditModal() {
   } catch { showToast('Không kết nối được server', true); }
 }
 
-async function resetPageContent() {
+// ─── Version history ──────────────────────────────────────────
+function fmtVersionTime(iso) {
+  const d = new Date(iso);
+  const two = n => String(n).padStart(2, '0');
+  return `${two(d.getHours())}:${two(d.getMinutes())} ngày ${two(d.getDate())}/${two(d.getMonth() + 1)}/${String(d.getFullYear()).slice(2)}`;
+}
+
+async function openHistoryModal() {
   if (!editingPageId) return;
-  if (!confirm('Xóa nội dung đã chỉnh sửa và về lại nội dung mặc định?')) return;
+  document.getElementById('historyModalTitle').textContent =
+    document.getElementById('editModalTitle').textContent;
+  const list = document.getElementById('historyList');
+  list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--ink-mute)">Đang tải…</div>';
+  document.getElementById('historyModal').classList.add('open');
   try {
-    await fetch(apiUrl(`./api/content/${editingPageId}`), { method: 'DELETE' });
-    closeEditModal();
-    location.reload();
+    const res = await fetch(apiUrl(`./api/history/${editingPageId}`));
+    const data = await res.json();
+    if (!res.ok) { list.innerHTML = ''; showToast(data.error || 'Lỗi khi tải lịch sử', true); return; }
+    if (!data.versions || !data.versions.length) {
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--ink-mute)">Chưa có phiên bản nào. Lịch sử được ghi lại từ mỗi lần bấm Lưu.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    data.versions.forEach(v => {
+      const row = document.createElement('div');
+      row.className = 'history-item';
+      const info = document.createElement('div');
+      info.className = 'hi-info';
+      info.innerHTML = `<b>${fmtVersionTime(v.updatedAt)}</b> - updated by ${escapeHtml(v.updatedBy || '?')}`;
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-secondary btn-sm';
+      btn.textContent = '↩ Restore';
+      btn.onclick = () => restoreVersion(v.id, fmtVersionTime(v.updatedAt));
+      row.appendChild(info);
+      row.appendChild(btn);
+      list.appendChild(row);
+    });
+  } catch { list.innerHTML = ''; showToast('Không kết nối được server', true); }
+}
+
+function closeHistoryModal() {
+  document.getElementById('historyModal').classList.remove('open');
+}
+
+async function restoreVersion(id, label) {
+  if (!editingPageId) return;
+  if (!confirm(`Khôi phục nội dung về phiên bản lúc ${label}?`)) return;
+  try {
+    const res = await fetch(apiUrl(`./api/history/${editingPageId}/restore`), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.error || 'Lỗi khi khôi phục', true); return; }
+    // Cập nhật editor và trang đang hiển thị theo nội dung vừa khôi phục
+    const editor = document.getElementById('wysiwygEditor');
+    editor.innerHTML = data.content;
+    themeHeadingIcons(editor);
+    document.getElementById('editTextarea').value = data.content;
+    setPageBody(editingPageId, data.content);
+    setPageUpdated(editingPageId, { updatedAt: new Date().toISOString(), updatedBy: currentUser.email });
+    closeHistoryModal();
+    showToast('✓ Đã khôi phục phiên bản');
   } catch { showToast('Không kết nối được server', true); }
 }
 
