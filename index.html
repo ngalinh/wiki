@@ -500,14 +500,13 @@ tbody tr:hover{background:var(--cream);}
     <div class="sidebar-heading">Quy trình CSKH</div>
     <a class="sidebar-link" data-page="thuat-ngu"><span class="icon"></span> Thuật ngữ</a>
     <a class="sidebar-link" data-page="websites"><span class="icon"></span> Websites</a>
-    <a class="sidebar-link" data-page="bao-gia"><span class="icon"></span> Báo giá</a>
-    <a class="sidebar-link" data-page="tao-don"><span class="icon"></span> Tạo đơn</a>
+    <a class="sidebar-link" data-page="bao-gia"><span class="icon"></span> Tư vấn &amp; Báo giá</a>
+    <a class="sidebar-link" data-page="tao-don"><span class="icon"></span> Follow đơn</a>
     <a class="sidebar-link" data-page="bao-hang-ve"><span class="icon"></span> Báo hàng về</a>
     <a class="sidebar-link" data-page="hang-stock"><span class="icon"></span> Hàng stock</a>
     <a class="sidebar-link" data-page="khieu-nai"><span class="icon"></span> Khiếu nại thường gặp</a>
     <a class="sidebar-link" data-page="faq"><span class="icon"></span> FAQ</a>
-    <a class="sidebar-link" data-page="quy-dinh"><span class="icon"></span> Quy định chung</a>
-    <a class="sidebar-link" data-page="cong-cu"><span class="icon"></span> Tài khoản &amp; Công cụ</a>
+    <a class="sidebar-link" data-page="cong-cu"><span class="icon"></span> Công cụ hỗ trợ</a>
   </div>
   <div class="sidebar-section" id="settingsSection" style="display:none">
     <div class="sidebar-heading">Hệ thống</div>
@@ -536,16 +535,15 @@ tbody tr:hover{background:var(--cream);}
       <p>Dành cho nhân viên mới — tổng quan công ty, quy định và công cụ cần thiết.</p>
       <div class="block-card-links">
         <a data-go="tong-quan">Tổng quan công ty</a>
-        <a data-go="quy-dinh">Quy định chung</a>
       </div>
     </div>
     <div class="block-card" data-go="bao-gia">
       <div class="block-card-icon" data-icon="bao-gia"></div>
       <h2>Quy trình CSKH</h2>
-      <p>Báo giá, tạo đơn, báo hàng về và xử lý khiếu nại — quy trình chuẩn cho Sale &amp; CSKH.</p>
+      <p>Tư vấn &amp; báo giá, follow đơn, báo hàng về và xử lý khiếu nại — quy trình chuẩn cho Sale &amp; CSKH.</p>
       <div class="block-card-links">
-        <a data-go="bao-gia">Báo giá</a>
-        <a data-go="tao-don">Tạo đơn</a>
+        <a data-go="bao-gia">Tư vấn &amp; Báo giá</a>
+        <a data-go="tao-don">Follow đơn</a>
         <a data-go="khieu-nai">Khiếu nại thường gặp</a>
       </div>
     </div>
@@ -566,7 +564,7 @@ tbody tr:hover{background:var(--cream);}
       <div class="block-card-links">
         <a data-go="faq">Xem FAQ</a>
         <a data-go="thuat-ngu">Thuật ngữ</a>
-        <a data-go="cong-cu">Tài khoản &amp; Công cụ</a>
+        <a data-go="cong-cu">Công cụ hỗ trợ</a>
       </div>
     </div>
   </div>
@@ -880,100 +878,11 @@ tbody tr:hover{background:var(--cream);}
 </section>
 
 <!-- ===== SƠ ĐỒ PHÒNG BAN ===== -->
-<!-- ===== QUY ĐỊNH CHUNG ===== -->
-<section class="page" data-page="quy-dinh">
-  <div class="page-header">
-    <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
-    <div class="page-header-row"><h1><span class="h-ico" data-icon="quy-dinh"></span> Quy định chung</h1></div>
-  </div>
-  <div class="section" style="margin-top:6px;">
-    <h2>⏱ Thời gian phản hồi</h2>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Kênh</th><th>Thời gian phản hồi</th></tr></thead>
-        <tbody>
-          <tr><td>Fanpage, Zalo, FB cá nhân</td><td><strong>Trong 15 phút</strong></td></tr>
-          <tr><td>Email</td><td><strong>Trong 30 phút</strong></td></tr>
-          <tr><td>Web chat</td><td><strong>Ưu tiên trả lời ngay</strong></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>💬 Các group công ty</h2>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAcc(this)">Asale - Must Read <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><div class="accordion-body-inner">Nội quy công ty, thay đổi quy định, cập nhật hệ thống... Sếp sẽ nhắn vào group này → <strong>Tất cả mọi người đều phải đọc và phản hồi.</strong></div></div>
-    </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAcc(this)">Asale Team <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><div class="accordion-body-inner">Các thông tin liên quan đến công ty, công việc, quy trình, báo lỗi hệ thống, báo công nợ...</div></div>
-    </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAcc(this)">Asale - Mua hàng <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><div class="accordion-body-inner">Các thông tin liên quan đến việc mua hàng: SALE hỏi đơn đã mua chưa, khách muốn hủy đơn, thay đổi sản phẩm... Khi hỏi về đơn hàng <strong>phải kèm theo mã đơn + tên khách</strong>.</div></div>
-    </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAcc(this)">Asale - Payment <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><div class="accordion-body-inner">Các khoản payment hệ thống không tự động lấy sẽ được kế toán gửi vào group. Nhân viên sau khi tham chiếu xong phải báo vào group đã tham chiếu.</div></div>
-    </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAcc(this)">Asale - Kho hàng <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><div class="accordion-body-inner">Thông tin liên quan đến kho, vận chuyển. Khi hỏi kho về đơn hàng <strong>phải kèm mã đơn + tên khách</strong>.</div></div>
-    </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAcc(this)">Team SALE-CSKH <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><div class="accordion-body-inner">Cập nhật thông tin nội bộ, update tỷ giá, báo chỉnh tỷ giá riêng cho một đơn hàng...</div></div>
-    </div>
-    <div class="accordion">
-      <div class="accordion-header" onclick="toggleAcc(this)">KHO - Kênh X <span class="acc-arrow">▼</span></div>
-      <div class="accordion-body"><div class="accordion-body-inner">Group riêng của mỗi kênh làm việc với KHO về hàng hoá khách của kênh đó.</div></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>⚠️ Quy định xử phạt</h2>
-    <div class="callout warn">
-      Các sai phạm sẽ được nhắc nhở tối đa <strong>2 lần</strong>. Lần thứ 3 phạt <strong>50k</strong>, lần thứ 4 phạt <strong>100k</strong> và cứ thế nhân đôi cho các lần sau.
-    </div>
-    <div class="callout warn">
-      Nhân viên làm sai (mua sai, lên đơn sai...) có <strong>01 tháng</strong> kể từ khi hàng về để tự thanh lý. Sau 01 tháng không thanh lý được thì nhân viên sẽ phải nhận hàng đó và trả chi phí liên quan.
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>📋 Quy định giao hàng</h2>
-    <ul class="checklist">
-      <li>Tính từ <strong>Ngày nhập kho 10 ngày</strong>, không giao hàng cho khách → CSKH phải note lý do</li>
-      <li>Tính từ <strong>Ngày đã giao hàng 10 ngày</strong> mà khách chưa thanh toán → CSKH phải liên hệ đòi tiền</li>
-      <li>Không giao hàng cho khách nếu khách chưa thanh toán. Chỉ ship COD khi khách yêu cầu (số tiền &lt; 2 triệu)</li>
-      <li>Chỉ xử lý khiếu nại trong <strong>24h</strong> kể từ khi giao hàng thành công</li>
-    </ul>
-  </div>
-
-  <div class="section">
-    <h2>💰 Quy định đòi công nợ</h2>
-    <div class="callout info">Đòi tiền khách từ <strong>11h trưa trở ra</strong>, không đòi sáng sớm và tránh ngày mùng 1 âm lịch. Nếu hôm sau là mùng 1 âm thì báo công nợ toàn bộ ngày trước đó.</div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Loại khách</th><th>Công nợ tối đa</th></tr></thead>
-        <tbody>
-          <tr><td>Khách lẻ</td><td>10 triệu</td></tr>
-          <tr><td>Khách CTV / Sỉ nhỏ</td><td>20 triệu</td></tr>
-          <tr><td>Khách Sỉ vừa</td><td>50 triệu</td></tr>
-          <tr><td>Khách Sỉ to</td><td>100 triệu</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
 <!-- ===== TÀI KHOẢN & CÔNG CỤ ===== -->
 <section class="page" data-page="cong-cu">
   <div class="page-header">
     <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
-    <div class="page-header-row"><h1><span class="h-ico" data-icon="cong-cu"></span> Tài khoản &amp; Công cụ</h1></div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="cong-cu"></span> Công cụ hỗ trợ</h1></div>
   </div>
   <div class="section" style="margin-top:6px;">
     <h2>📦 Hệ thống Order</h2>
@@ -1166,7 +1075,7 @@ tbody tr:hover{background:var(--cream);}
 <section class="page" data-page="bao-gia">
   <div class="page-header">
     <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
-    <div class="page-header-row"><h1><span class="h-ico" data-icon="bao-gia"></span> Báo giá</h1></div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="bao-gia"></span> Tư vấn &amp; Báo giá</h1></div>
   </div>
 
   <div class="section" style="margin-top:6px;">
@@ -1321,7 +1230,7 @@ tbody tr:hover{background:var(--cream);}
 <section class="page" data-page="tao-don">
   <div class="page-header">
     <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Quy trình CSKH</div>
-    <div class="page-header-row"><h1><span class="h-ico" data-icon="tao-don"></span> Tạo đơn</h1></div>
+    <div class="page-header-row"><h1><span class="h-ico" data-icon="tao-don"></span> Follow đơn</h1></div>
   </div>
 
   <div class="section" style="margin-top:6px;">
@@ -2566,7 +2475,7 @@ let currentUser = { email: null, isAdmin: false, isEditor: false };
 let settingsData = { admins: [], editors: [] };
 let editingPageId = null;
 
-const CONTENT_PAGES = ['tong-quan','quy-dinh','cong-cu',
+const CONTENT_PAGES = ['tong-quan','cong-cu',
   'thuat-ngu','websites','bao-gia','tao-don','bao-hang-ve','hang-stock','khieu-nai','faq',
   'noi-quy','cach-lam-viec','quyen-loi'];
 
