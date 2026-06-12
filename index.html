@@ -376,6 +376,9 @@ tbody tr:hover{background:var(--cream);}
 .wysiwyg-mi:hover{background:var(--cream);}
 .wysiwyg-mi.danger{color:var(--red-ink);}
 .color-grid{display:grid;grid-template-columns:repeat(8,22px);gap:4px;padding:4px;}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,28px);gap:2px;padding:4px;max-height:220px;overflow-y:auto;}
+.emoji-cell{background:none;border:none;border-radius:var(--r-xs);font-size:18px;line-height:1;padding:4px 0;cursor:pointer;}
+.emoji-cell:hover{background:var(--cream);}
 .color-cell{width:22px;height:22px;border-radius:4px;cursor:pointer;border:1px solid rgba(0,0,0,.15);padding:0;}
 .color-cell:hover{transform:scale(1.15);}
 .img-bubble{position:fixed;z-index:220;background:var(--ink);border-radius:var(--r-pill);padding:4px 8px;display:none;gap:2px;align-items:center;box-shadow:var(--shadow-md);}
@@ -2375,6 +2378,10 @@ tbody tr:hover{background:var(--cream);}
       <button class="wysiwyg-btn" onclick="document.getElementById('imageFileInput').click()" title="Tải ảnh lên từ máy tính">&#128228;</button>
       <input type="file" id="imageFileInput" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" onchange="uploadImageFile(this)">
       <div class="wysiwyg-dd">
+        <button class="wysiwyg-btn" onmousedown="event.preventDefault()" onclick="ddToggle('ddEmoji')" title="Chèn emoji">&#128512;</button>
+        <div class="wysiwyg-menu" id="ddEmoji"><div class="emoji-grid" id="emojiGrid"></div></div>
+      </div>
+      <div class="wysiwyg-dd">
         <button class="wysiwyg-btn" onmousedown="event.preventDefault()" onclick="ddToggle('ddTable')" title="Bảng">&#9783; Bảng &#9662;</button>
         <div class="wysiwyg-menu" id="ddTable">
           <button class="wysiwyg-mi" onclick="insertTable()">&#10133; Chèn bảng mới…</button>
@@ -2952,6 +2959,17 @@ const WYSIWYG_COLORS = ['#1a1916','#5f5b54','#9a958c','#ffffff','#c0392b','#e67e
   '#2980b9','#8e44ad','#d81b60','#795548','#fadbd8','#fdebd0','#fff3a0','#d5f5e3',
   '#d6eaf8','#e8daef','#fce4ec','#eceff1'];
 
+const WYSIWYG_EMOJIS = ['😀','😄','😁','😆','🥹','😂','🤣','😊','😍','🥰','😘','😎','🤩','🥳','😉','🙂',
+  '🤔','😅','😬','😢','😭','😡','😱','🤯','😴','🤒','🙏','👍','👎','👏','🙌','🤝',
+  '💪','👀','✋','👋','❤️','💛','💚','💙','💜','🖤','💯','🔥','⭐','✨','🎉','🎊',
+  '✅','❌','⚠️','❓','❗','💡','📌','📎','📝','📅','⏰','🔔','🔗','📷','🚀','🏆'];
+
+function insertEmoji(emoji) {
+  ddCloseAll();
+  document.getElementById('wysiwygEditor').focus();
+  document.execCommand('insertText', false, emoji);
+}
+
 function fmtColor(cmd, color) {
   ddCloseAll();
   document.getElementById('wysiwygEditor').focus();
@@ -3138,6 +3156,15 @@ function imgDelete() {
       b.onclick = () => fmtColor(cmd, c);
       grid.appendChild(b);
     });
+  });
+
+  const emojiGrid = document.getElementById('emojiGrid');
+  WYSIWYG_EMOJIS.forEach(em => {
+    const b = document.createElement('button');
+    b.className = 'emoji-cell';
+    b.textContent = em;
+    b.onclick = () => insertEmoji(em);
+    emojiGrid.appendChild(b);
   });
 
   // Giữ vùng chọn trong editor khi bấm vào menu/bảng màu
