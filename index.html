@@ -252,10 +252,12 @@ h2:has(> .h2-ico),h3:has(> .h2-ico){display:flex;align-items:center;}
 .accordion{border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:9px;background:var(--white);overflow:hidden;}
 .accordion-header{
   padding:13px 16px;font-weight:600;font-size:14.5px;cursor:pointer;font-family:var(--font);
-  display:flex;justify-content:space-between;align-items:center;gap:12px;transition:.13s;color:var(--ink);
+  display:flex;justify-content:flex-start;align-items:center;gap:12px;transition:.13s;color:var(--ink);
 }
 .accordion-header:hover{background:var(--cream);}
-.acc-arrow{color:var(--ink-mute);font-size:11px;transition:transform .2s;flex:0 0 auto;}
+.acc-ico{display:inline-flex;width:24px;height:24px;flex:0 0 auto;border-radius:7px;background:var(--brown-soft);color:var(--brown-ink);align-items:center;justify-content:center;vertical-align:middle;}
+.acc-ico svg{width:14px;height:14px;}
+.acc-arrow{color:var(--ink-mute);font-size:11px;transition:transform .2s;flex:0 0 auto;margin-left:auto;}
 .accordion.open .acc-arrow{transform:rotate(180deg);color:var(--lav-ink);}
 .accordion-body{max-height:0;overflow:hidden;transition:max-height .26s ease;color:var(--ink-soft);font-size:14px;}
 .accordion-body-inner{padding:14px 16px 15px;}
@@ -2427,6 +2429,10 @@ const ICONS = {
   'pencil':'<path d="m4.5 19.5.9-3.7L16.6 4.6a2 2 0 0 1 2.8 2.8L8.2 18.6z"/><path d="m14.8 6.4 2.8 2.8"/>',
   'plug':'<path d="M9.5 3v4.5M14.5 3v4.5"/><path d="M7 7.5h10v3.7a5 5 0 0 1-10 0z"/><path d="M12 16.2V21"/>',
   'back':'<path d="M19 12H5"/><path d="m11 18-6-6 6-6"/>',
+  'clock':'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  'chart':'<path d="M3.5 4v16h17"/><path d="m7 14.5 3.5-4 3 2.5 4.5-5.5"/><path d="M14.5 7.5H18V11"/>',
+  'xcircle':'<circle cx="12" cy="12" r="8.5"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/>',
+  'search':'<circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.5-4.5"/>',
 };
 function iconSvg(p,sw){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.7)+'" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';}
 function paintIcons(root){
@@ -2439,22 +2445,25 @@ function paintIcons(root){
   });
 }
 
-// Emoji đứng đầu tiêu đề mục (h2/h3) được hiển thị bằng icon SVG đồng bộ
-// với bộ icon của wiki. Trong editor vẫn là emoji — gõ emoji đầu tiêu đề
-// là cách chọn icon cho mục đó.
+// Emoji đứng đầu tiêu đề mục (h2/h3) và tiêu đề khối gập được hiển thị bằng
+// icon SVG (line icon) đồng bộ với bộ icon của wiki. Gõ emoji đầu tiêu đề
+// là cách chọn icon cho mục/khối đó.
 const EMOJI_H_ICONS = {
   '🏢':'tong-quan','💬':'hoi-dap','🏠':'home','🔧':'cong-cu','🆕':'sparkles',
   '🔄':'refresh','⚠':'warn','📋':'clipboard','💰':'money','🗺':'map',
   '📦':'package','🏦':'bank','🛒':'cart','🏖':'umbrella','📱':'phone',
   '🔒':'lock','🏥':'care','🛍':'bag','👑':'crown','✏':'pencil','🔌':'plug',
   '🚀':'rocket','✨':'sparkles','📖':'quy-dinh','❓':'hoi-dap',
+  '🕐':'clock','🕑':'clock','🕒':'clock','⏰':'clock','⏱':'clock','⌛':'clock','⏳':'clock',
+  '📈':'chart','📉':'chart','📊':'chart','❌':'xcircle','🚫':'xcircle',
+  '🔍':'search','🔎':'search','💸':'money','💵':'money','💳':'money',
 };
 function themeHeadingIcons(root){
   // Không truyền root → quét các trang; truyền root (trang hoặc editor) → quét trong đó
   const scope=root||document;
-  const sel=root?'h2, h3':'.page h2, .page h3';
+  const sel=root?'h2, h3, .accordion-header':'.page h2, .page h3, .page .accordion-header';
   scope.querySelectorAll(sel).forEach(h=>{
-    if(h.querySelector('.h2-ico')) return;
+    if(h.querySelector('.h2-ico, .acc-ico')) return;
     const tn=h.firstChild;
     if(!tn || tn.nodeType!==3) return;
     const trimmed=tn.nodeValue.replace(/^\s+/,'');
@@ -2465,7 +2474,7 @@ function themeHeadingIcons(root){
     if(rest.charCodeAt(0)===0xFE0F) rest=rest.slice(1); // bỏ variation selector của emoji
     tn.nodeValue=rest.replace(/^\s+/,'');
     const span=document.createElement('span');
-    span.className='h2-ico';
+    span.className=h.classList.contains('accordion-header')?'acc-ico':'h2-ico';
     span.innerHTML=iconSvg(ICONS[key]);
     h.insertBefore(span,h.firstChild);
   });
