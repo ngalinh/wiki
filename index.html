@@ -2407,6 +2407,15 @@ tbody tr:hover{background:var(--cream);}
         </div>
       </div>
       <button class="wysiwyg-btn" onclick="insertAccordion()" title="Chèn khối gập (bấm tiêu đề để sổ nội dung ra)">&#9662; Khối gập</button>
+      <div class="wysiwyg-dd">
+        <button class="wysiwyg-btn" onmousedown="event.preventDefault()" onclick="ddToggle('ddCallout')" title="Chèn khối màu ghi chú">&#9645; Khối màu &#9662;</button>
+        <div class="wysiwyg-menu" id="ddCallout">
+          <button class="wysiwyg-mi" onclick="insertCallout('info')">&#128995; Tím — thông tin</button>
+          <button class="wysiwyg-mi" onclick="insertCallout('warn')">&#128993; Vàng — lưu ý</button>
+          <button class="wysiwyg-mi" onclick="insertCallout('danger')">&#128308; Đỏ — cảnh báo</button>
+          <button class="wysiwyg-mi" onclick="insertCallout('success')">&#128994; Xanh — mẹo / OK</button>
+        </div>
+      </div>
       <button class="wysiwyg-btn" onclick="fmt('insertHorizontalRule')" title="Đường kẻ ngang">&#9135;</button>
       <div class="wysiwyg-sep"></div>
       <button class="wysiwyg-btn" onclick="fmt('removeFormat')" title="Xóa định dạng">T&#x0336;</button>
@@ -3174,6 +3183,44 @@ function tableDeleteCol() {
 }
 
 // Chèn khối gập (accordion hỏi-đáp). Không cần onclick — đã có delegation.
+// Chèn khối màu ghi chú (callout). Nếu đang bôi đen chữ thì chữ đó thành
+// nội dung của khối, không thì chèn khối mẫu để sửa. Chèn DOM trực tiếp
+// ngay SAU đoạn hiện tại — execCommand('insertHTML') bị Chrome bóc mất div
+// khi con trỏ nằm trong <p>.
+function insertCallout(kind) {
+  ddCloseAll();
+  const editor = document.getElementById('wysiwygEditor');
+  editor.focus();
+  const sel = window.getSelection();
+  let picked = '';
+  let anchor = null;
+  if (sel.rangeCount && editor.contains(sel.anchorNode)) {
+    if (!sel.isCollapsed) {
+      picked = sel.toString().trim();
+      sel.getRangeAt(0).deleteContents();
+    }
+    let n = sel.anchorNode;
+    while (n && n.parentNode && n.parentNode !== editor) n = n.parentNode;
+    if (n && n.parentNode === editor) anchor = n;
+  }
+  const labels = { info: 'Thông tin', warn: 'Lưu ý', danger: 'Cảnh báo', success: 'Mẹo' };
+  const div = document.createElement('div');
+  div.className = `callout ${kind}`;
+  const strong = document.createElement('strong');
+  strong.textContent = `${labels[kind]}: `;
+  div.appendChild(strong);
+  div.appendChild(document.createTextNode(picked || 'Nội dung ghi chú…'));
+  const after = document.createElement('p');
+  after.innerHTML = '<br>';
+  if (anchor) anchor.after(div, after);
+  else { editor.appendChild(div); editor.appendChild(after); }
+  const r = document.createRange();
+  r.selectNodeContents(div);
+  r.collapse(false);
+  sel.removeAllRanges();
+  sel.addRange(r);
+}
+
 function insertAccordion() {
   document.getElementById('wysiwygEditor').focus();
   document.execCommand('insertHTML', false,
