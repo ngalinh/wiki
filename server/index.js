@@ -31,6 +31,24 @@ app.use(express.static(path.join(__dirname, '..'), {
   }
 }));
 
+// Đọc email từ cookie platform_token của hệ thống (gửi kèm mọi request
+// cùng origin). Token dạng base64("{\"u\":\"email\",...}") [+ ".chữ_ký"].
+function emailFromPlatformToken(req) {
+  try {
+    const m = /(?:^|;\s*)platform_token=([^;]+)/.exec(req.headers.cookie || '');
+    if (!m) return null;
+    const seg = decodeURIComponent(m[1]).split('.')[0].replace(/-/g, '+').replace(/_/g, '/');
+    const p = JSON.parse(Buffer.from(seg, 'base64').toString('utf8'));
+    if (p && p.exp) {
+      // exp có thể là epoch giây hoặc mili-giây
+      const expMs = Number(p.exp) < 1e12 ? Number(p.exp) * 1000 : Number(p.exp);
+      if (expMs < Date.now()) return null;
+    }
+    const email = p && (p.u || p.email || p.username);
+    return email ? String(email).trim().toLowerCase() : null;
+  } catch { return null; }
+}
+
 // Lấy email người dùng từ header do dashboard gửi
 function getUserEmail(req) {
   const header = process.env.USER_EMAIL_HEADER || 'x-user-email';
@@ -38,6 +56,7 @@ function getUserEmail(req) {
     req.headers[header] ||
     req.headers['x-user-email'] ||
     req.query.user_email ||
+    emailFromPlatformToken(req) ||
     ''
   ).trim().toLowerCase() || null;
 }
@@ -100,6 +119,7 @@ app.get('/api/debug-auth', (req, res) => {
     danhSachEditor: c.editors.map(mask),
     adminTuEnv: getEnvAdmins().map(mask),
     headerXUserEmail: req.headers['x-user-email'] || null,
+    emailTuCookiePlatform: emailFromPlatformToken(req),
     cacHeaderX: Object.keys(req.headers).filter(h => h.startsWith('x-')),
     tenCookie: (req.headers.cookie || '').split(';').map(s => s.split('=')[0].trim()).filter(Boolean),
   });
