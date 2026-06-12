@@ -466,6 +466,47 @@ tbody tr:hover{background:var(--cream);}
 /* ---------- FLOW DIAGRAM (tổng quan) ---------- */
 .flow-overview{overflow-x:auto;margin:18px 0 8px;}
 .flow-overview svg{min-width:540px;width:100%;display:block;}
+
+/* ---------- MICRO-INTERACTIONS (hover/click) ---------- */
+/* Nhấn nút: co nhẹ lại tạo cảm giác bấm thật */
+.btn:active{transform:translateY(0) scale(.96);transition-duration:.06s;}
+.wysiwyg-btn{transition:background .13s,border-color .13s,transform .1s;}
+.wysiwyg-btn:active{transform:scale(.9);}
+.wysiwyg-select:focus{border-color:var(--lav-ink);box-shadow:0 0 0 3px var(--lav-soft);outline:none;}
+/* Sidebar: trượt nhẹ sang phải khi rê chuột */
+.sidebar-link{transition:background .13s,color .13s,transform .16s;}
+.sidebar-link:hover{transform:translateX(3px);}
+.sidebar-link:active{transform:translateX(3px) scale(.97);}
+/* Card trang chủ: nhấn xuống khi click, icon nghiêng nhẹ khi hover */
+.block-card:active{transform:translateY(0) scale(.985);box-shadow:var(--shadow-sm);}
+.block-card-icon{transition:transform .22s cubic-bezier(.34,1.56,.64,1);}
+.block-card:hover .block-card-icon{transform:scale(1.1) rotate(-6deg);}
+.block-card-links a::before{display:inline-block;transition:transform .18s,opacity .18s;}
+.block-card-links a:hover::before{transform:translateX(4px);opacity:1;}
+/* Khối gập: icon lắc nhẹ + mũi tên gợi ý hướng sổ khi hover */
+.acc-ico,.h2-ico{transition:transform .22s cubic-bezier(.34,1.56,.64,1);}
+.accordion-header:hover .acc-ico{transform:scale(1.12) rotate(-6deg);}
+.accordion-header:active{background:var(--cream-2);}
+.accordion:not(.open) .accordion-header:hover .acc-arrow{transform:translateY(2px);color:var(--lav-ink);}
+.accordion.open .accordion-header:hover .acc-arrow{transform:rotate(180deg) translateY(2px);}
+/* Menu/bảng màu/emoji trong editor */
+.wysiwyg-mi{transition:background .12s,padding-left .16s;}
+.wysiwyg-mi:hover{padding-left:16px;}
+.emoji-cell{transition:transform .12s,background .12s;}
+.emoji-cell:hover{transform:scale(1.3);}
+.emoji-cell:active{transform:scale(1.05);}
+.color-cell{transition:transform .12s;}
+.color-cell:active{transform:scale(.95);}
+/* Hiệu ứng mở modal, dropdown, bubble (tôn trọng cài đặt giảm chuyển động) */
+@media (prefers-reduced-motion: no-preference){
+  .modal-overlay.open{animation:fadeIn .18s ease both;}
+  .modal-overlay.open .modal{animation:modalIn .26s cubic-bezier(.22,.61,.36,1) both;}
+  .wysiwyg-menu.open{animation:ddIn .15s ease both;}
+  .img-bubble.show{animation:ddIn .15s ease both;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.97);}to{opacity:1;transform:none;}}
+  @keyframes ddIn{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:none;}}
+}
 </style>
 </head>
 <body>
