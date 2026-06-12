@@ -12,6 +12,7 @@ const CONTENT_DIR = path.join(DATA_DIR, 'content');
 const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
 const HISTORY_DIR = path.join(DATA_DIR, 'history');
 const IMGTEXT_DIR = path.join(DATA_DIR, 'imgtext');
+const LINKTEXT_DIR = path.join(DATA_DIR, 'linktext');
 const MAX_HISTORY = 10;
 
 // Bootstrap data dirs
@@ -20,6 +21,7 @@ if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 if (!fs.existsSync(HISTORY_DIR)) fs.mkdirSync(HISTORY_DIR, { recursive: true });
 if (!fs.existsSync(IMGTEXT_DIR)) fs.mkdirSync(IMGTEXT_DIR, { recursive: true });
+if (!fs.existsSync(LINKTEXT_DIR)) fs.mkdirSync(LINKTEXT_DIR, { recursive: true });
 if (!fs.existsSync(CONFIG_FILE)) {
   const bootstrapAdmins = (process.env.ADMIN_EMAILS || '')
     .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
@@ -195,8 +197,9 @@ app.post('/api/content/:pageId', (req, res) => {
   const record = { content, updatedBy: email, updatedAt: new Date().toISOString() };
   fs.writeFileSync(path.join(CONTENT_DIR, `${pageId}.json`), JSON.stringify(record, null, 2));
   pushHistory(pageId, record);
-  // Trích xuất trước nội dung các hình mới trong trang (chạy ngầm cho AI hỏi-đáp)
+  // Trích xuất trước nội dung hình và link mới trong trang (chạy ngầm cho AI hỏi-đáp)
   injectImageText(content).catch(() => {});
+  injectLinkText(content).catch(() => {});
   res.json({ success: true });
 });
 
@@ -351,8 +354,65 @@ async function injectImageText(html) {
   }
   return html.replace(/<img\b[^>]*?\ssrc=["']([^"']+)["'][^>]*>/gi, (tag, src) => {
     const text = texts.get(src);
-    // Bỏ dấu < để htmlToText không nhầm nội dung trích xuất là thẻ HTML
-    return text ? `\n[HÌNH MINH HỌA — nội dung trong hình]\n${text.replace(/</g, '‹')}\n[HẾT HÌNH]\n` : '\n[Hình minh họa]\n';
+    // Địa chỉ hình kèm theo để AI trích dẫn nguồn dạng [HÌNH: địa_chỉ].
+    // Bỏ dấu < để htmlToText không nhầm nội dung trích xuất là thẻ HTML.
+    const cite = src.startsWith('data:') ? '' : ` — địa chỉ hình: ${src}`;
+    return text ? `\n[HÌNH MINH HỌA${cite}]\n${text.replace(/</g, '‹')}\n[HẾT HÌNH]\n` : `\n[Hình minh họa${cite}]\n`;
+  });
+}
+
+// ─── Đọc nội dung trang web được gắn link cho AI ──────────────
+// Văn bản chính của trang được tải MỘT lần và cache 7 ngày vào
+// data/linktext/<md5(url)>.json; hết hạn thì tự tải lại ở lần hỏi kế tiếp.
+const LINK_CACHE_MS = 7 * 24 * 60 * 60 * 1000;
+const LINK_TEXT_MAX = 3000;
+const linkTextFailed = new Map(); // url -> timestamp lần fail gần nhất (chỉ trong RAM)
+
+async function describeLink(url) {
+  const cacheFile = path.join(LINKTEXT_DIR, crypto.createHash('md5').update(url).digest('hex') + '.json');
+  let stale = null;
+  try {
+    const c = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
+    if (Date.now() - new Date(c.fetchedAt).getTime() < LINK_CACHE_MS) return c.text;
+    stale = c.text; // bản cũ: dùng tạm nếu tải lại thất bại
+  } catch {}
+  const failedAt = linkTextFailed.get(url);
+  if (failedAt && Date.now() - failedAt < 10 * 60 * 1000) return stale;
+  try {
+    const res = await fetch(url, {
+      redirect: 'follow',
+      signal: AbortSignal.timeout(10000),
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; BassoWikiBot/1.0)', 'Accept-Language': 'vi,en' },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const ct = (res.headers.get('content-type') || '').split(';')[0].trim();
+    if (ct !== 'text/html' && ct !== 'text/plain') throw new Error(`content-type ${ct}`);
+    let body = (await res.text()).slice(0, 1.5e6);
+    if (ct === 'text/html') body = body.replace(/<head[\s\S]*?<\/head>/gi, '').replace(/<(nav|footer|noscript)[\s\S]*?<\/\1>/gi, '');
+    const text = htmlToText(body).slice(0, LINK_TEXT_MAX);
+    if (!text) throw new Error('empty page');
+    fs.writeFileSync(cacheFile, JSON.stringify({ url, text, fetchedAt: new Date().toISOString() }, null, 2));
+    linkTextFailed.delete(url);
+    return text;
+  } catch (err) {
+    console.error('Đọc link lỗi:', url.slice(0, 80), err && err.message);
+    linkTextFailed.set(url, Date.now());
+    return stale;
+  }
+}
+
+// Chèn nội dung trang web ngay sau mỗi link http(s) trong HTML
+// (htmlToText vốn vứt bỏ thuộc tính href nên phải giữ lại địa chỉ ở đây)
+async function injectLinkText(html) {
+  const urls = [...new Set([...html.matchAll(/<a\b[^>]*?\shref=["'](https?:\/\/[^"']+)["']/gi)].map(m => m[1]))];
+  const texts = new Map();
+  for (let i = 0; i < urls.length; i += 4) {
+    await Promise.all(urls.slice(i, i + 4).map(async u => texts.set(u, await describeLink(u))));
+  }
+  return html.replace(/<a\b[^>]*?\shref=["'](https?:\/\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (tag, url, label) => {
+    const text = texts.get(url);
+    const head = `${label} [LINK: ${url}]`;
+    return text ? `${head}\n[NỘI DUNG TRANG WEB TRONG LINK]\n${text.replace(/</g, '‹')}\n[HẾT TRANG WEB]\n` : head;
   });
 }
 
@@ -377,6 +437,7 @@ async function getWikiContext() {
       } catch {}
     }
     contentHtml = await injectImageText(contentHtml);
+    contentHtml = await injectLinkText(contentHtml);
     sections.push(`# Trang: ${title}\n\n${htmlToText(contentHtml)}`);
   }
   return sections.join('\n\n---\n\n');
@@ -389,7 +450,8 @@ QUY TẮC BẮT BUỘC:
 2. Nếu wiki không có thông tin để trả lời, nói rõ: "Thông tin này chưa có trong wiki" và gợi ý người hỏi liên hệ quản lý hoặc nhờ Admin/Editor bổ sung nội dung.
 3. Luôn ghi rõ thông tin lấy từ trang nào của wiki (ví dụ: "Theo trang Báo giá, ...").
 4. Trả lời ngắn gọn, đúng trọng tâm. Trích đúng con số, mức phí, thời hạn như wiki ghi — không làm tròn hay diễn giải lại số liệu.
-5. Nếu câu hỏi không liên quan đến công việc/nội dung wiki, từ chối nhẹ nhàng và nhắc rằng bạn chỉ hỗ trợ hỏi đáp nội dung wiki nội bộ.`;
+5. Nếu câu hỏi không liên quan đến công việc/nội dung wiki, từ chối nhẹ nhàng và nhắc rằng bạn chỉ hỗ trợ hỏi đáp nội dung wiki nội bộ.
+6. Nếu câu trả lời dùng thông tin từ hình minh họa (khối [HÌNH MINH HỌA — địa chỉ hình: ...]) hoặc trang web trong link (khối [LINK: ...]), kết thúc câu trả lời bằng dòng "Nguồn:" rồi liệt kê mỗi nguồn trên một dòng theo ĐÚNG định dạng: [HÌNH: địa_chỉ_hình] hoặc [LINK: địa_chỉ_link] — địa chỉ chép nguyên văn từ ngữ cảnh, không tự bịa. Không có nguồn hình/link thì không thêm dòng này.`;
 
 // POST /api/ask — hỏi đáp AI dựa trên nội dung wiki
 app.post('/api/ask', async (req, res) => {
