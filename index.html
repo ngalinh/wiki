@@ -2340,6 +2340,7 @@ tbody tr:hover{background:var(--cream);}
       <input class="wysiwyg-select" id="fontSizeInput" list="fontSizeOptions" inputmode="numeric" placeholder="Cỡ chữ" style="width:72px;cursor:text"
         title="Cỡ chữ (px): gõ số tùy ý rồi Enter, hoặc chọn từ danh sách"
         onmousedown="saveEditorSelection()" onfocus="saveEditorSelection()"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();fmtSizePx(this.value);}"
         onchange="fmtSizePx(this.value)">
       <datalist id="fontSizeOptions">
         <option value="10"><option value="13"><option value="16"><option value="18">
@@ -2992,17 +2993,25 @@ function saveEditorSelection() {
 }
 
 // Cỡ chữ tự do theo px: execCommand('fontSize') chỉ nhận mức 1–7, nên dùng
-// mức 7 làm mốc rồi đổi các thẻ <font size="7"> mới sinh thành span px
+// mức 7 làm mốc rồi đổi các thẻ <font size="7"> mới sinh thành span px.
+// Cả Enter lẫn sự kiện change đều gọi vào đây → chặn gọi đúp trong 200ms.
+let fontSizeAppliedAt = 0;
 function fmtSizePx(v) {
+  if (Date.now() - fontSizeAppliedAt < 200) return;
   const px = Math.round(parseFloat(v));
   if (!px || px < 6 || px > 200) { if (v) showToast('Cỡ chữ hợp lệ: 6–200', true); return; }
+  fontSizeAppliedAt = Date.now();
   const editor = document.getElementById('wysiwygEditor');
   editor.focus();
+  const sel = window.getSelection();
   if (savedEditorRange) {
-    const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(savedEditorRange);
     savedEditorRange = null;
+  }
+  if (sel.isCollapsed || !editor.contains(sel.anchorNode)) {
+    showToast('Bôi đen đoạn chữ cần đổi cỡ trước', true);
+    return;
   }
   const before = new Set(editor.querySelectorAll('font[size="7"]'));
   document.execCommand('styleWithCSS', false, false);
