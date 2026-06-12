@@ -499,6 +499,7 @@ tbody tr:hover{background:var(--cream);}
   </div>
   <div class="sidebar-section">
     <a class="sidebar-link" href="/"><span class="icon" data-icon="back"></span> Về Dashboard</a>
+    <a class="sidebar-link" onclick="showAuthDebug()" style="font-size:12px;color:var(--ink-mute)"><span class="icon"></span> Kiểm tra đăng nhập</a>
   </div>
 </aside>
 
@@ -2665,6 +2666,32 @@ document.addEventListener('visibilitychange', async () => {
   renderUserBadge();
   updateRoleUI();
 });
+
+// Chẩn đoán nhận diện đăng nhập: gom những gì app thấy trong bộ nhớ
+// + những gì server nhận được, hiện trong alert để chụp màn hình gửi hỗ trợ
+async function showAuthDebug() {
+  const lines = ['— PHÍA APP (bộ nhớ của app/trình duyệt này) —'];
+  const dump = (store, label) => {
+    try {
+      if (!store.length) { lines.push(`${label}: (trống)`); return; }
+      for (let i = 0; i < store.length; i++) {
+        const k = store.key(i);
+        const v = String(store.getItem(k) || '');
+        lines.push(`${label}.${k} = ${v.slice(0, 70)}${v.length > 70 ? '…' : ''}`);
+      }
+    } catch { lines.push(`${label}: không đọc được`); }
+  };
+  dump(localStorage, 'local');
+  dump(sessionStorage, 'session');
+  lines.push(`Email app đang dùng: ${authEmail || currentUser.email || '(chưa nhận diện được)'}`);
+  lines.push(`Quyền hiện tại: ${currentUser.isAdmin ? 'Admin' : currentUser.isEditor ? 'Editor' : 'Viewer'}`);
+  lines.push('', '— PHÍA SERVER —');
+  try {
+    const r = await fetch(apiUrl('./api/debug-auth'));
+    lines.push(JSON.stringify(await r.json(), null, 1));
+  } catch { lines.push('Không gọi được server'); }
+  alert(lines.join('\n'));
+}
 
 function renderUserBadge() {
   const el = document.getElementById('userBadge');

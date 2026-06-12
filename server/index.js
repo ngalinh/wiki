@@ -87,6 +87,24 @@ app.get('/api/version', (req, res) => {
   res.json({ sha: STARTED_SHA, startedAt: STARTED_AT });
 });
 
+// GET /api/debug-auth — chẩn đoán nhận diện đăng nhập (email được che bớt)
+app.get('/api/debug-auth', (req, res) => {
+  const email = getUserEmail(req);
+  const c = getConfig();
+  const mask = e => String(e).replace(/^(..)[^@]*/, '$1***');
+  res.json({
+    emailServerNhanDuoc: email || null,
+    laAdmin: isAdmin(email),
+    laEditor: isEditor(email),
+    danhSachAdmin: c.admins.map(mask),
+    danhSachEditor: c.editors.map(mask),
+    adminTuEnv: getEnvAdmins().map(mask),
+    headerXUserEmail: req.headers['x-user-email'] || null,
+    cacHeaderX: Object.keys(req.headers).filter(h => h.startsWith('x-')),
+    tenCookie: (req.headers.cookie || '').split(';').map(s => s.split('=')[0].trim()).filter(Boolean),
+  });
+});
+
 // GET /api/me
 app.get('/api/me', (req, res) => {
   const email = getUserEmail(req);
