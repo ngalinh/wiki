@@ -9,11 +9,14 @@ const DATA_DIR = path.join(__dirname, 'data');
 const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 const CONTENT_DIR = path.join(DATA_DIR, 'content');
 const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
+const HISTORY_DIR = path.join(DATA_DIR, 'history');
+const MAX_HISTORY = 10;
 
 // Bootstrap data dirs
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+if (!fs.existsSync(HISTORY_DIR)) fs.mkdirSync(HISTORY_DIR, { recursive: true });
 if (!fs.existsSync(CONFIG_FILE)) {
   const bootstrapAdmins = (process.env.ADMIN_EMAILS || '')
     .split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
@@ -164,6 +167,21 @@ app.get('/api/content/:pageId', (req, res) => {
   catch { res.json({ content: null }); }
 });
 
+// ─── Lịch sử phiên bản: data/history/<pageId>.json, mới nhất đứng đầu ──
+function readHistory(pageId) {
+  try {
+    const v = JSON.parse(fs.readFileSync(path.join(HISTORY_DIR, `${pageId}.json`), 'utf8'));
+    return Array.isArray(v) ? v : [];
+  } catch { return []; }
+}
+
+function pushHistory(pageId, entry) {
+  const versions = readHistory(pageId);
+  versions.unshift({ id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`, ...entry });
+  fs.writeFileSync(path.join(HISTORY_DIR, `${pageId}.json`),
+    JSON.stringify(versions.slice(0, MAX_HISTORY), null, 2));
+}
+
 // POST /api/content/:pageId  — editor only
 app.post('/api/content/:pageId', (req, res) => {
   const email = getUserEmail(req);
@@ -171,10 +189,34 @@ app.post('/api/content/:pageId', (req, res) => {
   const pageId = req.params.pageId.replace(/[^a-z0-9-]/g, '');
   const { content } = req.body;
   if (typeof content !== 'string') return res.status(400).json({ error: 'Nội dung không hợp lệ' });
-  fs.writeFileSync(path.join(CONTENT_DIR, `${pageId}.json`), JSON.stringify({
-    content, updatedBy: email, updatedAt: new Date().toISOString()
-  }, null, 2));
+  const record = { content, updatedBy: email, updatedAt: new Date().toISOString() };
+  fs.writeFileSync(path.join(CONTENT_DIR, `${pageId}.json`), JSON.stringify(record, null, 2));
+  pushHistory(pageId, record);
   res.json({ success: true });
+});
+
+// GET /api/history/:pageId  — danh sách phiên bản (không kèm nội dung), editor only
+app.get('/api/history/:pageId', (req, res) => {
+  const email = getUserEmail(req);
+  if (!isEditor(email)) return res.status(403).json({ error: 'Không có quyền' });
+  const pageId = req.params.pageId.replace(/[^a-z0-9-]/g, '');
+  res.json({
+    versions: readHistory(pageId).map(v => ({ id: v.id, updatedBy: v.updatedBy, updatedAt: v.updatedAt }))
+  });
+});
+
+// POST /api/history/:pageId/restore  — khôi phục về một phiên bản, editor only
+app.post('/api/history/:pageId/restore', (req, res) => {
+  const email = getUserEmail(req);
+  if (!isEditor(email)) return res.status(403).json({ error: 'Không có quyền chỉnh sửa' });
+  const pageId = req.params.pageId.replace(/[^a-z0-9-]/g, '');
+  const version = readHistory(pageId).find(v => v.id === (req.body || {}).id);
+  if (!version) return res.status(404).json({ error: 'Không tìm thấy phiên bản này' });
+  const record = { content: version.content, updatedBy: email, updatedAt: new Date().toISOString() };
+  fs.writeFileSync(path.join(CONTENT_DIR, `${pageId}.json`), JSON.stringify(record, null, 2));
+  // Bản khôi phục cũng được ghi vào lịch sử như một lần cập nhật
+  pushHistory(pageId, record);
+  res.json({ success: true, content: version.content });
 });
 
 // POST /api/upload  — upload ảnh từ máy tính, editor only
