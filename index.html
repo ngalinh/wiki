@@ -2623,6 +2623,14 @@ document.addEventListener('click', e => {
   document.getElementById('imgLightbox').classList.add('show');
 });
 
+// ─── Link trong nội dung trang → luôn mở ở tab mới ───────────
+document.addEventListener('click', e => {
+  const a = e.target.closest('.page a[href]');
+  if (!a) return;
+  e.preventDefault();
+  window.open(a.href, '_blank', 'noopener');
+});
+
 // ─── Accordion (animated max-height) ─────────────────────────
 // Copy/dán trong editor làm trình duyệt gỡ thuộc tính onclick, nên ngoài
 // onclick gốc còn có delegation: mọi .accordion-header đều bấm được.
