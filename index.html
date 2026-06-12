@@ -171,11 +171,10 @@ h2:has(> .h2-ico),h3:has(> .h2-ico){display:flex;align-items:center;}
   .page.active > *:nth-child(6){animation-delay:.30s;}
   .page.active > *:nth-child(n+7){animation-delay:.34s;}
   @keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
-  /* block cards pop in a touch later, staggered */
-  .page.active .block-grid .block-card{animation:rise .5s cubic-bezier(.22,.61,.36,1) both;}
-  .page.active .block-grid .block-card:nth-child(2){animation-delay:.10s;}
-  .page.active .block-grid .block-card:nth-child(3){animation-delay:.16s;}
-  .page.active .block-grid .block-card:nth-child(4){animation-delay:.22s;}
+  /* thẻ danh mục trang chủ vào trễ hơn một nhịp, so le */
+  .page.active .grid .ecard{animation:rise .5s cubic-bezier(.22,.61,.36,1) both;}
+  .page.active .grid .ecard:nth-child(2){animation-delay:.10s;}
+  .page.active .grid .ecard:nth-child(3){animation-delay:.16s;}
 }
 
 /* ---------- PAGE HEADER ---------- */
@@ -199,35 +198,78 @@ h2:has(> .h2-ico),h3:has(> .h2-ico){display:flex;align-items:center;}
 .section ul:not(.checklist):not(.email-list),.section ol{padding-left:20px;color:var(--ink-soft);font-size:14.5px;margin-bottom:11px;}
 .mt-4{margin-top:34px;}
 
-/* ---------- HOME HERO ---------- */
-.home-hero{
-  background:var(--beige-card);
-  border:1px solid var(--line);border-radius:var(--r-card);padding:40px 36px;margin-bottom:30px;
+/* ---------- TRANG CHỦ (Editorial Hub) ---------- */
+.page.home-a{max-width:1040px;}
+/* Hero 2 cột: giới thiệu (beige) + promo Hỏi đáp AI (lavender) */
+.home-a .hero{display:grid;grid-template-columns:1.55fr 1fr;gap:26px;align-items:stretch;margin-bottom:32px;}
+.home-a .hero-main{background:var(--beige-card);border:1px solid var(--line);border-radius:22px;
+  padding:44px 40px;display:flex;flex-direction:column;justify-content:center;}
+.home-a .hero-kicker{font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--brown-ink);margin-bottom:18px;display:flex;align-items:center;gap:9px;}
+.home-a .hero-kicker::before{content:"";width:22px;height:1.5px;background:var(--brown-ink);opacity:.6;}
+.home-a .hero-main h1{font-size:46px;line-height:1.04;letter-spacing:-.03em;margin-bottom:16px;}
+.home-a .hero-main p{color:var(--ink-soft);max-width:46ch;font-size:16.5px;}
+.home-a .hero-aside{background:var(--lav);border:1px solid color-mix(in srgb,var(--lav-ink) 26%,transparent);
+  border-radius:22px;padding:30px 28px;display:flex;flex-direction:column;justify-content:space-between;gap:22px;}
+.home-a .hero-aside .ai-head{display:flex;flex-direction:column;}
+.home-a .hero-aside .ai-ic{width:46px;height:46px;border-radius:14px;background:#fff;color:var(--lav-ink);
+  display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+.home-a .hero-aside .ai-ic svg{width:25px;height:25px;}
+.home-a .hero-aside h3{font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--lav-ink);letter-spacing:-.02em;margin-bottom:8px;}
+.home-a .hero-aside p{font-size:14px;color:color-mix(in srgb,var(--lav-ink) 80%,var(--ink));line-height:1.5;}
+.home-a .ai-cta{display:inline-flex;align-items:center;gap:9px;align-self:flex-start;
+  background:var(--lav-ink);color:#fff;font-family:var(--font-head);font-weight:600;font-size:14px;
+  padding:11px 20px;border-radius:999px;transition:.15s;cursor:pointer;}
+.home-a .ai-cta:hover{filter:brightness(1.06);transform:translateY(-1px);}
+.home-a .ai-cta:active{transform:translateY(0) scale(.96);}
+.home-a .ai-cta .arr{width:18px;height:18px;border-radius:50%;background:#fff;color:var(--lav-ink);
+  display:inline-flex;align-items:center;justify-content:center;}
+.home-a .ai-cta .arr svg{width:11px;height:11px;}
+/* Chip truy cập nhanh */
+.home-a .quick{margin-bottom:36px;}
+.home-a .quick-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-mute);margin-bottom:13px;}
+.home-a .chips{display:flex;flex-wrap:wrap;gap:10px;}
+.home-a .chip{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);
+  border-radius:999px;padding:9px 17px 9px 13px;font-size:14px;font-weight:600;color:var(--ink);transition:.14s;cursor:pointer;}
+.home-a .chip .ci{width:18px;height:18px;color:var(--ink-soft);display:flex;}
+.home-a .chip .ci svg{width:18px;height:18px;}
+.home-a .chip:hover{border-color:var(--ink);transform:translateY(-1px);}
+.home-a .chip:active{transform:translateY(0) scale(.96);}
+/* Lưới 3 thẻ danh mục */
+.home-a .sec-label{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--ink);
+  margin-bottom:16px;display:flex;align-items:baseline;gap:12px;}
+.home-a .sec-label::after{content:"";flex:1;height:1px;background:var(--line);}
+.home-a .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+.home-a .grid.grid-3{grid-template-columns:repeat(3,1fr);}
+.home-a .ecard{background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px 26px 22px;
+  cursor:pointer;transition:.16s;display:flex;flex-direction:column;}
+.home-a .ecard:hover{border-color:var(--ink);transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.home-a .ecard:active{transform:translateY(-1px) scale(.99);}
+.home-a .ecard-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px;}
+.home-a .ecard-ic{width:54px;height:54px;border-radius:16px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;transition:transform .22s cubic-bezier(.34,1.56,.64,1);}
+.home-a .ecard-ic svg{width:27px;height:27px;}
+.home-a .ecard:hover .ecard-ic{transform:scale(1.08) rotate(-5deg);}
+.home-a .grid-3 .ecard:nth-child(1) .ecard-ic{background:var(--peach);color:var(--peach-ink);}
+.home-a .grid-3 .ecard:nth-child(2) .ecard-ic{background:var(--blue);color:var(--blue-ink);}
+.home-a .grid-3 .ecard:nth-child(3) .ecard-ic{background:var(--green);color:var(--green-ink);}
+.home-a .ecard h2{font-size:21px;font-weight:700;letter-spacing:-.02em;margin:8px 0 0;border:none;padding:0;}
+.home-a .ecard > p{font-size:14px;color:var(--ink-soft);line-height:1.55;margin-bottom:18px;flex:1;}
+.home-a .ecard-links{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--line-soft);padding-top:8px;}
+.home-a .ecard-links a{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:600;
+  color:var(--ink-soft);padding:8px 4px;border-radius:8px;transition:.12s;}
+.home-a .ecard-links a .go{color:var(--ink-mute);transition:.14s;display:inline-flex;}
+.home-a .ecard-links a .go svg{width:15px;height:15px;}
+.home-a .ecard-links a:hover{color:var(--ink);background:var(--cream);padding-left:9px;}
+.home-a .ecard-links a:hover .go{transform:translateX(3px);color:var(--lav-ink);}
+/* Sidebar: link Hỏi đáp AI điểm nhấn lavender */
+.sidebar-link.ai .icon{color:var(--lav-ink);}
+.sidebar-link.ai.active{background:var(--lav);color:var(--lav-ink);}
+.sidebar-link.ai.active .icon{color:var(--lav-ink);}
+@media(max-width:980px){
+  .home-a .hero{grid-template-columns:1fr;}
+  .home-a .grid,.home-a .grid.grid-3{grid-template-columns:1fr;}
 }
-.hero-badge{width:50px;height:50px;border-radius:15px;background:var(--lav-soft);color:var(--lav-ink);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
-.hero-badge svg{width:27px;height:27px;}
-.home-hero h1{font-size:clamp(30px,4.4vw,44px);font-weight:700;margin-bottom:12px;letter-spacing:-.025em;}
-.home-hero p{color:var(--ink-soft);max-width:60ch;font-size:16px;}
-
-/* ---------- BLOCK CARDS ---------- */
-.block-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
-.block-card{
-  background:var(--white);border:1px solid var(--line);border-radius:var(--r-card);padding:24px;
-  cursor:pointer;transition:.16s;box-shadow:var(--shadow-sm);
-}
-.block-card:hover{border-color:var(--ink);box-shadow:var(--shadow-md);transform:translateY(-2px);}
-.block-card-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px;color:var(--ink);}
-.block-card-icon svg{width:25px;height:25px;}
-.block-grid .block-card:nth-child(1) .block-card-icon{background:var(--lav-soft);color:var(--lav-ink);}
-.block-grid .block-card:nth-child(2) .block-card-icon{background:var(--peach);color:var(--peach-ink);}
-.block-grid .block-card:nth-child(3) .block-card-icon{background:var(--blue);color:var(--blue-ink);}
-.block-grid .block-card:nth-child(4) .block-card-icon{background:var(--green);color:var(--green-ink);}
-.block-card h2{font-size:18px;font-weight:700;margin-bottom:6px;border:none;padding:0;}
-.block-card p{font-size:13.5px;color:var(--ink-soft);margin-bottom:16px;line-height:1.5;}
-.block-card-links{display:flex;flex-direction:column;gap:7px;border-top:1px solid var(--line-soft);padding-top:14px;}
-.block-card-links a{font-size:13px;color:var(--lav-ink);font-weight:600;display:inline-flex;align-items:center;gap:7px;}
-.block-card-links a::before{content:"→";opacity:.7;}
-.block-card-links a:hover{color:var(--ink);}
 
 /* ---------- CALLOUT ---------- */
 .callout{border-radius:var(--r-sm);padding:14px 18px;margin:18px 0;font-size:14.5px;
@@ -438,7 +480,9 @@ tbody tr:hover{background:var(--cream);}
 @media(max-width:820px){
   .sidebar{position:fixed;left:0;top:var(--nav-h);z-index:30;background:var(--cream);transform:translateX(-100%);transition:.2s;box-shadow:var(--shadow-md);}
   .sidebar.open{transform:none;}
-  .block-grid,.settings-grid{grid-template-columns:1fr;}
+  .settings-grid{grid-template-columns:1fr;}
+  .home-a .hero-main{padding:32px 26px;}
+  .home-a .hero-main h1{font-size:34px;}
   .topnav{gap:10px;padding-left:14px;padding-right:max(14px, env(safe-area-inset-right));}
   .topnav-search{width:auto;flex:1;padding:8px 12px;}
   .topnav-title{display:none;}
@@ -456,12 +500,11 @@ tbody tr:hover{background:var(--cream);}
    CONTENT SURFACE — kiểu cố định "Viền mảnh" (outline):
    trắng, viền hairline, không đổ bóng
    =========================================================== */
-.block-card,.accordion,.table-wrap,.settings-card,.empty-state{
+.accordion,.table-wrap,.settings-card,.empty-state{
   background:#fff;
   border-color:var(--line-soft);
   box-shadow:none;
 }
-.block-card:hover{border-color:var(--ink);box-shadow:none;}
 
 /* ---------- FLOW DIAGRAM (tổng quan) ---------- */
 .flow-overview{overflow-x:auto;margin:18px 0 8px;}
@@ -478,11 +521,6 @@ tbody tr:hover{background:var(--cream);}
 .sidebar-link:hover{transform:translateX(3px);}
 .sidebar-link:active{transform:translateX(3px) scale(.97);}
 /* Card trang chủ: nhấn xuống khi click, icon nghiêng nhẹ khi hover */
-.block-card:active{transform:translateY(0) scale(.985);box-shadow:var(--shadow-sm);}
-.block-card-icon{transition:transform .22s cubic-bezier(.34,1.56,.64,1);}
-.block-card:hover .block-card-icon{transform:scale(1.1) rotate(-6deg);}
-.block-card-links a::before{display:inline-block;transition:transform .18s,opacity .18s;}
-.block-card-links a:hover::before{transform:translateX(4px);opacity:1;}
 /* Khối gập: icon lắc nhẹ + mũi tên gợi ý hướng sổ khi hover */
 .acc-ico,.h2-ico{transition:transform .22s cubic-bezier(.34,1.56,.64,1);}
 .accordion-header:hover .acc-ico{transform:scale(1.12) rotate(-6deg);}
@@ -531,7 +569,7 @@ tbody tr:hover{background:var(--cream);}
   <div class="sidebar-section">
     <div class="sidebar-heading">Tổng quan</div>
     <a class="sidebar-link" data-page="home"><span class="icon"></span> Trang chủ</a>
-    <a class="sidebar-link" data-page="hoi-dap"><span class="icon"></span> Hỏi đáp AI</a>
+    <a class="sidebar-link ai" data-page="hoi-dap"><span class="icon"></span> Hỏi đáp AI</a>
   </div>
   <div class="sidebar-section">
     <div class="sidebar-heading">Bắt đầu tại đây</div>
@@ -566,49 +604,65 @@ tbody tr:hover{background:var(--cream);}
 <main class="main" id="main">
 
 <!-- ===== HOME ===== -->
-<section class="page" data-page="home">
-  <div class="home-hero">
-    <span class="hero-badge" data-icon="sparkles"></span>
-    <h1>Chào mừng đến Wiki Nội Bộ</h1>
-    <p>Tài liệu hướng dẫn quy trình, nghiệp vụ dành cho toàn bộ nhân viên Basso / ShipUS. Mọi quy định, công cụ và checklist công việc đều được tập trung tại đây.</p>
+<section class="page home-a" data-page="home">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-main">
+      <div class="hero-kicker">Wiki nội bộ · Basso / ShipUS</div>
+      <h1>Mọi quy trình, gọn trong một nơi.</h1>
+      <p>Hướng dẫn nghiệp vụ, quy định và checklist công việc cho toàn bộ nhân viên — luôn cập nhật, dễ tra cứu.</p>
+    </div>
+    <div class="hero-aside">
+      <div class="ai-head">
+        <div class="ai-ic" data-icon="hoi-dap"></div>
+        <h3>Hỏi đáp AI</h3>
+        <p>Không biết quy trình nằm ở đâu? Hỏi trợ lý AI — trả lời ngay từ nội dung wiki.</p>
+      </div>
+      <a class="ai-cta" data-go="hoi-dap">Bắt đầu hỏi <span class="arr" data-icon="arr"></span></a>
+    </div>
   </div>
-  <div class="block-grid">
-    <div class="block-card" data-go="tong-quan">
-      <div class="block-card-icon" data-icon="rocket"></div>
-      <h2>Bắt đầu tại đây</h2>
-      <p>Dành cho nhân viên mới — tổng quan công ty, quy định và công cụ cần thiết.</p>
-      <div class="block-card-links">
-        <a data-go="tong-quan">Tổng quan công ty</a>
-      </div>
+
+  <!-- TRUY CẬP NHANH -->
+  <div class="quick">
+    <div class="quick-label">Truy cập nhanh</div>
+    <div class="chips">
+      <span class="chip" data-go="bao-gia"><span class="ci" data-icon="bao-gia"></span> Tư vấn &amp; Báo giá</span>
+      <span class="chip" data-go="tao-don"><span class="ci" data-icon="tao-don"></span> Follow đơn</span>
+      <span class="chip" data-go="bao-hang-ve"><span class="ci" data-icon="bao-hang-ve"></span> Báo hàng về</span>
+      <span class="chip" data-go="khieu-nai"><span class="ci" data-icon="khieu-nai"></span> Khiếu nại thường gặp</span>
+      <span class="chip" data-go="thuat-ngu"><span class="ci" data-icon="thuat-ngu"></span> Thuật ngữ</span>
+      <span class="chip" data-go="websites"><span class="ci" data-icon="websites"></span> Websites</span>
     </div>
-    <div class="block-card" data-go="bao-gia">
-      <div class="block-card-icon" data-icon="bao-gia"></div>
-      <h2>Quy trình CSKH</h2>
+  </div>
+
+  <!-- DANH MỤC CHÍNH -->
+  <div class="sec-label">Danh mục chính</div>
+  <div class="grid grid-3">
+    <div class="ecard" data-go="bao-gia">
+      <div class="ecard-top"><div class="ecard-ic" data-icon="bao-gia"></div><h2>Quy trình CSKH</h2></div>
       <p>Tư vấn &amp; báo giá, follow đơn, báo hàng về và xử lý khiếu nại — quy trình chuẩn cho Sale &amp; CSKH.</p>
-      <div class="block-card-links">
-        <a data-go="bao-gia">Tư vấn &amp; Báo giá</a>
-        <a data-go="tao-don">Follow đơn</a>
-        <a data-go="khieu-nai">Khiếu nại thường gặp</a>
+      <div class="ecard-links">
+        <a data-go="bao-gia">Tư vấn &amp; Báo giá <span class="go" data-icon="arr"></span></a>
+        <a data-go="tao-don">Follow đơn <span class="go" data-icon="arr"></span></a>
+        <a data-go="khieu-nai">Khiếu nại thường gặp <span class="go" data-icon="arr"></span></a>
       </div>
     </div>
-    <div class="block-card" data-go="noi-quy">
-      <div class="block-card-icon" data-icon="noi-quy"></div>
-      <h2>Nội quy nhân sự</h2>
+    <div class="ecard" data-go="noi-quy">
+      <div class="ecard-top"><div class="ecard-ic" data-icon="noi-quy"></div><h2>Nội quy nhân sự</h2></div>
       <p>Nội quy chung, cách làm việc hiệu quả và các quyền lợi dành cho nhân viên.</p>
-      <div class="block-card-links">
-        <a data-go="noi-quy">Nội quy chung</a>
-        <a data-go="cach-lam-viec">Cách làm việc</a>
-        <a data-go="quyen-loi">Quyền lợi</a>
+      <div class="ecard-links">
+        <a data-go="noi-quy">Nội quy chung <span class="go" data-icon="arr"></span></a>
+        <a data-go="cach-lam-viec">Cách làm việc <span class="go" data-icon="arr"></span></a>
+        <a data-go="quyen-loi">Quyền lợi <span class="go" data-icon="arr"></span></a>
       </div>
     </div>
-    <div class="block-card" data-go="faq">
-      <div class="block-card-icon" data-icon="faq"></div>
-      <h2>Câu hỏi thường gặp</h2>
+    <div class="ecard" data-go="faq">
+      <div class="ecard-top"><div class="ecard-ic" data-icon="faq"></div><h2>Câu hỏi thường gặp</h2></div>
       <p>Giải đáp nhanh các thắc mắc phổ biến về quy trình và công cụ làm việc.</p>
-      <div class="block-card-links">
-        <a data-go="faq">Xem FAQ</a>
-        <a data-go="thuat-ngu">Thuật ngữ</a>
-        <a data-go="cong-cu">Công cụ hỗ trợ</a>
+      <div class="ecard-links">
+        <a data-go="faq">Xem FAQ <span class="go" data-icon="arr"></span></a>
+        <a data-go="thuat-ngu">Thuật ngữ <span class="go" data-icon="arr"></span></a>
+        <a data-go="cong-cu">Công cụ hỗ trợ <span class="go" data-icon="arr"></span></a>
       </div>
     </div>
   </div>
@@ -2470,6 +2524,7 @@ const ICONS = {
   'pencil':'<path d="m4.5 19.5.9-3.7L16.6 4.6a2 2 0 0 1 2.8 2.8L8.2 18.6z"/><path d="m14.8 6.4 2.8 2.8"/>',
   'plug':'<path d="M9.5 3v4.5M14.5 3v4.5"/><path d="M7 7.5h10v3.7a5 5 0 0 1-10 0z"/><path d="M12 16.2V21"/>',
   'back':'<path d="M19 12H5"/><path d="m11 18-6-6 6-6"/>',
+  'arr':'<path d="M5 12h14"/><path d="m13 5 7 7-7 7"/>',
   'clock':'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
   'chart':'<path d="M3.5 4v16h17"/><path d="m7 14.5 3.5-4 3 2.5 4.5-5.5"/><path d="M14.5 7.5H18V11"/>',
   'xcircle':'<circle cx="12" cy="12" r="8.5"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/>',
