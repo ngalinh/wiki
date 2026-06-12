@@ -371,13 +371,17 @@ const LINK_CACHE_MS = 7 * 24 * 60 * 60 * 1000;
 const LINK_TEXT_MAX = 15000;
 const linkTextFailed = new Map(); // url -> timestamp lần fail gần nhất (chỉ trong RAM)
 
-function linkAuthHosts() {
-  return (process.env.LINK_AUTH_HOSTS || '').split(',').map(h => h.trim()).filter(Boolean);
+// Host được gửi kèm cookie: trùng host của wiki, hoặc nằm trong LINK_AUTH_HOSTS
+// (khai "basso.vn" là khớp luôn mọi subdomain như www.basso.vn, dashboard.basso.vn)
+function linkHostAllowed(host, auth) {
+  if (auth && host === auth.host) return true;
+  return (process.env.LINK_AUTH_HOSTS || '').split(',').map(h => h.trim()).filter(Boolean)
+    .some(h => host === h || host.endsWith('.' + h));
 }
 
 async function describeLink(url, auth) {
-  // 'v2': đổi key để bỏ các bản cache cũ tải khi chưa gửi kèm cookie
-  const cacheFile = path.join(LINKTEXT_DIR, crypto.createHash('md5').update('v2|' + url).digest('hex') + '.json');
+  // 'v3': đổi key để bỏ cache cũ (bản tải khi chưa kèm cookie / lỡ dính trang login)
+  const cacheFile = path.join(LINKTEXT_DIR, crypto.createHash('md5').update('v3|' + url).digest('hex') + '.json');
   let stale = null;
   try {
     const c = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
@@ -389,8 +393,7 @@ async function describeLink(url, auth) {
   try {
     const headers = { 'User-Agent': 'Mozilla/5.0 (compatible; BassoWikiBot/1.0)', 'Accept-Language': 'vi,en' };
     try {
-      const host = new URL(url).host;
-      if (auth && auth.cookie && (host === auth.host || linkAuthHosts().includes(host))) headers.cookie = auth.cookie;
+      if (auth && auth.cookie && linkHostAllowed(new URL(url).host, auth)) headers.cookie = auth.cookie;
     } catch {}
     const res = await fetch(url, {
       redirect: 'follow',
@@ -404,6 +407,9 @@ async function describeLink(url, auth) {
     if (ct === 'text/html') body = body.replace(/<head[\s\S]*?<\/head>/gi, '').replace(/<(nav|footer|noscript)[\s\S]*?<\/\1>/gi, '');
     const text = htmlToText(body).slice(0, LINK_TEXT_MAX);
     if (!text) throw new Error('empty page');
+    // Trang trả về form đăng nhập (cookie không được chấp nhận) → coi như lỗi,
+    // KHÔNG cache 7 ngày kẻo sửa cấu hình xong vẫn dùng nhầm bản login
+    if (text.length < 400 && /đăng nhập|log\s?in|sign\s?in/i.test(text)) throw new Error('trang yêu cầu đăng nhập');
     fs.writeFileSync(cacheFile, JSON.stringify({ url, text, fetchedAt: new Date().toISOString() }, null, 2));
     linkTextFailed.delete(url);
     return text;
