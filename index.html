@@ -146,6 +146,7 @@ strong{font-weight:700;color:var(--ink);}
 .page{max-width:880px;margin:0 auto;padding:40px 44px calc(90px + env(safe-area-inset-bottom, 0px));display:none;}
 .page img{max-width:100%;height:auto;cursor:zoom-in;}
 .expand-all-row{display:flex;justify-content:flex-end;margin:14px 0 8px;}
+h2 .expand-all-btn{float:right;margin-left:10px;}
 .img-lightbox{position:fixed;inset:0;z-index:300;background:rgba(26,25,22,.88);display:none;align-items:center;justify-content:center;padding:18px;cursor:zoom-out;}
 .img-lightbox.show{display:flex;}
 .img-lightbox img{max-width:100%;max-height:calc(100vh - 36px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));border-radius:10px;box-shadow:var(--shadow-md);}
@@ -2784,31 +2785,44 @@ function refreshEditBtn(pageId) {
   row.appendChild(btn);
 }
 
-// Nút "Xem toàn bộ" đặt ngay phía trên khối hỏi-đáp đầu tiên của trang:
-// sổ/thu gọn tất cả các khối một lần
+// Nút "Xem toàn bộ" đặt ở mỗi mục (h2) có khối hỏi-đáp bên dưới:
+// sổ/thu gọn các khối của riêng mục đó một lần
 function refreshExpandBtn(pageId) {
   const page = document.querySelector(`.page[data-page="${pageId}"]`);
   if (!page) return;
-  page.querySelectorAll('.expand-all-row').forEach(b => b.remove());
-  const firstAcc = page.querySelector('.accordion');
-  if (!firstAcc) return;
-  const btn = document.createElement('button');
-  btn.className = 'btn btn-secondary btn-sm expand-all-btn';
-  btn.textContent = '⌄ Xem toàn bộ';
-  btn.onclick = () => {
-    const expanding = btn.dataset.open !== '1';
-    page.querySelectorAll('.accordion').forEach(a => {
-      const body = a.querySelector('.accordion-body');
-      a.classList.toggle('open', expanding);
-      if (body) body.style.maxHeight = expanding ? body.scrollHeight + 'px' : '';
-    });
-    btn.dataset.open = expanding ? '1' : '';
-    btn.textContent = expanding ? '⌃ Thu gọn' : '⌄ Xem toàn bộ';
-  };
-  const row = document.createElement('div');
-  row.className = 'expand-all-row';
-  row.appendChild(btn);
-  firstAcc.parentNode.insertBefore(row, firstAcc);
+  page.querySelectorAll('.expand-all-row, .expand-all-btn').forEach(b => b.remove());
+  // Gom khối hỏi-đáp theo mục: h2 cùng cấp gần nhất phía trước nó
+  const groups = new Map();
+  page.querySelectorAll('.accordion').forEach(acc => {
+    let h = acc.previousElementSibling;
+    while (h && h.tagName !== 'H2') h = h.previousElementSibling;
+    if (!groups.has(h)) groups.set(h, []);
+    groups.get(h).push(acc);
+  });
+  groups.forEach((accs, heading) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-secondary btn-sm expand-all-btn';
+    btn.textContent = '⌄ Xem toàn bộ';
+    btn.onclick = () => {
+      const expanding = btn.dataset.open !== '1';
+      accs.forEach(a => {
+        const body = a.querySelector('.accordion-body');
+        a.classList.toggle('open', expanding);
+        if (body) body.style.maxHeight = expanding ? body.scrollHeight + 'px' : '';
+      });
+      btn.dataset.open = expanding ? '1' : '';
+      btn.textContent = expanding ? '⌃ Thu gọn' : '⌄ Xem toàn bộ';
+    };
+    if (heading) {
+      heading.appendChild(btn);
+    } else {
+      // Khối hỏi-đáp không thuộc mục h2 nào → đặt nút ngay phía trên khối đầu tiên
+      const row = document.createElement('div');
+      row.className = 'expand-all-row';
+      row.appendChild(btn);
+      accs[0].parentNode.insertBefore(row, accs[0]);
+    }
+  });
 }
 
 // ─── Custom content load/save ─────────────────────────────────
@@ -2857,7 +2871,7 @@ function getPageBody(pageId) {
     el = el.nextElementSibling;
   }
   // Nút "Xem toàn bộ" là UI chèn lúc hiển thị, không thuộc nội dung lưu
-  tmp.querySelectorAll('.expand-all-row').forEach(b => b.remove());
+  tmp.querySelectorAll('.expand-all-row, .expand-all-btn').forEach(b => b.remove());
   return tmp.innerHTML;
 }
 
