@@ -2466,6 +2466,9 @@ tbody tr:hover{background:var(--cream);}
 
 <!-- Bubble xóa khối gập / khối màu — hiện khi click vào khối trong editor -->
 <div class="img-bubble" id="accBubble">
+  <button onclick="accInsertPara(false)" title="Thêm đoạn văn trống phía trên khối">&#182; Trên</button>
+  <button onclick="accInsertPara(true)" title="Thêm đoạn văn trống phía dưới khối">&#182; Dưới</button>
+  <span class="bub-sep"></span>
   <button id="accBubbleBtn" onclick="accDelete()" title="Xóa cả khối này khỏi nội dung">&#128465; Xóa khối</button>
 </div>
 
@@ -3316,6 +3319,24 @@ function accDelete() {
   accDeselect();
 }
 
+// Thêm đoạn văn trống ngay trên/dưới khối đang chọn để gõ chữ thường
+function accInsertPara(below) {
+  if (!selectedAcc) return;
+  const p = document.createElement('p');
+  p.innerHTML = '<br>';
+  below ? selectedAcc.after(p) : selectedAcc.before(p);
+  accDeselect();
+  const editor = document.getElementById('wysiwygEditor');
+  editor.focus({ preventScroll: true });
+  const sel = window.getSelection();
+  const r = document.createRange();
+  r.setStart(p, 0);
+  r.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(r);
+  p.scrollIntoView({ block: 'nearest' });
+}
+
 // ─── Khởi tạo editor: bảng màu, dán/kéo-thả ảnh, chọn ảnh ────
 (function initWysiwyg() {
   const editor = document.getElementById('wysiwygEditor');
@@ -3363,6 +3384,56 @@ function accDelete() {
     else accDeselect();
   });
   editor.addEventListener('scroll', () => { imgBubblePosition(); accBubblePosition(); });
+
+  // Enter trong khối màu: mặc định trình duyệt nhân bản cả khối → thay bằng
+  // xuống dòng trong khối; Enter lần nữa trên dòng trống cuối khối = thoát ra
+  // đoạn văn thường bên dưới (giống Notion/Docs)
+  editor.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !sel.isCollapsed) return;
+    const node = sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode;
+    const callout = node && node.closest && node.closest('.callout');
+    if (!callout || !editor.contains(callout)) return;
+    e.preventDefault();
+    const r = sel.getRangeAt(0);
+    const tail = r.cloneRange();
+    tail.selectNodeContents(callout);
+    tail.setStart(r.endContainer, r.endOffset);
+    const atEnd = tail.toString().trim() === '';
+    // Phần tử cuối cùng nhìn thấy được (Chrome hay sinh text node rỗng ở cuối)
+    let lastVisible = callout.lastChild;
+    while (lastVisible && lastVisible.nodeType === 3 && !lastVisible.textContent.trim()) lastVisible = lastVisible.previousSibling;
+    if (atEnd && lastVisible && lastVisible.nodeName === 'BR') {
+      // Dòng trống cuối khối → thoát khối: dọn <br>/text rỗng cuối rồi ra <p> mới
+      let n = callout.lastChild;
+      while (n && (n.nodeName === 'BR' || (n.nodeType === 3 && !n.textContent.trim()))) {
+        const prev = n.previousSibling;
+        n.remove();
+        n = prev;
+      }
+      const p = document.createElement('p');
+      p.innerHTML = '<br>';
+      callout.after(p);
+      const nr = document.createRange();
+      nr.setStart(p, 0);
+      nr.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(nr);
+      p.scrollIntoView({ block: 'nearest' });
+    } else {
+      // Chèn <br> bằng DOM trực tiếp — insertHTML chèn ra NGOÀI khối khi
+      // con trỏ ở ranh giới phần tử. Cuối khối cần 2 <br> để thấy dòng mới.
+      const br = document.createElement('br');
+      r.insertNode(br);
+      if (atEnd) br.after(document.createElement('br'));
+      const nr = document.createRange();
+      nr.setStartAfter(br);
+      nr.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(nr);
+    }
+  });
 
   // Dán hoặc kéo-thả ảnh → tự upload lên server (không nhúng base64 làm phình nội dung)
   editor.addEventListener('paste', e => {
