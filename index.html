@@ -394,7 +394,7 @@ tbody tr:hover{background:var(--cream);}
 .img-bubble button{background:none;border:none;color:#fff;font-size:12px;padding:4px 7px;cursor:pointer;border-radius:var(--r-xs);font-family:var(--font);white-space:nowrap;}
 .img-bubble button:hover{background:rgba(255,255,255,.18);}
 .img-bubble .bub-sep{width:1px;height:16px;background:rgba(255,255,255,.3);margin:0 2px;}
-.wysiwyg-editor .accordion.acc-selected{outline:2px solid var(--lav);outline-offset:2px;}
+.wysiwyg-editor .acc-selected{outline:2px solid var(--lav);outline-offset:2px;}
 /* Khối gập rỗng/sót lại trong editor: vẫn nhìn thấy để bấm chọn và xóa */
 .wysiwyg-editor .accordion{min-height:22px;}
 .wysiwyg-editor img.img-selected{outline:2px solid var(--lav);outline-offset:2px;}
@@ -2464,9 +2464,9 @@ tbody tr:hover{background:var(--cream);}
   <button onclick="imgDelete()" title="Xóa ảnh">&#128465;</button>
 </div>
 
-<!-- Bubble xóa khối gập — hiện khi click vào khối hỏi-đáp trong editor -->
+<!-- Bubble xóa khối gập / khối màu — hiện khi click vào khối trong editor -->
 <div class="img-bubble" id="accBubble">
-  <button onclick="accDelete()" title="Xóa cả khối gập này khỏi nội dung">&#128465; Xóa khối gập</button>
+  <button id="accBubbleBtn" onclick="accDelete()" title="Xóa cả khối này khỏi nội dung">&#128465; Xóa khối</button>
 </div>
 
 <!-- Popup xem ảnh to (bấm vào ảnh trên trang) -->
@@ -3290,6 +3290,8 @@ function accSelect(acc) {
   accDeselect();
   selectedAcc = acc;
   acc.classList.add('acc-selected');
+  document.getElementById('accBubbleBtn').textContent =
+    `🗑 Xóa ${acc.classList.contains('callout') ? 'khối màu' : 'khối gập'}`;
   document.getElementById('accBubble').classList.add('show');
   accBubblePosition();
 }
@@ -3350,13 +3352,13 @@ function accDelete() {
   document.addEventListener('click', e => {
     if (!e.target.closest('.wysiwyg-dd')) ddCloseAll();
     if (!e.target.closest('#imgBubble') && e.target.tagName !== 'IMG') imgDeselect();
-    if (!e.target.closest('#accBubble') && !(e.target.closest('.accordion') && editor.contains(e.target))) accDeselect();
+    if (!e.target.closest('#accBubble') && !(e.target.closest('.accordion, .callout') && editor.contains(e.target))) accDeselect();
   });
 
   editor.addEventListener('click', e => {
     if (e.target.tagName === 'IMG') imgSelect(e.target);
     else imgDeselect();
-    const acc = e.target.closest('.accordion');
+    const acc = e.target.closest('.accordion, .callout');
     if (acc && editor.contains(acc)) accSelect(acc);
     else accDeselect();
   });
