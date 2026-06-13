@@ -462,6 +462,61 @@ async function getWikiContext(auth) {
   return sections.join('\n\n---\n\n');
 }
 
+// GET /api/debug-links — chẩn đoán AI đọc link: thử tải từng link trong tài liệu
+// với đúng cấu hình cookie hiện tại và báo kết quả chi tiết. Admin only.
+app.get('/api/debug-links', async (req, res) => {
+  const email = getUserEmail(req);
+  if (!isAdmin(email)) return res.status(403).json({ error: 'Chỉ Admin mới dùng được công cụ này' });
+  const auth = { cookie: req.headers.cookie || '', host: req.headers.host };
+  // Gom link theo trang (nội dung đã chỉnh sửa đè lên mặc định)
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const links = [];
+  const re = /<section class="page" data-page="([a-z-]+)">([\s\S]*?)<\/section>/g;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    const [, pageId, body] = m;
+    if (pageId === 'settings' || pageId === 'hoi-dap') continue;
+    let contentHtml = body;
+    try {
+      const custom = JSON.parse(fs.readFileSync(path.join(CONTENT_DIR, `${pageId}.json`), 'utf8'));
+      if (custom && custom.content) contentHtml = custom.content;
+    } catch {}
+    for (const lm of contentHtml.matchAll(/<a\b[^>]*?\shref=["'](https?:\/\/[^"']+)["']/gi)) {
+      if (!links.some(l => l.url === lm[1])) links.push({ trang: pageId, url: lm[1] });
+    }
+  }
+  const results = [];
+  for (const { trang, url } of links) {
+    const r = { trang, url };
+    try {
+      const host = new URL(url).host;
+      r.host = host;
+      r.guiKemCookieDangNhap = !!(auth.cookie && linkHostAllowed(host, auth));
+      const headers = { 'User-Agent': 'Mozilla/5.0 (compatible; BassoWikiBot/1.0)', 'Accept-Language': 'vi,en' };
+      if (r.guiKemCookieDangNhap) headers.cookie = auth.cookie;
+      const resp = await fetch(url, { redirect: 'follow', signal: AbortSignal.timeout(10000), headers });
+      r.httpStatus = resp.status;
+      r.contentType = (resp.headers.get('content-type') || '').split(';')[0];
+      if (resp.url !== url) r.biChuyenHuongToi = resp.url;
+      const body = (await resp.text()).slice(0, 3e6);
+      const text = htmlToText(body.replace(/<head[\s\S]*?<\/head>/gi, '').replace(/<(nav|footer|noscript)[\s\S]*?<\/\1>/gi, ''));
+      r.doDaiVanBanDocDuoc = text.length;
+      r.coVeLaTrangDangNhap = text.length < 400 && /đăng nhập|log\s?in|sign\s?in/i.test(text);
+      r.trichDoanDau = text.slice(0, 250);
+    } catch (err) {
+      r.loi = err && err.message;
+    }
+    results.push(r);
+  }
+  res.json({
+    hostCuaWiki: auth.host,
+    linkAuthHosts: process.env.LINK_AUTH_HOSTS || '(chưa cấu hình)',
+    coCookieTuTrinhDuyet: !!auth.cookie,
+    tongSoLink: results.length,
+    links: results,
+  });
+});
+
 const AI_SYSTEM_PROMPT = `Bạn là trợ lý hỏi đáp của Wiki Nội Bộ công ty Basso / ShipUS, trả lời câu hỏi của nhân viên bằng tiếng Việt.
 
 QUY TẮC BẮT BUỘC:
