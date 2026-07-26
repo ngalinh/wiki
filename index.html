@@ -316,6 +316,8 @@ thead th{background:var(--beige-card);text-align:left;font-family:var(--font-hea
 tbody td{padding:12px 15px;border-bottom:1px solid var(--line-soft);color:var(--ink-soft);vertical-align:top;}
 tbody tr:last-child td{border-bottom:none;}
 tbody tr:hover{background:var(--cream);}
+.page .table-wrap table{table-layout:fixed;}
+.page .table-wrap td,.page .table-wrap th{overflow-wrap:break-word;word-break:break-word;}
 
 /* ---------- TAG (category) ---------- */
 .tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--r-pill);
@@ -3321,6 +3323,13 @@ function initTableResize(editor) {
     const table = cell.closest('table');
     const idx = cell.cellIndex;
     const x0 = e.clientX, w0 = cell.offsetWidth;
+    // Lock width của các column khác để fixed layout hoạt động đúng khi lưu
+    const colCount = table.rows[0] ? table.rows[0].cells.length : 0;
+    for (let c = 0; c < colCount; c++) {
+      if (c === idx) continue;
+      const cw = table.rows[0].cells[c].offsetWidth;
+      for (const row of table.rows) { if (row.cells[c]) row.cells[c].style.width = cw + 'px'; }
+    }
     const move = mv => {
       const w = Math.max(40, w0 + mv.clientX - x0);
       for (const row of table.rows) { if (row.cells[idx]) row.cells[idx].style.width = w + 'px'; }
