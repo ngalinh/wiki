@@ -3365,7 +3365,14 @@ function normalizeTableWidths(root) {
     const firstRow = t.querySelector('tr');
     if (!firstRow) return;
     const cells = [...firstRow.querySelectorAll('th,td')];
-    const pxWidths = cells.map(c => parseFloat(c.style.width) || 0);
+    // Strip "width: 100%" from individual cells — Google Sheets artifact, breaks fixed layout
+    cells.forEach(c => { if (c.style.width === '100%') c.style.removeProperty('width'); });
+    // Only process px widths; skip cells with % (already converted) or no width
+    const pxWidths = cells.map(c => {
+      const w = c.style.width;
+      if (!w || w.endsWith('%')) return 0;
+      return parseFloat(w) || 0;
+    });
     const total = pxWidths.reduce((s, w) => s + w, 0);
     if (total <= 0) return;
     cells.forEach((c, i) => {
