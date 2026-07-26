@@ -3284,9 +3284,10 @@ function cleanPastedTable(html) {
   return [...tmp.querySelectorAll('table')].map(t => t.outerHTML).join('<p><br></p>') || tmp.innerHTML;
 }
 
-// Resize cột bảng trong editor: phát hiện chuột gần viền phải ô (6px), không cần DOM phụ
+// Resize cột bảng trong editor: phát hiện chuột gần viền phải ô (10px), đặt cursor trực tiếp trên ô
 function initTableResize(editor) {
   let resizing = false;
+  let hoverCell = null;
   function cellFromEvent(e) {
     let el = e.target;
     if (el && el.nodeType === 3) el = el.parentElement;
@@ -3295,18 +3296,28 @@ function initTableResize(editor) {
   editor.addEventListener('mousemove', e => {
     if (resizing) return;
     const cell = cellFromEvent(e);
-    if (!cell || !editor.contains(cell)) { editor.style.cursor = ''; return; }
+    // Reset cursor ô trước khi chuyển sang ô khác
+    if (hoverCell && hoverCell !== cell) { hoverCell.style.cursor = ''; hoverCell = null; }
+    if (!cell || !editor.contains(cell)) return;
     const rect = cell.getBoundingClientRect();
-    editor.style.cursor = e.clientX >= rect.right - 6 ? 'col-resize' : '';
+    if (e.clientX >= rect.right - 10) {
+      cell.style.cursor = 'col-resize';
+      hoverCell = cell;
+    } else {
+      cell.style.cursor = '';
+    }
   });
-  editor.addEventListener('mouseleave', () => { if (!resizing) editor.style.cursor = ''; });
+  editor.addEventListener('mouseleave', () => {
+    if (!resizing && hoverCell) { hoverCell.style.cursor = ''; hoverCell = null; }
+  });
   editor.addEventListener('mousedown', e => {
     const cell = cellFromEvent(e);
     if (!cell || !editor.contains(cell)) return;
     const rect = cell.getBoundingClientRect();
-    if (e.clientX < rect.right - 6) return;
+    if (e.clientX < rect.right - 10) return;
     e.preventDefault(); e.stopPropagation();
     resizing = true;
+    document.body.style.cursor = 'col-resize'; // Giữ cursor suốt quá trình kéo
     const table = cell.closest('table');
     const idx = cell.cellIndex;
     const x0 = e.clientX, w0 = cell.offsetWidth;
@@ -3317,7 +3328,8 @@ function initTableResize(editor) {
     };
     const up = () => {
       resizing = false;
-      editor.style.cursor = '';
+      document.body.style.cursor = '';
+      if (hoverCell) { hoverCell.style.cursor = ''; hoverCell = null; }
       document.removeEventListener('mousemove', move);
       document.removeEventListener('mouseup', up);
     };
