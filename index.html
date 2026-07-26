@@ -3284,35 +3284,45 @@ function cleanPastedTable(html) {
   return [...tmp.querySelectorAll('table')].map(t => t.outerHTML).join('<p><br></p>') || tmp.innerHTML;
 }
 
-// Gắn handle kéo-thả resize cột cho bảng trong editor
-function attachTableResizers(table) {
-  table.querySelectorAll('.col-resizer').forEach(r => r.remove());
-  table.querySelectorAll('th,td').forEach(cell => {
-    const resizer = document.createElement('div');
-    resizer.className = 'col-resizer';
-    resizer.contentEditable = 'false';
-    cell.appendChild(resizer);
-    let x0, w0, idx;
-    resizer.addEventListener('mousedown', e => {
-      e.preventDefault(); e.stopPropagation();
-      x0 = e.clientX; w0 = cell.offsetWidth; idx = cell.cellIndex;
-      resizer.classList.add('dragging');
-      const move = mv => {
-        const w = Math.max(40, w0 + mv.clientX - x0);
-        for (const row of table.rows) {
-          const c = row.cells[idx];
-          if (c) c.style.width = w + 'px';
-        }
-        table.style.removeProperty('width');
-      };
-      const up = () => {
-        resizer.classList.remove('dragging');
-        document.removeEventListener('mousemove', move);
-        document.removeEventListener('mouseup', up);
-      };
-      document.addEventListener('mousemove', move);
-      document.addEventListener('mouseup', up);
-    });
+// Resize cột bảng trong editor: phát hiện chuột gần viền phải ô (6px), không cần DOM phụ
+function initTableResize(editor) {
+  let resizing = false;
+  function cellFromEvent(e) {
+    let el = e.target;
+    if (el && el.nodeType === 3) el = el.parentElement;
+    return el && el.closest && el.closest('td,th');
+  }
+  editor.addEventListener('mousemove', e => {
+    if (resizing) return;
+    const cell = cellFromEvent(e);
+    if (!cell || !editor.contains(cell)) { editor.style.cursor = ''; return; }
+    const rect = cell.getBoundingClientRect();
+    editor.style.cursor = e.clientX >= rect.right - 6 ? 'col-resize' : '';
+  });
+  editor.addEventListener('mouseleave', () => { if (!resizing) editor.style.cursor = ''; });
+  editor.addEventListener('mousedown', e => {
+    const cell = cellFromEvent(e);
+    if (!cell || !editor.contains(cell)) return;
+    const rect = cell.getBoundingClientRect();
+    if (e.clientX < rect.right - 6) return;
+    e.preventDefault(); e.stopPropagation();
+    resizing = true;
+    const table = cell.closest('table');
+    const idx = cell.cellIndex;
+    const x0 = e.clientX, w0 = cell.offsetWidth;
+    const move = mv => {
+      const w = Math.max(40, w0 + mv.clientX - x0);
+      for (const row of table.rows) { if (row.cells[idx]) row.cells[idx].style.width = w + 'px'; }
+      table.style.removeProperty('width');
+    };
+    const up = () => {
+      resizing = false;
+      editor.style.cursor = '';
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', up);
+    };
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', up);
   });
 }
 
@@ -3473,12 +3483,8 @@ function accInsertPara(below) {
     const acc = e.target.closest('.accordion, .callout');
     if (acc && editor.contains(acc)) accSelect(acc);
     else accDeselect();
-    // Gắn resize handle khi click vào bảng
-    const tbl = e.target.closest && e.target.closest('table');
-    if (tbl && editor.contains(tbl) && !e.target.classList.contains('col-resizer')) {
-      attachTableResizers(tbl);
-    }
   });
+  initTableResize(editor);
   editor.addEventListener('scroll', () => { imgBubblePosition(); accBubblePosition(); });
 
   // Enter trong khối màu: mặc định trình duyệt nhân bản cả khối → thay bằng
@@ -3627,14 +3633,7 @@ async function saveEditModal() {
   accDeselect();
   const editor = document.getElementById('wysiwygEditor');
   const source = document.getElementById('editTextarea');
-  let content;
-  if (wysiwygSourceMode) {
-    content = source.value;
-  } else {
-    const clone = editor.cloneNode(true);
-    clone.querySelectorAll('.col-resizer').forEach(r => r.remove());
-    content = clone.innerHTML;
-  }
+  const content = wysiwygSourceMode ? source.value : editor.innerHTML;
   try {
     const res = await fetch(apiUrl(`./api/content/${editingPageId}`), {
       method: 'POST',
