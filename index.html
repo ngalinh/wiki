@@ -2947,6 +2947,7 @@ function setPageBody(pageId, html) {
   }
   header ? header.insertAdjacentHTML('afterend', html) : (page.innerHTML = html);
   wrapBareTablesIn(page);
+  normalizeTableWidths(page);
   normalizeAccordions(page);
   themeHeadingIcons(page);
   refreshExpandBtn(pageId);
@@ -3356,6 +3357,20 @@ function wrapBareTablesIn(root) {
       t.replaceWith(wrap);
       wrap.appendChild(t);
     }
+  });
+}
+
+function normalizeTableWidths(root) {
+  root.querySelectorAll('.table-wrap table').forEach(t => {
+    const firstRow = t.querySelector('tr');
+    if (!firstRow) return;
+    const cells = [...firstRow.querySelectorAll('th,td')];
+    const pxWidths = cells.map(c => parseFloat(c.style.width) || 0);
+    const total = pxWidths.reduce((s, w) => s + w, 0);
+    if (total <= 0) return;
+    cells.forEach((c, i) => {
+      if (pxWidths[i] > 0) c.style.width = (pxWidths[i] / total * 100).toFixed(2) + '%';
+    });
   });
 }
 
