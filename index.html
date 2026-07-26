@@ -414,6 +414,13 @@ tbody tr:hover{background:var(--cream);}
 .wysiwyg-editor hr{border:none;border-top:2px solid var(--line);margin:1em 0;}
 .wysiwyg-editor code{background:var(--cream);border:1px solid var(--line);border-radius:var(--r-xs);font-family:var(--font-mono);font-size:13px;padding:2px 6px;}
 .wysiwyg-editor img{max-width:100%;height:auto;border-radius:var(--r-xs);margin:4px 0;}
+/* Bảng trong editor: cuộn ngang thay vì tràn */
+.wysiwyg-editor table{width:100%;table-layout:auto;}
+.wysiwyg-editor .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-xs);margin:.5em 0;background:var(--white);}
+/* Resize cột: handle tại viền phải của th/td */
+.wysiwyg-editor th,.wysiwyg-editor td{position:relative;}
+.col-resizer{position:absolute;top:0;right:-2px;width:5px;height:100%;cursor:col-resize;user-select:none;z-index:2;border-radius:2px;}
+.col-resizer:hover,.col-resizer.dragging{background:var(--lav-ink);opacity:.4;}
 /* Trong editor: khối gập (accordion) luôn mở sẵn để sửa được nội dung bên trong */
 .wysiwyg-editor .accordion-body{max-height:none;overflow:visible;}
 .wysiwyg-editor .accordion-header{cursor:text;}
@@ -2937,6 +2944,7 @@ function setPageBody(pageId, html) {
     el = next;
   }
   header ? header.insertAdjacentHTML('afterend', html) : (page.innerHTML = html);
+  wrapBareTablesIn(page);
   normalizeAccordions(page);
   themeHeadingIcons(page);
   refreshExpandBtn(pageId);
@@ -3254,6 +3262,72 @@ function tableDeleteTable() {
   if (confirm('Xóa cả bảng này?')) cell.closest('table').remove();
 }
 
+// Làm sạch bảng paste từ Google Sheets / Excel (xóa style inline tràn)
+function cleanPastedTable(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  tmp.querySelectorAll('table').forEach(t => {
+    ['style','width','border','cellpadding','cellspacing','bgcolor'].forEach(a => t.removeAttribute(a));
+    t.querySelectorAll('td,th').forEach(cell => {
+      ['style','width','bgcolor','valign','nowrap'].forEach(a => cell.removeAttribute(a));
+      cell.removeAttribute('class');
+    });
+    t.querySelectorAll('col,colgroup').forEach(c => c.remove());
+    t.querySelectorAll('[class]').forEach(el => el.removeAttribute('class'));
+    // Đảm bảo thead/tbody đúng cấu trúc
+    const rows = [...t.querySelectorAll('tr')];
+    if (rows.length && !t.querySelector('thead') && rows[0].querySelectorAll('th').length === 0) {
+      // Chuyển hàng đầu thành header nếu chưa có thead
+    }
+  });
+  // Lấy các table đã clean
+  return [...tmp.querySelectorAll('table')].map(t => t.outerHTML).join('<p><br></p>') || tmp.innerHTML;
+}
+
+// Gắn handle kéo-thả resize cột cho bảng trong editor
+function attachTableResizers(table) {
+  table.querySelectorAll('.col-resizer').forEach(r => r.remove());
+  table.querySelectorAll('th,td').forEach(cell => {
+    const resizer = document.createElement('div');
+    resizer.className = 'col-resizer';
+    resizer.contentEditable = 'false';
+    cell.appendChild(resizer);
+    let x0, w0, idx;
+    resizer.addEventListener('mousedown', e => {
+      e.preventDefault(); e.stopPropagation();
+      x0 = e.clientX; w0 = cell.offsetWidth; idx = cell.cellIndex;
+      resizer.classList.add('dragging');
+      const move = mv => {
+        const w = Math.max(40, w0 + mv.clientX - x0);
+        for (const row of table.rows) {
+          const c = row.cells[idx];
+          if (c) c.style.width = w + 'px';
+        }
+        table.style.removeProperty('width');
+      };
+      const up = () => {
+        resizer.classList.remove('dragging');
+        document.removeEventListener('mousemove', move);
+        document.removeEventListener('mouseup', up);
+      };
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', up);
+    });
+  });
+}
+
+// Wrap <table> chưa có .table-wrap (cả view mode lẫn editor)
+function wrapBareTablesIn(root) {
+  root.querySelectorAll('table').forEach(t => {
+    if (!t.closest('.table-wrap')) {
+      const wrap = document.createElement('div');
+      wrap.className = 'table-wrap';
+      t.replaceWith(wrap);
+      wrap.appendChild(t);
+    }
+  });
+}
+
 // ─── Chỉnh ảnh: click vào ảnh → bubble resize/căn lề/xóa ─────
 let selectedImg = null;
 
@@ -3399,6 +3473,11 @@ function accInsertPara(below) {
     const acc = e.target.closest('.accordion, .callout');
     if (acc && editor.contains(acc)) accSelect(acc);
     else accDeselect();
+    // Gắn resize handle khi click vào bảng
+    const tbl = e.target.closest && e.target.closest('table');
+    if (tbl && editor.contains(tbl) && !e.target.classList.contains('col-resizer')) {
+      attachTableResizers(tbl);
+    }
   });
   editor.addEventListener('scroll', () => { imgBubblePosition(); accBubblePosition(); });
 
@@ -3453,9 +3532,15 @@ function accInsertPara(below) {
   });
 
   // Dán hoặc kéo-thả ảnh → tự upload lên server (không nhúng base64 làm phình nội dung)
+  // Dán bảng HTML (Google Sheets, Excel) → làm sạch style tràn trước khi chèn
   editor.addEventListener('paste', e => {
     const file = [...(e.clipboardData && e.clipboardData.files || [])].find(f => f.type.startsWith('image/'));
-    if (file) { e.preventDefault(); uploadAndInsertImage(file); }
+    if (file) { e.preventDefault(); uploadAndInsertImage(file); return; }
+    const html = e.clipboardData && e.clipboardData.getData('text/html');
+    if (html && /<table/i.test(html)) {
+      e.preventDefault();
+      document.execCommand('insertHTML', false, cleanPastedTable(html));
+    }
   });
   editor.addEventListener('drop', e => {
     const file = [...(e.dataTransfer && e.dataTransfer.files || [])].find(f => f.type.startsWith('image/'));
@@ -3521,6 +3606,7 @@ async function openEditModal(pageId) {
   } catch {}
 
   editor.innerHTML = html;
+  wrapBareTablesIn(editor);
   themeHeadingIcons(editor);
   document.getElementById('editModal').classList.add('open');
   document.execCommand('styleWithCSS', false, true);
@@ -3541,7 +3627,14 @@ async function saveEditModal() {
   accDeselect();
   const editor = document.getElementById('wysiwygEditor');
   const source = document.getElementById('editTextarea');
-  const content = wysiwygSourceMode ? source.value : editor.innerHTML;
+  let content;
+  if (wysiwygSourceMode) {
+    content = source.value;
+  } else {
+    const clone = editor.cloneNode(true);
+    clone.querySelectorAll('.col-resizer').forEach(r => r.remove());
+    content = clone.innerHTML;
+  }
   try {
     const res = await fetch(apiUrl(`./api/content/${editingPageId}`), {
       method: 'POST',
