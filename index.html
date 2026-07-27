@@ -3371,15 +3371,22 @@ function normalizeTableWidths(root) {
       if (!w || w === '100%' || w.endsWith('%')) return 0;
       return parseFloat(w) || 0;
     });
-    // Strip inline width từ TẤT CẢ cells — Google Sheets thường để width: 48px trên non-first rows
-    // gây lỗi layout khi table-layout: fixed (browser dùng explicit width đó thay vì column width từ first row)
+    // Strip inline width từ TẤT CẢ cells (kể cả non-first rows với rowspan)
     t.querySelectorAll('td,th').forEach(c => c.style.removeProperty('width'));
     // Chỉ set % khi TẤT CẢ first-row cells có explicit px width
     const total = pxWidths.reduce((s, w) => s + w, 0);
     if (total <= 0 || pxWidths.some(w => w === 0)) return;
-    cells.forEach((c, i) => {
-      c.style.width = (pxWidths[i] / total * 100).toFixed(2) + '%';
+    const pcts = pxWidths.map(w => (w / total * 100).toFixed(2) + '%');
+    // Dùng <colgroup> thay vì chỉ set width trên first-row cells
+    // <col> có precedence cao nhất, hoạt động đúng trên mọi browser kể cả Safari với rowspan
+    t.querySelector('colgroup')?.remove();
+    const cg = document.createElement('colgroup');
+    pcts.forEach(p => {
+      const col = document.createElement('col');
+      col.style.width = p;
+      cg.appendChild(col);
     });
+    t.prepend(cg);
   });
 }
 
