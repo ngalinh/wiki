@@ -3365,20 +3365,20 @@ function normalizeTableWidths(root) {
     const firstRow = t.querySelector('tr');
     if (!firstRow) return;
     const cells = [...firstRow.querySelectorAll('th,td')];
-    // Strip "width: 100%" from individual cells — Google Sheets artifact, breaks fixed layout
-    cells.forEach(c => { if (c.style.width === '100%') c.style.removeProperty('width'); });
-    // Only process px widths; skip cells with % (already converted) or no width
+    // Đọc px widths từ first row TRƯỚC khi strip
     const pxWidths = cells.map(c => {
       const w = c.style.width;
-      if (!w || w.endsWith('%')) return 0;
+      if (!w || w === '100%' || w.endsWith('%')) return 0;
       return parseFloat(w) || 0;
     });
+    // Strip inline width từ TẤT CẢ cells — Google Sheets thường để width: 48px trên non-first rows
+    // gây lỗi layout khi table-layout: fixed (browser dùng explicit width đó thay vì column width từ first row)
+    t.querySelectorAll('td,th').forEach(c => c.style.removeProperty('width'));
+    // Chỉ set % khi TẤT CẢ first-row cells có explicit px width
     const total = pxWidths.reduce((s, w) => s + w, 0);
-    if (total <= 0) return;
-    // Chỉ convert khi TẤT CẢ cells có explicit px width — nếu mix (1 cột có, 3 cột không) sẽ tính sai
-    if (pxWidths.some(w => w === 0)) return;
+    if (total <= 0 || pxWidths.some(w => w === 0)) return;
     cells.forEach((c, i) => {
-      if (pxWidths[i] > 0) c.style.width = (pxWidths[i] / total * 100).toFixed(2) + '%';
+      c.style.width = (pxWidths[i] / total * 100).toFixed(2) + '%';
     });
   });
 }
