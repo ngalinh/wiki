@@ -3373,6 +3373,9 @@ function normalizeTableWidths(root) {
     });
     // Strip inline width từ TẤT CẢ cells (kể cả non-first rows với rowspan)
     t.querySelectorAll('td,th').forEach(c => c.style.removeProperty('width'));
+    // Strip height cứng từ rows — Google Sheets paste gán height=73px per row,
+    // làm cell overflow visible khi content nhiều hơn height đó
+    t.querySelectorAll('tr').forEach(r => r.style.removeProperty('height'));
     // Chỉ set % khi TẤT CẢ first-row cells có explicit px width
     const total = pxWidths.reduce((s, w) => s + w, 0);
     if (total <= 0 || pxWidths.some(w => w === 0)) return;
