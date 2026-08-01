@@ -560,7 +560,7 @@ tbody tr:hover{background:var(--cream);}
 
 <!-- TOP NAV -->
 <nav class="topnav">
-  <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+  <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/></svg></button>
   <div class="topnav-logo"><span class="logo-mark" data-icon="layers"></span> Basso Wiki</div>
   <div class="topnav-title">Trang nội bộ</div>
   <div class="topnav-search">
@@ -2245,7 +2245,7 @@ tbody tr:hover{background:var(--cream);}
     </div>
     <div class="chat-input-row">
       <input id="chatInput" type="text" placeholder="Đặt câu hỏi về nội dung wiki…" onkeydown="if(event.key==='Enter')sendAsk()" autocomplete="off">
-      <button class="btn" id="chatSendBtn" onclick="sendAsk()">Gửi <span class="arr">↗</span></button>
+      <button class="btn" id="chatSendBtn" onclick="sendAsk()">Gửi <span class="arr" data-icon="arr"></span></button>
     </div>
   </div>
   <div class="chat-note">AI chỉ trả lời từ nội dung wiki · Câu trả lời nên được đối chiếu với trang gốc khi cần độ chính xác cao</div>
