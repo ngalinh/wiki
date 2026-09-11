@@ -8,39 +8,64 @@ function shuffle(items) {
   for (let i = result.length - 1; i > 0; i--) { const j = randomInt(i + 1); [result[i], result[j]] = [result[j], result[i]]; }
   return result;
 }
-function validateBank(bank) {
-  return Array.isArray(bank) && bank.length === 100 && new Set(bank.map(q => q.id)).size === 100 &&
-    bank.filter(q => q.type === 'mc').length === 70 && bank.filter(q => q.type === 'tf').length === 30 && bank.every(q =>
-      seed.some(s => s.id === q.id && s.type === q.type) && typeof q.enabled === 'boolean' && SOURCES.has(q.source) &&
-      typeof q.prompt === 'string' && q.prompt.trim() && q.prompt.length <= 1000 &&
-      typeof q.explanation === 'string' && q.explanation.trim() && q.explanation.length <= 3000 &&
-      Array.isArray(q.options) && q.options.length === (q.type === 'mc' ? 4 : 2) &&
-      q.options.every(o => typeof o === 'string' && o.trim() && o.length <= 500) &&
-      new Set(q.options.map(o => o.trim())).size === q.options.length &&
-      (q.type !== 'tf' || (q.options[0] === 'Đúng' && q.options[1] === 'Sai')) &&
-      Number.isInteger(q.correct) && q.correct >= 0 && q.correct < q.options.length);
+function validImage(value) {
+  return !value || (typeof value === 'string' && /^(?:assets\/quiz\/[\w.-]+|uploads\/[\w.-]+)\.(?:png|jpg|jpeg|gif|webp)$/.test(value));
 }
-module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin }) {
+function validateBank(bank) {
+  return Array.isArray(bank) && bank.length >= 50 && bank.length <= 2000 && bank.every(q => q && typeof q === 'object') && new Set(bank.map(q => q.id)).size === bank.length && bank.every(q =>
+    q && typeof q.id === 'string' && /^[a-zA-Z0-9-]{1,80}$/.test(q.id) &&
+    ['mc', 'tf', 'paragraph'].includes(q.type) && typeof q.enabled === 'boolean' && SOURCES.has(q.source) &&
+    typeof q.prompt === 'string' && q.prompt.trim() && q.prompt.length <= 2000 &&
+    typeof q.explanation === 'string' && q.explanation.trim() && q.explanation.length <= 3000 && validImage(q.image) &&
+    (!q.imageAlt || (typeof q.imageAlt === 'string' && q.imageAlt.length <= 200)) &&
+    (!q.productUrl || (typeof q.productUrl === 'string' && q.productUrl.length <= 1000 && /^https:\/\/[^\s]+$/.test(q.productUrl))) &&
+    Array.isArray(q.options) && (q.type === 'paragraph'
+      ? q.options.length === 0 && q.correct === null
+      : q.options.length >= 2 && q.options.length <= 8 &&
+        q.options.every(o => typeof o === 'string' && o.trim() && o.length <= 500) &&
+        new Set(q.options.map(o => o.trim())).size === q.options.length &&
+        (q.type !== 'tf' || (q.options.length === 2 && q.options[0] === 'Đúng' && q.options[1] === 'Sai')) &&
+        Number.isInteger(q.correct) && q.correct >= 0 && q.correct < q.options.length));
+}
+function cleanQuestion(q) {
+  const { id, type, source, prompt, options, correct, enabled, explanation, image = '', imageAlt = '', productUrl = '' } = q;
+  return { id, type, source, prompt, options, correct, enabled, explanation, image, imageAlt, productUrl };
+}
+function grade(a, grades = a.grades || {}) {
+  const points = a.questions.map((q, i) => q.type === 'paragraph' ? (grades[q.id] ?? null) : (q.correct === a.answers[i] ? 2 : 0));
+  const pendingCount = points.filter(p => p === null).length;
+  const score = points.reduce((sum, p) => sum + (p || 0), 0);
+  return { ...a, grades, points, pendingCount, correctCount: points.filter(p => p === 2).length,
+    score, status: pendingCount ? 'Pending review' : score >= 80 ? 'Success' : 'Failed' };
+}
+module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canManage = isAdmin }) {
   const dir = path.join(dataDir, 'quiz');
   fs.mkdirSync(dir, { recursive: true });
   const file = path.join(dir, 'state.json');
-  let state = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : { bank: seed, revision: 1, attempts: [] };
+  let state = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : { bank: seed, revision: 1, attempts: [], seedVersion: 2 };
   function commit(next) {
     const temp = file + '.tmp';
     fs.writeFileSync(temp, JSON.stringify(next));
     fs.renameSync(temp, file);
     state = next;
   }
+  // Append new bundled questions once; preserve edits and all attempt snapshots.
+  if (!state.seedVersion || state.seedVersion < 2) {
+    const ids = new Set(state.bank.map(q => q.id));
+    const bank = state.bank.map(q => q.id === 'q045' && q.prompt === 'Khi thông báo hỗ trợ thêm, cần làm rõ điều gì?' && q.correct === 0 && q.explanation === 'đây là ngoại lệ chứ ko phải thông lệ' && JSON.stringify(q.options) === JSON.stringify(['Đây là ngoại lệ, không phải thông lệ', 'Lần sau luôn được như vậy', 'Mọi khách đều được tự động', 'Không cần nhắc policy']) ? { ...seed.find(s => s.id === q.id), enabled: q.enabled } : q);
+    bank.push(...seed.filter(q => !ids.has(q.id)));
+    commit({ ...state, bank, seedVersion: 2, revision: state.revision + 1 });
+  }
   function summary(a) {
     return { id: a.id, name: a.name, email: a.email, startedAt: a.startedAt, submittedAt: a.submittedAt,
-      score: a.score, correctCount: a.correctCount, status: a.status };
+      score: a.score, correctCount: a.correctCount, status: a.status, pendingCount: a.pendingCount || 0, gradedBy: a.gradedBy, gradedAt: a.gradedAt };
   }
   function publicAttempt(a) {
     return { ...summary(a), questions: a.questions.map(({ correct, explanation, ...q }) => q) };
   }
-  app.use('/api/quiz', (req, res, next) => {
+  app.use('/api/quiz', async (req, res, next) => {
     res.set('Cache-Control', 'no-store');
-    req.quizEmail = getUserEmail(req);
+    try { req.quizEmail = await getUserEmail(req); } catch { return res.status(503).json({ error: 'Không xác minh được phiên đăng nhập. Vui lòng thử lại.' }); }
     if (!req.quizEmail) return res.status(401).json({ error: 'Vui lòng đăng nhập dashboard để làm bài và lưu kết quả.' });
     next();
   });
@@ -48,20 +73,20 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin }) {
     const mc = state.bank.filter(q => q.enabled && q.type === 'mc').length;
     const tf = state.bank.filter(q => q.enabled && q.type === 'tf').length;
     const active = state.attempts.find(a => a.email === req.quizEmail && !a.submittedAt);
-    res.json({ isAdmin: isAdmin(req.quizEmail), email: req.quizEmail, available: { mc, tf }, active: active ? publicAttempt(active) : null });
+    res.json({ canManage: canManage(req.quizEmail), email: req.quizEmail, available: { mc, tf, paragraph: state.bank.filter(q => q.enabled && q.type === 'paragraph').length }, active: active ? publicAttempt(active) : null });
   });
   app.get('/api/quiz/bank', (req, res) => {
-    if (!isAdmin(req.quizEmail)) return res.status(403).json({ error: 'Chỉ Admin được quản lý câu hỏi.' });
+    if (!canManage(req.quizEmail)) return res.status(403).json({ error: 'Chỉ Admin và Editor được quản lý câu hỏi.' });
     res.json({ bank: state.bank, revision: state.revision });
   });
   app.put('/api/quiz/bank', (req, res) => {
-    if (!isAdmin(req.quizEmail)) return res.status(403).json({ error: 'Chỉ Admin được quản lý câu hỏi.' });
+    if (!canManage(req.quizEmail)) return res.status(403).json({ error: 'Chỉ Admin và Editor được quản lý câu hỏi.' });
     const { bank, revision } = req.body;
     if (revision !== state.revision) return res.status(409).json({ error: 'Ngân hàng đã được người khác sửa. Tải lại trước khi lưu.' });
-    if (!validateBank(bank)) return res.status(400).json({ error: 'Cần đủ 70 câu trắc nghiệm, 30 câu đúng/sai; nội dung, lựa chọn và đáp án phải hợp lệ.' });
-    if (bank.filter(q => q.enabled && q.type === 'mc').length < 35 || bank.filter(q => q.enabled && q.type === 'tf').length < 15)
-      return res.status(400).json({ error: 'Cần chọn ít nhất 35 câu trắc nghiệm và 15 câu đúng/sai để tạo đề.' });
-    const clean = bank.map(({ id, type, source, prompt, options, correct, enabled, explanation }) => ({ id, type, source, prompt, options, correct, enabled, explanation }));
+    if (!validateBank(bank)) return res.status(400).json({ error: 'Ngân hàng cần 50–2000 câu; nội dung, loại câu, hình ảnh và đáp án phải hợp lệ.' });
+    if (bank.filter(q => q.enabled).length < 50)
+      return res.status(400).json({ error: 'Cần chọn ít nhất 50 câu để tạo đề.' });
+    const clean = bank.map(cleanQuestion);
     commit({ ...state, bank: clean, revision: state.revision + 1 });
     res.json({ revision: state.revision });
   });
@@ -70,10 +95,10 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin }) {
     if (!name || name.length > 120) return res.status(400).json({ error: 'Nhập họ tên (tối đa 120 ký tự).' });
     const active = state.attempts.find(a => a.email === req.quizEmail && !a.submittedAt);
     if (active) return res.json(publicAttempt(active));
-    const mc = state.bank.filter(q => q.enabled && q.type === 'mc');
-    const tf = state.bank.filter(q => q.enabled && q.type === 'tf');
-    if (mc.length < 35 || tf.length < 15) return res.status(409).json({ error: 'Ngân hàng chưa đủ câu đang được chọn.' });
-    const questions = shuffle([...shuffle(mc).slice(0, 35), ...shuffle(tf).slice(0, 15)]).map(q => {
+    const pool = state.bank.filter(q => q.enabled);
+    if (pool.length < 50) return res.status(409).json({ error: 'Ngân hàng chưa đủ câu đang được chọn.' });
+    const questions = shuffle(pool).slice(0, 50).map(q => {
+      if (q.type === 'paragraph') return { ...q };
       const order = q.type === 'mc' ? shuffle(q.options.map((_, i) => i)) : [0, 1];
       return { ...q, options: order.map(i => q.options[i]), correct: order.indexOf(q.correct) };
     });
@@ -84,23 +109,42 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin }) {
   app.post('/api/quiz/attempts/:id/submit', (req, res) => {
     const a = state.attempts.find(a => a.id === req.params.id && a.email === req.quizEmail);
     if (!a) return res.status(404).json({ error: 'Không tìm thấy bài làm.' });
-    if (a.submittedAt) return res.json({ ...summary(a), questions: a.questions, answers: a.answers });
+    if (a.submittedAt) return res.json({ ...summary(a), questions: a.questions, answers: a.answers, points: a.points });
     const answers = req.body.answers;
-    if (!Array.isArray(answers) || answers.length !== 50 || answers.some((v, i) => !Number.isInteger(v) || v < 0 || v >= a.questions[i].options.length))
+    if (!Array.isArray(answers) || answers.length !== 50 || answers.some((v, i) => a.questions[i].type === 'paragraph' ? typeof v !== 'string' || !v.trim() || v.length > 5000 : !Number.isInteger(v) || v < 0 || v >= a.questions[i].options.length))
       return res.status(400).json({ error: 'Vui lòng trả lời đủ 50 câu trước khi nộp.' });
-    const correctCount = a.questions.filter((q, i) => q.correct === answers[i]).length;
-    const score = correctCount * 2;
-    const result = { ...a, answers, correctCount, score, status: score >= 80 ? 'Success' : 'Failed', submittedAt: new Date().toISOString() };
+    const result = grade({ ...a, answers, submittedAt: new Date().toISOString() });
     commit({ ...state, attempts: state.attempts.map(x => x.id === a.id ? result : x) });
-    res.json({ ...summary(result), questions: result.questions, answers: result.answers });
+    res.json({ ...summary(result), questions: result.questions, answers: result.answers, points: result.points });
+  });
+  app.post('/api/quiz/questions', (req, res) => {
+    if (!canManage(req.quizEmail)) return res.status(403).json({ error: 'Chỉ Admin và Editor được tạo câu hỏi.' });
+    const question = cleanQuestion({ ...req.body, id: 'custom-' + randomUUID() });
+    if (!validateBank([...state.bank, question])) return res.status(400).json({ error: 'Kiểm tra nội dung, đáp án, giải thích và hình ảnh của câu hỏi.' });
+    commit({ ...state, bank: [...state.bank, question], revision: state.revision + 1 });
+    res.status(201).json({ question, revision: state.revision });
+  });
+  app.post('/api/quiz/results/:id/grade', (req, res) => {
+    if (!canManage(req.quizEmail)) return res.status(403).json({ error: 'Chỉ Admin và Editor được chấm bài.' });
+    const a = state.attempts.find(a => a.id === req.params.id && a.submittedAt);
+    if (!a) return res.status(404).json({ error: 'Không tìm thấy bài làm.' });
+    const grades = req.body.grades;
+    const paragraphs = a.questions.filter(q => q.type === 'paragraph');
+    if (!grades || typeof grades !== 'object' || Array.isArray(grades) ||
+        Object.keys(grades).length !== paragraphs.length || !paragraphs.length ||
+        !paragraphs.every(q => Object.hasOwn(grades, q.id) && [0, 2].includes(grades[q.id])))
+      return res.status(400).json({ error: 'Chấm đủ câu tự luận: đúng 2 điểm hoặc sai 0 điểm.' });
+    const result = grade({ ...a, gradedBy: req.quizEmail, gradedAt: new Date().toISOString() }, grades);
+    commit({ ...state, attempts: state.attempts.map(x => x.id === a.id ? result : x) });
+    res.json({ ...summary(result), questions: result.questions, answers: result.answers, points: result.points });
   });
   app.get('/api/quiz/results', (req, res) => {
-    res.json(state.attempts.filter(a => a.submittedAt && (isAdmin(req.quizEmail) || a.email === req.quizEmail)).map(summary).reverse());
+    res.json(state.attempts.filter(a => a.submittedAt && (canManage(req.quizEmail) || a.email === req.quizEmail)).map(summary).reverse());
   });
   app.get('/api/quiz/results/:id', (req, res) => {
-    const a = state.attempts.find(a => a.id === req.params.id && a.submittedAt && (isAdmin(req.quizEmail) || a.email === req.quizEmail));
+    const a = state.attempts.find(a => a.id === req.params.id && a.submittedAt && (canManage(req.quizEmail) || a.email === req.quizEmail));
     if (!a) return res.status(404).json({ error: 'Không tìm thấy kết quả.' });
-    res.json({ ...summary(a), questions: a.questions, answers: a.answers });
+    res.json({ ...summary(a), questions: a.questions, answers: a.answers, points: a.points });
   });
 };
 module.exports.validateBank = validateBank;

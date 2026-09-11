@@ -67,6 +67,7 @@ function emailFromPlatformToken(req) {
 
 // Lấy email người dùng từ header do dashboard gửi
 function getUserEmail(req) {
+  if (Object.hasOwn(req, 'verifiedEmail')) return req.verifiedEmail;
   const header = process.env.USER_EMAIL_HEADER || 'x-user-email';
   return (
     req.headers[header] ||
@@ -147,7 +148,13 @@ app.get('/api/me', (req, res) => {
   res.json({ email, isAdmin: isAdmin(email), isEditor: isEditor(email) });
 });
 
-require('./quiz')(app, { dataDir: DATA_DIR, getUserEmail, isAdmin });
+const quizIdentity = require('./quiz-identity');
+// Protect role changes and quiz image uploads with the same verified identity.
+app.use(['/api/settings', '/api/upload'], async (req, res, next) => {
+  try { req.verifiedEmail = await quizIdentity(req); next(); }
+  catch { res.status(503).json({ error: 'Không xác minh được phiên đăng nhập. Vui lòng thử lại.' }); }
+});
+require('./quiz')(app, { dataDir: DATA_DIR, getUserEmail: quizIdentity, isAdmin, canManage: isEditor });
 
 // GET /api/settings  — admin only
 app.get('/api/settings', (req, res) => {

@@ -662,17 +662,17 @@
   {
     "type": "mc",
     "source": "bao-hang-ve",
-    "prompt": "Khi thông báo hỗ trợ thêm, cần làm rõ điều gì?",
+    "prompt": "Khách báo nhận sai hàng và yêu cầu hỗ trợ thêm ngoài mức đền bù theo policy. Trước khi xin sếp duyệt, SALE cần cung cấp những thông tin nào?",
     "options": [
-      "Đây là ngoại lệ, không phải thông lệ",
-      "Lần sau luôn được như vậy",
-      "Mọi khách đều được tự động",
-      "Không cần nhắc policy"
+      "Lý do hỗ trợ thêm, doanh thu và cách làm việc của khách, mức hỗ trợ đề xuất",
+      "Chỉ gửi tên khách và yêu cầu sếp tự xem lịch sử chat",
+      "Tự hứa mức hỗ trợ với khách rồi mới báo sếp",
+      "Chỉ gửi hình sản phẩm, không cần nêu mức hỗ trợ"
     ],
     "correct": 0,
     "id": "q045",
     "enabled": true,
-    "explanation": "đây là ngoại lệ chứ ko phải thông lệ"
+    "explanation": "Quy trình hỗ trợ thêm yêu cầu SALE giải trình lý do, doanh thu và cách làm việc của khách, cùng số tiền đề nghị để sếp cân nhắc."
   },
   {
     "type": "mc",
@@ -1438,5 +1438,875 @@
     "id": "q100",
     "enabled": true,
     "explanation": "Tạo tài khoản và thực hiện chấm công, xin nghỉ, xin làm online, báo đi muộn trên app."
+  },
+  {
+    "id": "q101",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Tommy — polo 1985 Classic Fit.\nGiá giả định $80, giảm 25% trên giá này. Giá hàng sau giảm, chưa gồm ship và thuế là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$60.00",
+      "$55.00",
+      "$65.00",
+      "$20.00"
+    ],
+    "correct": 0,
+    "explanation": "80 × (1 − 25%) = $60. Chưa cộng ship hoặc đổi sang VNĐ.",
+    "image": "assets/quiz/tommy.jpg",
+    "imageAlt": "Tommy — polo 1985 Classic Fit",
+    "productUrl": "https://br.tommy.com/polo-1985-classic-fit-thmw0mw32064_thdw5/p"
+  },
+  {
+    "id": "q102",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Lacoste — polo L.12.12.\nGiá giả định $120, giảm 30%. Giá hàng sau giảm là bao nhiêu USD? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$90.00",
+      "$36.00",
+      "$80.00",
+      "$84.00"
+    ],
+    "correct": 3,
+    "explanation": "120 × 70% = $84.",
+    "image": "assets/quiz/lacoste.png",
+    "imageAlt": "Lacoste — polo L.12.12",
+    "productUrl": "https://www.lacoste.com/us/lacoste/men/clothing/polos/L1212-51-T01.html"
+  },
+  {
+    "id": "q103",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Amazon — adidas Clear Backpack.\nGiá giả định $50, coupon giảm $10 đã áp thành công cho 1 balo. Tiền hàng sau coupon là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$10.00",
+      "$50.00",
+      "$40.00",
+      "$45.00"
+    ],
+    "correct": 2,
+    "explanation": "50 − 10 = $40. Coupon giảm số tiền cố định, không phải 10%.",
+    "image": "assets/quiz/amazon.jpg",
+    "imageAlt": "Amazon — adidas Clear Backpack",
+    "productUrl": "https://www.amazon.com/dp/B0BDPM58W3"
+  },
+  {
+    "id": "q104",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — eBay — đồng hồ Casio F-91W.\nGiá giả định $45, mã giảm 20% chỉ áp dụng tiền hàng; ship web $5 không giảm. Tổng USD phải trả (thuế $0) là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$45.00",
+      "$41.00",
+      "$40.00",
+      "$36.00"
+    ],
+    "correct": 1,
+    "explanation": "45 × 80% + 5 = $41. Ship web không nằm trong cơ sở giảm.",
+    "image": "assets/quiz/ebay.jpg",
+    "imageAlt": "eBay — đồng hồ Casio F-91W",
+    "productUrl": "https://www.ebay.com/p/93133781"
+  },
+  {
+    "id": "q105",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Macy’s — áo len cashmere Charter Club (ảnh tham khảo).\nGiá giả định $150, giảm 40%. Giá hàng sau giảm là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$90.00",
+      "$60.00",
+      "$100.00",
+      "$110.00"
+    ],
+    "correct": 0,
+    "explanation": "150 × 60% = $90.",
+    "image": "assets/quiz/macys.jpg",
+    "imageAlt": "Macy’s — áo len cashmere Charter Club (ảnh tham khảo)",
+    "productUrl": "https://www.macys.com/shop/product/charter-club-womens-100-cashmere-shaker-stitch-crewneck-sweater-macys-exclusive?ID=26704762"
+  },
+  {
+    "id": "q106",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Sephora — Clinique Almost Lipstick Black Honey.\nGiá giả định $25, giảm 20% cho khách đủ điều kiện. Giá hàng sau giảm là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$5.00",
+      "$22.00",
+      "$18.00",
+      "$20.00"
+    ],
+    "correct": 3,
+    "explanation": "25 × 80% = $20.",
+    "image": "assets/quiz/sephora.jpg",
+    "imageAlt": "Sephora — Clinique Almost Lipstick Black Honey",
+    "productUrl": "https://www.sephora.com/product/almost-lipstick-P122751"
+  },
+  {
+    "id": "q107",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Tommy — polo 1985 Classic Fit.\nGiá $100, giảm 30%, sau đó được áp thêm mã giảm 20% trên giá đã giảm. Giá cuối là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$70.00",
+      "$60.00",
+      "$56.00",
+      "$50.00"
+    ],
+    "correct": 2,
+    "explanation": "100 × 70% × 80% = $56. Không cộng 30% và 20% thành 50%.",
+    "image": "assets/quiz/tommy.jpg",
+    "imageAlt": "Tommy — polo 1985 Classic Fit",
+    "productUrl": "https://br.tommy.com/polo-1985-classic-fit-thmw0mw32064_thdw5/p"
+  },
+  {
+    "id": "q108",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Lacoste — polo L.12.12.\nGiá $120 đã được giảm còn $90. Mã giảm thêm 10% áp trên $90. Giá hàng cuối là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$72.00",
+      "$81.00",
+      "$78.00",
+      "$90.00"
+    ],
+    "correct": 1,
+    "explanation": "90 × 90% = $81. Không giảm 10% trên giá gốc $120.",
+    "image": "assets/quiz/lacoste.png",
+    "imageAlt": "Lacoste — polo L.12.12",
+    "productUrl": "https://www.lacoste.com/us/lacoste/men/clothing/polos/L1212-51-T01.html"
+  },
+  {
+    "id": "q109",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Amazon — adidas Clear Backpack.\nHai balo cùng giá $40/cái. Coupon $8 chỉ áp cho 1 cái, không áp cả hai. Tổng tiền hàng sau coupon là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$72.00",
+      "$64.00",
+      "$80.00",
+      "$32.00"
+    ],
+    "correct": 0,
+    "explanation": "40 × 2 − 8 = $72.",
+    "image": "assets/quiz/amazon.jpg",
+    "imageAlt": "Amazon — adidas Clear Backpack",
+    "productUrl": "https://www.amazon.com/dp/B0BDPM58W3"
+  },
+  {
+    "id": "q110",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — eBay — đồng hồ Casio F-91W.\nGiá $80; giảm 15% nhưng tối đa $10. Ship web $6, thuế $0. Tổng USD là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$74.00",
+      "$68.00",
+      "$70.00",
+      "$76.00"
+    ],
+    "correct": 3,
+    "explanation": "15% × 80 = $12 nhưng bị giới hạn $10. Tổng = 80 − 10 + 6 = $76.",
+    "image": "assets/quiz/ebay.jpg",
+    "imageAlt": "eBay — đồng hồ Casio F-91W",
+    "productUrl": "https://www.ebay.com/p/93133781"
+  },
+  {
+    "id": "q111",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Macy’s — áo len cashmere Charter Club (ảnh tham khảo).\nHai áo giá $60/cái, mua 1 áo được giảm 50% áo thứ hai. Tổng tiền hàng là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$120.00",
+      "$30.00",
+      "$90.00",
+      "$60.00"
+    ],
+    "correct": 2,
+    "explanation": "Áo đầu $60, áo thứ hai $30. Tổng $90; không giảm 50% cả đơn.",
+    "image": "assets/quiz/macys.jpg",
+    "imageAlt": "Macy’s — áo len cashmere Charter Club (ảnh tham khảo)",
+    "productUrl": "https://www.macys.com/shop/product/charter-club-womens-100-cashmere-shaker-stitch-crewneck-sweater-macys-exclusive?ID=26704762"
+  },
+  {
+    "id": "q112",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Sephora — Clinique Almost Lipstick Black Honey.\nHai son giá $25/cây. Được chọn một trong hai ưu đãi, không cộng dồn: giảm 10% tổng hàng hoặc giảm $8/đơn. Chọn ưu đãi tốt hơn, tiền hàng còn bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$40.00",
+      "$42.00",
+      "$45.00",
+      "$37.00"
+    ],
+    "correct": 1,
+    "explanation": "Giảm 10% tiết kiệm $5; mã $8 tiết kiệm nhiều hơn. 50 − 8 = $42.",
+    "image": "assets/quiz/sephora.jpg",
+    "imageAlt": "Sephora — Clinique Almost Lipstick Black Honey",
+    "productUrl": "https://www.sephora.com/product/almost-lipstick-P122751"
+  },
+  {
+    "id": "q113",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Tommy — polo 1985 Classic Fit.\nKhách lẻ Asale: giá sau giảm $60, ship web $5, thuế $0; tỷ giá 28.500đ/USD; cân nặng tính cước 0,5kg × 250.000đ/kg. Không phụ thu khác, chưa ship nội địa VN. Báo giá về VN? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "1.977.500 đ",
+      "1.852.500 đ",
+      "1.840.000 đ",
+      "2.102.500 đ"
+    ],
+    "correct": 0,
+    "explanation": "(60 + 5) × 28.500 + 0,5 × 250.000 = 1.977.500đ.",
+    "image": "assets/quiz/tommy.jpg",
+    "imageAlt": "Tommy — polo 1985 Classic Fit",
+    "productUrl": "https://br.tommy.com/polo-1985-classic-fit-thmw0mw32064_thdw5/p"
+  },
+  {
+    "id": "q114",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Lacoste — polo L.12.12.\nKhách lẻ Basso: giá sau giảm $84, ship web $0, thuế $0; tỷ giá 29.500đ/USD; cân nặng tính cước 0,6kg × 250.000đ/kg. Không phụ thu khác, chưa ship nội địa VN. Báo giá về VN? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "2.478.000 đ",
+      "2.593.000 đ",
+      "2.778.000 đ",
+      "2.628.000 đ"
+    ],
+    "correct": 3,
+    "explanation": "84 × 29.500 + 0,6 × 250.000 = 2.628.000đ.",
+    "image": "assets/quiz/lacoste.png",
+    "imageAlt": "Lacoste — polo L.12.12",
+    "productUrl": "https://www.lacoste.com/us/lacoste/men/clothing/polos/L1212-51-T01.html"
+  },
+  {
+    "id": "q115",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Amazon — adidas Clear Backpack.\nKhách lẻ ShipUS: giá sau coupon $40, ship web $6, thuế $0; tỷ giá 28.500đ/USD; cân nặng tính cước 0,8kg × 240.000đ/kg. Không phụ thu khác, chưa ship nội địa VN. Báo giá về VN? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "1.332.000 đ",
+      "1.511.000 đ",
+      "1.503.000 đ",
+      "1.311.000 đ"
+    ],
+    "correct": 2,
+    "explanation": "(40 + 6) × 28.500 + 0,8 × 240.000 = 1.503.000đ.",
+    "image": "assets/quiz/amazon.jpg",
+    "imageAlt": "Amazon — adidas Clear Backpack",
+    "productUrl": "https://www.amazon.com/dp/B0BDPM58W3"
+  },
+  {
+    "id": "q116",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — eBay — đồng hồ Casio F-91W.\nKhách lẻ Asale: giá sau giảm $36, ship web $5, thuế $0; tỷ giá 28.500đ/USD; cân nặng tính cước 0,5kg × 250.000đ/kg. Không phụ thu khác, chưa ship nội địa VN. Báo giá về VN? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "1.418.500 đ",
+      "1.293.500 đ",
+      "1.168.500 đ",
+      "1.151.000 đ"
+    ],
+    "correct": 1,
+    "explanation": "(36 + 5) × 28.500 + 125.000 = 1.293.500đ.",
+    "image": "assets/quiz/ebay.jpg",
+    "imageAlt": "eBay — đồng hồ Casio F-91W",
+    "productUrl": "https://www.ebay.com/p/93133781"
+  },
+  {
+    "id": "q117",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Macy’s — áo len cashmere Charter Club (ảnh tham khảo).\nKhách lẻ Basso: giá sau giảm $90, ship web $10, thuế $0; tỷ giá 29.500đ/USD; cân nặng tính cước 0,7kg × 250.000đ/kg. Không phụ thu khác, chưa ship nội địa VN. Báo giá về VN? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "3.125.000 đ",
+      "2.950.000 đ",
+      "2.830.000 đ",
+      "3.300.000 đ"
+    ],
+    "correct": 0,
+    "explanation": "(90 + 10) × 29.500 + 0,7 × 250.000 = 3.125.000đ.",
+    "image": "assets/quiz/macys.jpg",
+    "imageAlt": "Macy’s — áo len cashmere Charter Club (ảnh tham khảo)",
+    "productUrl": "https://www.macys.com/shop/product/charter-club-womens-100-cashmere-shaker-stitch-crewneck-sweater-macys-exclusive?ID=26704762"
+  },
+  {
+    "id": "q118",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Sephora — Clinique Almost Lipstick Black Honey.\nKhách lẻ ShipUS mua riêng 1 son: giá sau giảm $20, ship web $0, thuế $0; tỷ giá 28.500đ/USD; cân nặng tính cước tối thiểu 0,5kg × 240.000đ/kg; phụ thu đơn dưới $30 là 50.000đ. Không phí khác, chưa ship nội địa VN. Báo giá về VN? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "690.000 đ",
+      "620.000 đ",
+      "570.000 đ",
+      "740.000 đ"
+    ],
+    "correct": 3,
+    "explanation": "20 × 28.500 + 0,5 × 240.000 + 50.000 = 740.000đ.",
+    "image": "assets/quiz/sephora.jpg",
+    "imageAlt": "Sephora — Clinique Almost Lipstick Black Honey",
+    "productUrl": "https://www.sephora.com/product/almost-lipstick-P122751"
+  },
+  {
+    "id": "q119",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Tommy — polo 1985 Classic Fit.\nDeal giả định $60 off $200. Khách mua lẻ 1 áo $80, không đủ đơn $200. Theo wiki, tỷ lệ giảm báo khách = tỷ lệ deal trừ 5 điểm phần trăm. Giá áo sau giảm để báo khách là bao nhiêu USD? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$20.00",
+      "$76.00",
+      "$60.00",
+      "$56.00"
+    ],
+    "correct": 2,
+    "explanation": "60 / 200 = 30%; trừ 5 điểm phần trăm còn 25%. 80 × 75% = $60.",
+    "image": "assets/quiz/tommy.jpg",
+    "imageAlt": "Tommy — polo 1985 Classic Fit",
+    "productUrl": "https://br.tommy.com/polo-1985-classic-fit-thmw0mw32064_thdw5/p"
+  },
+  {
+    "id": "q120",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Lacoste — polo L.12.12.\nDeal giả định $40 off $200. Khách mua lẻ 1 áo $100, không đủ đơn $200. Theo cách báo deal tiền cố định trong wiki (trừ 5 điểm phần trăm), giá sau giảm báo khách là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "$95.00",
+      "$85.00",
+      "$80.00",
+      "$60.00"
+    ],
+    "correct": 1,
+    "explanation": "40 / 200 = 20%; giảm báo khách 15%. 100 × 85% = $85.",
+    "image": "assets/quiz/lacoste.png",
+    "imageAlt": "Lacoste — polo L.12.12",
+    "productUrl": "https://www.lacoste.com/us/lacoste/men/clothing/polos/L1212-51-T01.html"
+  },
+  {
+    "id": "q121",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Amazon — adidas Clear Backpack.\nKhách lẻ nhận riêng 1 balo nặng 0,3kg. Theo mức tối thiểu mỗi lần hàng về 0,5kg, cước ShipUS 240.000đ/kg. Chỉ tính phí VC quốc tế, bao nhiêu tiền? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "120.000 đ",
+      "72.000 đ",
+      "125.000 đ",
+      "240.000 đ"
+    ],
+    "correct": 0,
+    "explanation": "Lần hàng về khách lẻ tối thiểu 0,5kg: 0,5 × 240.000 = 120.000đ.",
+    "image": "assets/quiz/amazon.jpg",
+    "imageAlt": "Amazon — adidas Clear Backpack",
+    "productUrl": "https://www.amazon.com/dp/B0BDPM58W3"
+  },
+  {
+    "id": "q122",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — eBay — đồng hồ Casio F-91W.\nĐơn giả định có 2 đồng hồ, mỗi item $300; tổng $600. Chỉ xét phụ thu item trên $500 trong wiki. Tổng phụ thu theo quy tắc này là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "477.000 đ",
+      "238.500 đ",
+      "18.000 đ",
+      "0 đ"
+    ],
+    "correct": 3,
+    "explanation": "Mốc trên $500 áp từng item, không áp tổng đơn. Hai item đều $300 nên phụ thu này bằng 0.",
+    "image": "assets/quiz/ebay.jpg",
+    "imageAlt": "eBay — đồng hồ Casio F-91W",
+    "productUrl": "https://www.ebay.com/p/93133781"
+  },
+  {
+    "id": "q123",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Macy’s — áo len cashmere Charter Club (ảnh tham khảo).\nGiỏ hàng giả định có 1 item cao cấp giá sau giảm $600. Wiki tính phụ thu 3% theo giá item × tỷ giá 26.500. Chỉ tính phụ thu này, bao nhiêu tiền? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "513.000 đ",
+      "18.000 đ",
+      "477.000 đ",
+      "531.000 đ"
+    ],
+    "correct": 2,
+    "explanation": "600 × 3% × 26.500 = 477.000đ. Tỷ giá tính riêng phụ thu là 26.500.",
+    "image": "assets/quiz/macys.jpg",
+    "imageAlt": "Macy’s — áo len cashmere Charter Club (ảnh tham khảo)",
+    "productUrl": "https://www.macys.com/shop/product/charter-club-womens-100-cashmere-shaker-stitch-crewneck-sweater-macys-exclusive?ID=26704762"
+  },
+  {
+    "id": "q124",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Sephora — Clinique Almost Lipstick Black Honey.\nKhách lẻ mua một đơn 2 son cùng giá sau giảm $20/cây, tổng tiền hàng $40. Chỉ xét phụ thu 50.000đ cho đơn dưới $30. Phụ thu này cho đơn là bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "40.000 đ",
+      "0 đ",
+      "50.000 đ",
+      "100.000 đ"
+    ],
+    "correct": 1,
+    "explanation": "Mốc dưới $30 xét đơn hàng. Tổng hàng $40 nên không có phụ thu đơn nhỏ, dù mỗi son chỉ $20.",
+    "image": "assets/quiz/sephora.jpg",
+    "imageAlt": "Sephora — Clinique Almost Lipstick Black Honey",
+    "productUrl": "https://www.sephora.com/product/almost-lipstick-P122751"
+  },
+  {
+    "id": "q125",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Tommy — polo 1985 Classic Fit.\nKhách Asale: áo giá $100 giảm 20%, ship web $4, thuế $0; tỷ giá 28.500; cước 0,5kg × 250.000. Không phụ thu, chưa ship nội địa VN. Tổng báo giá về VN? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "2.519.000 đ",
+      "2.964.000 đ",
+      "2.394.000 đ",
+      "2.405.000 đ"
+    ],
+    "correct": 0,
+    "explanation": "100 × 80% = $80. (80 + 4) × 28.500 + 125.000 = 2.519.000đ.",
+    "image": "assets/quiz/tommy.jpg",
+    "imageAlt": "Tommy — polo 1985 Classic Fit",
+    "productUrl": "https://br.tommy.com/polo-1985-classic-fit-thmw0mw32064_thdw5/p"
+  },
+  {
+    "id": "q126",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Lacoste — polo L.12.12.\nCùng item giá $100, ship web $0, thuế $0, cân nặng tính cước 1kg. Basso: tỷ giá 29.500, cước 250.000/kg. ShipUS: tỷ giá 28.500, cước 240.000/kg. Không phụ thu. Giá Basso cao hơn ShipUS bao nhiêu? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "100.000 đ",
+      "10.000 đ",
+      "90.000 đ",
+      "110.000 đ"
+    ],
+    "correct": 3,
+    "explanation": "Basso: 3.200.000đ. ShipUS: 3.090.000đ. Chênh 110.000đ, gồm tỷ giá lẫn cước.",
+    "image": "assets/quiz/lacoste.png",
+    "imageAlt": "Lacoste — polo L.12.12",
+    "productUrl": "https://www.lacoste.com/us/lacoste/men/clothing/polos/L1212-51-T01.html"
+  },
+  {
+    "id": "q127",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Amazon — adidas Clear Backpack.\nMột đơn 2 balo: tổng hàng sau giảm $80, tổng ship web $8, thuế $0; khách Asale tỷ giá 28.500; tổng cân nặng tính cước 1,2kg × 250.000. Không phụ thu, chưa ship nội địa VN. Tổng báo giá? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "2.733.000 đ",
+      "3.036.000 đ",
+      "2.808.000 đ",
+      "2.508.000 đ"
+    ],
+    "correct": 2,
+    "explanation": "(80 + 8) × 28.500 + 1,2 × 250.000 = 2.808.000đ. Ship web $8 là của cả đơn.",
+    "image": "assets/quiz/amazon.jpg",
+    "imageAlt": "Amazon — adidas Clear Backpack",
+    "productUrl": "https://www.amazon.com/dp/B0BDPM58W3"
+  },
+  {
+    "id": "q128",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — eBay — đồng hồ Casio F-91W.\nKhách Basso: item giá $50, được giảm cố định $5, ship web $3, thuế $0; tỷ giá 29.500; cước 0,5kg × 250.000. Không phụ thu, chưa ship nội địa VN. Giá về VN? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "1.478.500 đ",
+      "1.541.000 đ",
+      "1.416.000 đ",
+      "1.629.500 đ"
+    ],
+    "correct": 1,
+    "explanation": "(50 − 5 + 3) × 29.500 + 125.000 = 1.541.000đ.",
+    "image": "assets/quiz/ebay.jpg",
+    "imageAlt": "eBay — đồng hồ Casio F-91W",
+    "productUrl": "https://www.ebay.com/p/93133781"
+  },
+  {
+    "id": "q129",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Macy’s — áo len cashmere Charter Club (ảnh tham khảo).\nKhách Asale mua 1 áo: giá $100, giảm 20% rồi thêm 10% trên giá đã giảm; ship web $0, thuế $0; tỷ giá 28.500; cước 0,5kg × 250.000. Không phụ thu, chưa ship nội địa VN. Giá về VN? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "2.177.000 đ",
+      "2.120.000 đ",
+      "2.052.000 đ",
+      "2.405.000 đ"
+    ],
+    "correct": 0,
+    "explanation": "100 × 80% × 90% = $72. 72 × 28.500 + 125.000 = 2.177.000đ.",
+    "image": "assets/quiz/macys.jpg",
+    "imageAlt": "Macy’s — áo len cashmere Charter Club (ảnh tham khảo)",
+    "productUrl": "https://www.macys.com/shop/product/charter-club-womens-100-cashmere-shaker-stitch-crewneck-sweater-macys-exclusive?ID=26704762"
+  },
+  {
+    "id": "q130",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Sephora — Clinique Almost Lipstick Black Honey.\nKhách Basso mua riêng 1 son: giá $25, coupon $5, ship web $5, thuế $0; tỷ giá 29.500; cước tối thiểu 0,5kg × 250.000; phụ thu đơn nhỏ 50.000đ. Không phí khác, chưa ship nội địa VN. Giá về VN? Dùng số liệu đề bài, không dùng giá đang hiển thị ở link tham khảo.",
+    "options": [
+      "862.500 đ",
+      "765.000 đ",
+      "737.500 đ",
+      "912.500 đ"
+    ],
+    "correct": 3,
+    "explanation": "(25 − 5 + 5) × 29.500 + 125.000 + 50.000 = 912.500đ.",
+    "image": "assets/quiz/sephora.jpg",
+    "imageAlt": "Sephora — Clinique Almost Lipstick Black Honey",
+    "productUrl": "https://www.sephora.com/product/almost-lipstick-P122751"
+  },
+  {
+    "id": "q131",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Amazon — adidas Clear Backpack.\nKhi báo giá balo cho khách, cần lưu bằng chứng nào vì giá và người bán có thể thay đổi?",
+    "options": [
+      "Ảnh chụp giá sản phẩm và seller tại thời điểm báo",
+      "Chỉ chụp tên thương hiệu adidas",
+      "Chỉ gửi ảnh sản phẩm không có giá",
+      "Không cần lưu vì giá Amazon cố định"
+    ],
+    "correct": 0,
+    "explanation": "Wiki yêu cầu screenshot giá sản phẩm và seller khi báo giá Amazon/Walmart/eBay.",
+    "image": "assets/quiz/amazon.jpg",
+    "imageAlt": "Amazon — adidas Clear Backpack",
+    "productUrl": "https://www.amazon.com/dp/B0BDPM58W3"
+  },
+  {
+    "id": "q132",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — eBay — đồng hồ Casio F-91W.\nKhách gửi link đồng hồ từ seller khác với lần trước. Bước nào phù hợp trước khi chốt giá?",
+    "options": [
+      "Dùng lại giá cũ của seller trước",
+      "Kiểm tra giá, seller và ship web của đúng listing rồi lưu screenshot",
+      "Chỉ nhìn ảnh giống nhau là chốt",
+      "Mặc định mọi seller đều free ship"
+    ],
+    "correct": 1,
+    "explanation": "Báo đúng listing hiện tại: kiểm tra giá, seller và ship web; lưu screenshot theo quy định wiki.",
+    "image": "assets/quiz/ebay.jpg",
+    "imageAlt": "eBay — đồng hồ Casio F-91W",
+    "productUrl": "https://www.ebay.com/p/93133781"
+  },
+  {
+    "id": "q133",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Tommy — polo 1985 Classic Fit.\nDeal trên web chỉ còn 40 phút. Khách mới nhờ mua ngay. Theo quy định nhận đơn sắp hết sale, cần làm gì?",
+    "options": [
+      "Nhận đơn và cam kết mua kịp",
+      "Nhận tiền trước rồi mới kiểm tra",
+      "Không nhận đơn vì còn dưới 1 giờ",
+      "Tự chuyển sang giá full mà không hỏi khách"
+    ],
+    "correct": 2,
+    "explanation": "Wiki chỉ nhận đơn khi còn hơn 1 giờ trước lúc hết sale.",
+    "image": "assets/quiz/tommy.jpg",
+    "imageAlt": "Tommy — polo 1985 Classic Fit",
+    "productUrl": "https://br.tommy.com/polo-1985-classic-fit-thmw0mw32064_thdw5/p"
+  },
+  {
+    "id": "q134",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Lacoste — polo L.12.12.\nKhách muốn pre-order áo. Trước khi nhận đơn, cần xác nhận gì?",
+    "options": [
+      "Chỉ cần tên màu áo",
+      "Không cần hỏi lịch ship",
+      "Cọc 10% và hứa giao trong 2 ngày",
+      "Thời gian web sẽ ship và yêu cầu thanh toán 100%"
+    ],
+    "correct": 3,
+    "explanation": "Quy trình pre-order: xác nhận thời gian web ship và thanh toán 100% trước khi nhận đơn.",
+    "image": "assets/quiz/lacoste.png",
+    "imageAlt": "Lacoste — polo L.12.12",
+    "productUrl": "https://www.lacoste.com/us/lacoste/men/clothing/polos/L1212-51-T01.html"
+  },
+  {
+    "id": "q135",
+    "type": "mc",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Sephora — Clinique Almost Lipstick Black Honey.\nSon được hiển thị giảm thêm 5% khi Auto-Replenish. Khách chỉ yêu cầu mua một lần, chưa đồng ý đăng ký định kỳ. Cách báo giá nào rõ ràng?",
+    "options": [
+      "Dùng giá mua một lần; chỉ tính ưu đãi định kỳ khi đã xác nhận đủ điều kiện và khách đồng ý",
+      "Tự đăng ký định kỳ để lấy giá rẻ",
+      "Báo giá định kỳ nhưng không nói điều kiện",
+      "Coi 5% là giảm tự động cho mọi đơn"
+    ],
+    "correct": 0,
+    "explanation": "Phải kiểm tra điều kiện promotion. Trong tình huống này, khách chưa đồng ý mua định kỳ nên không dùng giá yêu cầu đăng ký làm giá mua một lần.",
+    "image": "assets/quiz/sephora.jpg",
+    "imageAlt": "Sephora — Clinique Almost Lipstick Black Honey",
+    "productUrl": "https://www.sephora.com/product/almost-lipstick-P122751"
+  },
+  {
+    "id": "q136",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Tommy — polo 1985 Classic Fit.\nGiá $100 giảm 20% rồi giảm tiếp 10% trên giá còn lại. Kết luận: giá cuối là $70. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "explanation": "Giá cuối = 100 × 80% × 90% = $72, không phải $70.",
+    "image": "assets/quiz/tommy.jpg",
+    "imageAlt": "Tommy — polo 1985 Classic Fit",
+    "productUrl": "https://br.tommy.com/polo-1985-classic-fit-thmw0mw32064_thdw5/p"
+  },
+  {
+    "id": "q137",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Lacoste — polo L.12.12.\nGiá $120 giảm 25%. Kết luận: tiền hàng sau giảm là $90. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "explanation": "120 × 75% = $90.",
+    "image": "assets/quiz/lacoste.png",
+    "imageAlt": "Lacoste — polo L.12.12",
+    "productUrl": "https://www.lacoste.com/us/lacoste/men/clothing/polos/L1212-51-T01.html"
+  },
+  {
+    "id": "q138",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Amazon — adidas Clear Backpack.\nGiá $50, coupon cố định $10 chỉ áp tiền hàng, ship web $5 và thuế $0. Kết luận: tổng thanh toán là $45. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "explanation": "50 − 10 + 5 = $45.",
+    "image": "assets/quiz/amazon.jpg",
+    "imageAlt": "Amazon — adidas Clear Backpack",
+    "productUrl": "https://www.amazon.com/dp/B0BDPM58W3"
+  },
+  {
+    "id": "q139",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — eBay — đồng hồ Casio F-91W.\nMã giảm 10% trên item $80, không giảm ship web $10, thuế $0. Kết luận: tổng USD là $81. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "explanation": "80 × 90% + 10 = $82. $81 là kết quả giảm nhầm cả ship.",
+    "image": "assets/quiz/ebay.jpg",
+    "imageAlt": "eBay — đồng hồ Casio F-91W",
+    "productUrl": "https://www.ebay.com/p/93133781"
+  },
+  {
+    "id": "q140",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Macy’s — áo len cashmere Charter Club (ảnh tham khảo).\nHai áo giá $60/cái, áo thứ hai được giảm 50%. Kết luận: tổng hàng là $60. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "explanation": "60 + 60 × 50% = $90.",
+    "image": "assets/quiz/macys.jpg",
+    "imageAlt": "Macy’s — áo len cashmere Charter Club (ảnh tham khảo)",
+    "productUrl": "https://www.macys.com/shop/product/charter-club-womens-100-cashmere-shaker-stitch-crewneck-sweater-macys-exclusive?ID=26704762"
+  },
+  {
+    "id": "q141",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Sephora — Clinique Almost Lipstick Black Honey.\nKhách lẻ mua riêng 1 son giá sau giảm $20. Kết luận: bỏ qua phụ thu đơn dưới $30 vì sản phẩm nhỏ nhẹ. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "explanation": "Wiki quy định phụ thu đơn dưới $30 là 50.000đ cho khách lẻ; kích thước nhỏ không tự miễn phụ thu.",
+    "image": "assets/quiz/sephora.jpg",
+    "imageAlt": "Sephora — Clinique Almost Lipstick Black Honey",
+    "productUrl": "https://www.sephora.com/product/almost-lipstick-P122751"
+  },
+  {
+    "id": "q142",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Tommy — polo 1985 Classic Fit.\nDeal $60 off $200, khách mua lẻ không đủ $200. Theo wiki, dùng tỷ lệ deal trừ 5 điểm phần trăm. Kết luận: giảm báo khách 25%. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "explanation": "60 / 200 = 30%; 30% − 5 điểm phần trăm = 25%.",
+    "image": "assets/quiz/tommy.jpg",
+    "imageAlt": "Tommy — polo 1985 Classic Fit",
+    "productUrl": "https://br.tommy.com/polo-1985-classic-fit-thmw0mw32064_thdw5/p"
+  },
+  {
+    "id": "q143",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Lacoste — polo L.12.12.\nMột item có giá đúng $500. Chỉ xét quy tắc phụ thu item >$500. Kết luận: item này phải chịu 3% theo quy tắc đó. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "explanation": "Quy định là lớn hơn $500, không phải từ $500. Item đúng $500 chưa vượt mốc này.",
+    "image": "assets/quiz/lacoste.png",
+    "imageAlt": "Lacoste — polo L.12.12",
+    "productUrl": "https://www.lacoste.com/us/lacoste/men/clothing/polos/L1212-51-T01.html"
+  },
+  {
+    "id": "q144",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Amazon — adidas Clear Backpack.\nHai item đều $300, tổng đơn $600. Kết luận: không có phụ thu item >$500 chỉ vì tổng đơn vượt $500. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "explanation": "Phụ thu 3% xét theo từng item. Mỗi item $300 nên không vượt mốc.",
+    "image": "assets/quiz/amazon.jpg",
+    "imageAlt": "Amazon — adidas Clear Backpack",
+    "productUrl": "https://www.amazon.com/dp/B0BDPM58W3"
+  },
+  {
+    "id": "q145",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — eBay — đồng hồ Casio F-91W.\nKhi báo giá đồng hồ trên eBay, chỉ lưu ảnh sản phẩm là đủ; không cần lưu giá và seller. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "explanation": "Wiki yêu cầu lưu screenshot giá sản phẩm và seller khi báo giá eBay.",
+    "image": "assets/quiz/ebay.jpg",
+    "imageAlt": "eBay — đồng hồ Casio F-91W",
+    "productUrl": "https://www.ebay.com/p/93133781"
+  },
+  {
+    "id": "q146",
+    "type": "tf",
+    "source": "bao-hang-ve",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Macy’s — áo len cashmere Charter Club (ảnh tham khảo).\nKhách lẻ nhận riêng 1 áo nặng 0,3kg. Theo wiki, cân nặng tính cước tối thiểu mỗi lần hàng về là 0,5kg. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "explanation": "Mức tối thiểu 0,5kg áp cho mỗi lần hàng về của khách lẻ; cần báo trước khi khách đặt hàng nhẹ.",
+    "image": "assets/quiz/macys.jpg",
+    "imageAlt": "Macy’s — áo len cashmere Charter Club (ảnh tham khảo)",
+    "productUrl": "https://www.macys.com/shop/product/charter-club-womens-100-cashmere-shaker-stitch-crewneck-sweater-macys-exclusive?ID=26704762"
+  },
+  {
+    "id": "q147",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Sephora — Clinique Almost Lipstick Black Honey.\nKhách sỉ/CTV mua đơn tiền hàng $25. Kết luận: luôn cộng phụ thu đơn dưới $30 là 50.000đ giống khách lẻ. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "explanation": "Wiki ghi phụ thu đơn dưới $30 không áp dụng cho khách sỉ/CTV.",
+    "image": "assets/quiz/sephora.jpg",
+    "imageAlt": "Sephora — Clinique Almost Lipstick Black Honey",
+    "productUrl": "https://www.sephora.com/product/almost-lipstick-P122751"
+  },
+  {
+    "id": "q148",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Tommy — polo 1985 Classic Fit.\nKhách Asale: hàng $60 + ship web $5, tỷ giá 28.500; thuế $0; cước 0,5kg × 250.000, không phí khác. Kết luận: giá về VN trước ship nội địa là 1.977.500đ. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "explanation": "(60 + 5) × 28.500 + 125.000 = 1.977.500đ.",
+    "image": "assets/quiz/tommy.jpg",
+    "imageAlt": "Tommy — polo 1985 Classic Fit",
+    "productUrl": "https://br.tommy.com/polo-1985-classic-fit-thmw0mw32064_thdw5/p"
+  },
+  {
+    "id": "q149",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Lacoste — polo L.12.12.\nKhách Basso: hàng $84, ship web/thuế $0; tỷ giá 29.500; cước 0,6kg × 250.000; không phí khác. Kết luận: giá về VN trước ship nội địa là 2.478.000đ. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "explanation": "2.478.000đ mới là tiền hàng. Cộng cước 150.000đ được 2.628.000đ.",
+    "image": "assets/quiz/lacoste.png",
+    "imageAlt": "Lacoste — polo L.12.12",
+    "productUrl": "https://www.lacoste.com/us/lacoste/men/clothing/polos/L1212-51-T01.html"
+  },
+  {
+    "id": "q150",
+    "type": "tf",
+    "source": "bao-gia",
+    "enabled": true,
+    "prompt": "Tình huống luyện tập — Amazon — adidas Clear Backpack.\nKhách ShipUS: hàng $40 + ship web $6; thuế $0; tỷ giá 28.500; cước 0,8kg × 240.000; không phí khác. Kết luận: giá về VN trước ship nội địa là 1.503.000đ. Đây là dữ liệu luyện tập, không phải giá bán hiện tại.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "explanation": "46 × 28.500 + 192.000 = 1.503.000đ.",
+    "image": "assets/quiz/amazon.jpg",
+    "imageAlt": "Amazon — adidas Clear Backpack",
+    "productUrl": "https://www.amazon.com/dp/B0BDPM58W3"
   }
 ]
