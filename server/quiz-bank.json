@@ -1,0 +1,1442 @@
+[
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Việc không gấp chưa được trả lời, sau bao lâu cần nhắc lại?",
+    "options": [
+      "1 giờ",
+      "5 phút",
+      "1 ngày",
+      "3 ngày"
+    ],
+    "correct": 0,
+    "id": "q001",
+    "enabled": true,
+    "explanation": "Việc không gấp: chờ câu trả lời trong 1h"
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Việc gấp chưa có câu trả lời sau 15–30 phút, cần làm gì?",
+    "options": [
+      "Chờ đến tuần sau",
+      "Nhắc lại ngay hoặc gọi điện",
+      "Đợi hết ngày",
+      "Tự bỏ qua"
+    ],
+    "correct": 1,
+    "id": "q002",
+    "enabled": true,
+    "explanation": "Việc gấp: trong 15–30 phút chưa có câu trả lời — nhắc lại ngay hoặc gọi điện."
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Khi nhận câu hỏi nhưng chưa thể trả lời ngay, cần làm gì?",
+    "options": [
+      "Chuyển trách nhiệm cho người hỏi",
+      "Chờ được nhắc ba lần",
+      "Báo thời gian sẽ trả lời",
+      "Đọc rồi để đó"
+    ],
+    "correct": 2,
+    "id": "q003",
+    "enabled": true,
+    "explanation": "Người nhận câu hỏi phải trả lời ngay hoặc báo thời gian sẽ trả lời"
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Mỗi yêu cầu hỏi thông tin cần xác định điều gì?",
+    "options": [
+      "Số lượng emoji",
+      "Màu tin nhắn",
+      "Số lần đã đọc",
+      "Thời hạn/ngày giờ trả lời"
+    ],
+    "correct": 3,
+    "id": "q004",
+    "enabled": true,
+    "explanation": "Tất cả yêu cầu, hỏi thông tin đều phải xác định thời hạn/ngày giờ trả lời."
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Muốn thay đổi quy trình để hiệu quả hơn, cần làm gì trước?",
+    "options": [
+      "Báo sếp để được duyệt",
+      "Tự đổi rồi báo sau",
+      "Chỉ hỏi khách hàng",
+      "Đổi nếu thấy lỗi nhỏ"
+    ],
+    "correct": 0,
+    "id": "q005",
+    "enabled": true,
+    "explanation": "Muốn thay đổi quy trình để hiệu quả hơn → báo sếp để được duyệt"
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Nhân sự cũ dạy nhân sự mới sai quy trình, ai chịu trách nhiệm theo wiki?",
+    "options": [
+      "Không ai",
+      "Nhân sự cũ",
+      "Khách hàng",
+      "Đơn vị vận chuyển"
+    ],
+    "correct": 1,
+    "id": "q006",
+    "enabled": true,
+    "explanation": "Nhân sự cũ dạy nhân sự mới sai quy trình → nhân sự cũ chịu trách nhiệm"
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Khi nhờ sếp hỗ trợ cách xử lý khách, nên chuẩn bị gì?",
+    "options": [
+      "Chỉ gửi emoji",
+      "Yêu cầu khách tự hỏi sếp",
+      "Đề xuất phương án của mình trước",
+      "Chỉ hỏi “làm sao?”"
+    ],
+    "correct": 2,
+    "id": "q007",
+    "enabled": true,
+    "explanation": "hãy đề xuất phương án của mình trước rồi hỏi sếp xem có được không"
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Khi hỏi team mua hàng, nên gửi thông tin nào?",
+    "options": [
+      "Chỉ tên khách",
+      "Chỉ ảnh không có mã dạng chữ",
+      "Chỉ ngày sinh khách",
+      "Mã đơn hàng và tên web"
+    ],
+    "correct": 3,
+    "id": "q008",
+    "enabled": true,
+    "explanation": "Hỏi team mua hàng thì gửi mã ĐH + tên web"
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Report vấn đề nên được trình bày thế nào?",
+    "options": [
+      "Đầy đủ, chi tiết trong một tin nhắn",
+      "Chia thành nhiều tin thiếu ngữ cảnh",
+      "Chỉ gửi “lỗi rồi”",
+      "Đợi người nhận hỏi từng ý"
+    ],
+    "correct": 0,
+    "id": "q009",
+    "enabled": true,
+    "explanation": "luôn report đầy đủ, chi tiết trong 1 tin nhắn"
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Khi sếp hỏi nguyên nhân sự cố, cần trả lời thế nào?",
+    "options": [
+      "Đổ lỗi cho khách",
+      "Nêu nguyên nhân gốc rễ, chi tiết và nhận sai ngay",
+      "Trả lời vòng vo",
+      "Chỉ nói đã xử lý"
+    ],
+    "correct": 1,
+    "id": "q010",
+    "enabled": true,
+    "explanation": "hãy trả lời cụ thể, chi tiết và thừa nhận sai lầm ngay"
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Theo quy định bảo mật, khi tạo tài khoản web nên chọn cách nào?",
+    "options": [
+      "Đăng nhập bằng Facebook",
+      "Cấp quyền truy cập Gmail cho app",
+      "Checkout as guest hoặc nhập email riêng",
+      "Đăng nhập bằng Gmail công ty"
+    ],
+    "correct": 2,
+    "id": "q011",
+    "enabled": true,
+    "explanation": "chỉ check out as guest hoặc nhập email riêng"
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Yêu cầu hoặc lỗi hệ thống phải báo ở đâu?",
+    "options": [
+      "Tin nhắn riêng cho bất kỳ ai",
+      "Bình luận công khai",
+      "Chỉ ghi vào sổ cá nhân",
+      "Group Asale team"
+    ],
+    "correct": 3,
+    "id": "q012",
+    "enabled": true,
+    "explanation": "Tất cả yêu cầu/lỗi hệ thống phải nhắn vào group Asale team, không nhắn riêng."
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Khi nhờ đồng nghiệp làm khác quy trình đã được duyệt, cần gửi gì?",
+    "options": [
+      "Screenshot tin nhắn sếp đã duyệt",
+      "Lời hứa miệng",
+      "Ảnh sản phẩm",
+      "Lịch làm việc"
+    ],
+    "correct": 0,
+    "id": "q013",
+    "enabled": true,
+    "explanation": "người yêu cầu phải screenshot tin nhắn đã được sếp duyệt và gửi cho bộ phận kia"
+  },
+  {
+    "type": "mc",
+    "source": "cach-lam-viec",
+    "prompt": "Khi khó hiểu ý nhau trong công việc, nên trao đổi ở đâu?",
+    "options": [
+      "Group ngoài công ty",
+      "Các group công ty",
+      "Chat riêng tiếp cho đến khi xong",
+      "Trang cá nhân của khách"
+    ],
+    "correct": 1,
+    "id": "q014",
+    "enabled": true,
+    "explanation": "Yêu cầu trao đổi công việc trong các group công ty"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "SALE mới tiếp nhận khách cũ cần làm gì trước khi tư vấn?",
+    "options": [
+      "Xóa lịch sử chat",
+      "Báo giá ngay không đọc",
+      "Đọc lại các đoạn chat trước",
+      "Yêu cầu khách kể lại toàn bộ"
+    ],
+    "correct": 2,
+    "id": "q015",
+    "enabled": true,
+    "explanation": "Với khách cũ, SALE mới cần đọc lại các đoạn chat trước với khách"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Khi báo giá Amazon/Walmart/Ebay, cần screenshot gì?",
+    "options": [
+      "Chỉ logo web",
+      "Chỉ tên khách",
+      "Chỉ trang chủ",
+      "Giá sản phẩm và seller"
+    ],
+    "correct": 3,
+    "id": "q016",
+    "enabled": true,
+    "explanation": "Luôn screenshot giá sản phẩm + seller khi báo giá Amazon/Walmart/Ebay"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Trên website, chương trình sale thường xuất hiện ở đâu?",
+    "options": [
+      "Banner hoặc đầu trang",
+      "Trang đổi mật khẩu",
+      "Mục tuyển dụng",
+      "Trang đăng xuất"
+    ],
+    "correct": 0,
+    "id": "q017",
+    "enabled": true,
+    "explanation": "Các chương trình SALE thường được hiển thị trên banner hoặc đầu trang."
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Tìm deal thương hiệu trên Dealmoon bằng cách nào?",
+    "options": [
+      "Tìm mã đơn nội bộ",
+      "Nhập tên thương hiệu vào ô tìm kiếm",
+      "Chỉ tìm bằng số điện thoại",
+      "Gửi email cho khách"
+    ],
+    "correct": 1,
+    "id": "q018",
+    "enabled": true,
+    "explanation": "Truy cập dealmoon.com/en, nhập tên thương hiệu vào ô tìm kiếm"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Khi tìm deal trên Facebook, nên ưu tiên bộ lọc nào?",
+    "options": [
+      "Chỉ ảnh đại diện",
+      "Chỉ người quen",
+      "Bài viết mới đây",
+      "Bài viết cũ nhất"
+    ],
+    "correct": 2,
+    "id": "q019",
+    "enabled": true,
+    "explanation": "Ưu tiên chọn \"Bài viết mới đây\""
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Tìm email sale trong Gmail Basso ở mục nào?",
+    "options": [
+      "Trash",
+      "Sent",
+      "Drafts",
+      "Promotions"
+    ],
+    "correct": 3,
+    "id": "q020",
+    "enabled": true,
+    "explanation": "Vào Gmail Basso → chọn Promotions"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Deal đã đăng trên Xeko được tìm lại ở đâu?",
+    "options": [
+      "AI Basso → Xeko → Kho content",
+      "App chấm công",
+      "Mục xin nghỉ",
+      "Trang đổi mật khẩu"
+    ],
+    "correct": 0,
+    "id": "q021",
+    "enabled": true,
+    "explanation": "Vào AI Basso → Xeko → Kho content"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Muốn xem deal của một kênh trên Xeko, làm gì?",
+    "options": [
+      "Tạo tài khoản mới",
+      "Chọn Tài khoản rồi bấm Lọc",
+      "Chỉ đổi tên sản phẩm",
+      "Xóa bộ lọc ngày rồi thoát"
+    ],
+    "correct": 1,
+    "id": "q022",
+    "enabled": true,
+    "explanation": "chọn Tài khoản cần xem rồi bấm Lọc"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Theo hướng dẫn tìm sản phẩm bằng Google Lens, cần bật gì?",
+    "options": [
+      "Chặn hình ảnh",
+      "Tắt mạng",
+      "VPN Mỹ",
+      "Chế độ máy bay"
+    ],
+    "correct": 2,
+    "id": "q023",
+    "enabled": true,
+    "explanation": "Cần bật VPN Mỹ, dùng Google Lens để tìm"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Google Lens chưa ra website bán sản phẩm, bước tiếp theo là gì?",
+    "options": [
+      "Kết luận sản phẩm không tồn tại",
+      "Báo hết hàng ngay",
+      "Tạo link giả",
+      "Tìm tên sản phẩm và thương hiệu từ web khác để tìm tiếp"
+    ],
+    "correct": 3,
+    "id": "q024",
+    "enabled": true,
+    "explanation": "xem các web khác để tìm tên sản phẩm, tên thương hiệu để tìm kiếm tiếp"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Địa chỉ các kho được tra ở đâu theo mục báo giá?",
+    "options": [
+      "Sheet Note trong file Orders",
+      "Lịch nghỉ phép",
+      "Bảng chấm công",
+      "Trang cá nhân khách"
+    ],
+    "correct": 0,
+    "id": "q025",
+    "enabled": true,
+    "explanation": "Địa chỉ các kho — xem ở sheet Note file Orders."
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Deal $60 off $200, khách mua lẻ không đủ $200 được tính mức giảm nào theo wiki?",
+    "options": [
+      "5%",
+      "25%",
+      "30%",
+      "60%"
+    ],
+    "correct": 1,
+    "id": "q026",
+    "enabled": true,
+    "explanation": "deal $60 off $200 = tỷ lệ 30% → tính 25%"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Deal chỉ còn 45 phút hết sale, quy định nhận đơn thế nào?",
+    "options": [
+      "Nhận nếu khách nhắn hai lần",
+      "Nhận mà không báo rủi ro",
+      "Không nhận đơn cần mua kịp sale đó",
+      "Luôn nhận và cam kết mua"
+    ],
+    "correct": 2,
+    "id": "q027",
+    "enabled": true,
+    "explanation": "đơn cần mua kịp sale khi còn ít hơn 1h thì sẽ không nhận"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Trước khi nhận hàng dễ vỡ, cần có xác nhận nào từ khách?",
+    "options": [
+      "Chỉ thả tim",
+      "Không cần xác nhận",
+      "Chỉ hẹn ngày nhận",
+      "Đồng ý bằng văn bản về việc không chịu trách nhiệm nếu vỡ khi vận chuyển"
+    ],
+    "correct": 3,
+    "id": "q028",
+    "enabled": true,
+    "explanation": "Yêu cầu khách đồng ý bằng văn bản trước khi nhận đơn."
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Hàng pre-order cần thanh toán bao nhiêu trước khi nhận đơn?",
+    "options": [
+      "100%",
+      "20%",
+      "30%",
+      "Không cần thanh toán"
+    ],
+    "correct": 0,
+    "id": "q029",
+    "enabled": true,
+    "explanation": "yêu cầu khách thanh toán 100% trước khi nhận đơn"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Ngoài thanh toán, hàng pre-order cần xác nhận thông tin nào?",
+    "options": [
+      "Giờ mở cửa văn phòng",
+      "Thời gian web sẽ ship",
+      "Ngày sinh khách",
+      "Số nhân viên kho"
+    ],
+    "correct": 1,
+    "id": "q030",
+    "enabled": true,
+    "explanation": "Xác nhận với khách thời gian web sẽ ship"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Công thức báo giá trong wiki bao gồm nhóm khoản nào?",
+    "options": [
+      "Chỉ giá web và tiền cọc",
+      "Chỉ tiền kg",
+      "Giá web, ship web, tỷ giá, phụ thu và phí vận chuyển quốc tế",
+      "Chỉ giá web"
+    ],
+    "correct": 2,
+    "id": "q031",
+    "enabled": true,
+    "explanation": "[Giá web + Ship web (nếu có)] × Tỷ giá + Phụ thu (nếu có) + Phí VC quốc tế (theo kg)"
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Phụ thu sản phẩm trên $500 xét theo đơn vị nào?",
+    "options": [
+      "Tổng đơn bất kể từng item",
+      "Tổng mua cả tháng",
+      "Tổng tiền cọc",
+      "Từng item"
+    ],
+    "correct": 3,
+    "id": "q032",
+    "enabled": true,
+    "explanation": "Tất cả sp >$500: phụ thu 3% (tính theo từng item, không phải tổng đơn)."
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Sản phẩm trên 5kg cần xử lý tiền kg thế nào?",
+    "options": [
+      "Check kg dự tính và thu cùng tiền hàng",
+      "Luôn miễn tiền kg",
+      "Không cần dự tính",
+      "Chỉ hỏi sau khi khách nhận"
+    ],
+    "correct": 0,
+    "id": "q033",
+    "enabled": true,
+    "explanation": "Sp >5kg: CSKH phải check kg dự tính và thu tiền kg cùng tiền hàng."
+  },
+  {
+    "type": "mc",
+    "source": "bao-gia",
+    "prompt": "Nickname khách mới trên Facebook/Zalo được đặt theo cú pháp nào?",
+    "options": [
+      "Ngày đặt - tên kho",
+      "Tên fb/zalo - SĐT khách",
+      "Chỉ mã nhân viên",
+      "Chỉ tên web"
+    ],
+    "correct": 1,
+    "id": "q034",
+    "enabled": true,
+    "explanation": "Tên fb/zalo - SĐT khách"
+  },
+  {
+    "type": "mc",
+    "source": "tao-don",
+    "prompt": "Khi nhập giảm giá cho khách, phải ghi gì?",
+    "options": [
+      "Không cần ghi chú",
+      "Tên người giao hàng",
+      "Lý do giảm giá cụ thể",
+      "Chỉ số tiền"
+    ],
+    "correct": 2,
+    "id": "q035",
+    "enabled": true,
+    "explanation": "Khi SALE/CSKH nhập giảm giá cho khách đều phải note lý do giảm giá cụ thể."
+  },
+  {
+    "type": "mc",
+    "source": "tao-don",
+    "prompt": "Khách sỉ hỏi có đô mua luôn, CSKH nhắn group nào?",
+    "options": [
+      "Group chấm công",
+      "Group tuyển dụng",
+      "Group khách khác",
+      "Asale - Mua hàng"
+    ],
+    "correct": 3,
+    "id": "q036",
+    "enabled": true,
+    "explanation": "CSKH nhắn group Asale - Mua hàng"
+  },
+  {
+    "type": "mc",
+    "source": "tao-don",
+    "prompt": "Hỏi rate mua luôn trong giờ hành chính thì tag ai theo wiki?",
+    "options": [
+      "Thuy Duong",
+      "Nhung Vân",
+      "Khách hàng",
+      "Shipper"
+    ],
+    "correct": 0,
+    "id": "q037",
+    "enabled": true,
+    "explanation": "Trong giờ hành chính: tag Thuy Duong"
+  },
+  {
+    "type": "mc",
+    "source": "tao-don",
+    "prompt": "Hỏi rate mua luôn ngoài giờ thì tag ai theo wiki?",
+    "options": [
+      "Shipper",
+      "Nhung Vân",
+      "Thuy Duong",
+      "Khách hàng"
+    ],
+    "correct": 1,
+    "id": "q038",
+    "enabled": true,
+    "explanation": "Ngoài giờ: tag Nhung Vân"
+  },
+  {
+    "type": "mc",
+    "source": "tao-don",
+    "prompt": "Khách trùng giữa các kênh, tạo đơn ở đâu?",
+    "options": [
+      "Tạo khách mới để giấu",
+      "Không được tạo đơn",
+      "Tài khoản khách đã có trong hệ thống",
+      "Luôn tạo tài khoản giả"
+    ],
+    "correct": 2,
+    "id": "q039",
+    "enabled": true,
+    "explanation": "vẫn tạo đơn bình thường ở tài khoản khách đã có trong hệ thống"
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Đơn mới về một phần, CSKH nên hỏi khách điều gì?",
+    "options": [
+      "Có muốn hủy tất cả không",
+      "Có muốn đổi tài khoản không",
+      "Có muốn đổi tên không",
+      "Nhận trước item đã về hay đợi đủ"
+    ],
+    "correct": 3,
+    "id": "q040",
+    "enabled": true,
+    "explanation": "hỏi khách có muốn nhận trước các item đã về không hay đợi hàng về hết"
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Khi khách complain dù không phải lỗi bên mình, cần làm gì?",
+    "options": [
+      "Xin lỗi vì trải nghiệm dịch vụ chưa tốt",
+      "Bỏ qua",
+      "Tranh cãi trước",
+      "Chặn khách"
+    ],
+    "correct": 0,
+    "id": "q041",
+    "enabled": true,
+    "explanation": "Phải xin lỗi khách hàng vì trải nghiệm dịch vụ đã không tốt trong MỌI trường hợp"
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Bước đầu khi xử lý issue đền bù là gì?",
+    "options": [
+      "Giấu thông tin",
+      "Đền bù đúng policy và báo khách",
+      "Tự hứa mức cao nhất",
+      "Hỏi khách tự quyết mức tiền"
+    ],
+    "correct": 1,
+    "id": "q042",
+    "enabled": true,
+    "explanation": "Khi xử lý issue sẽ đền bù đúng theo policy và báo khách"
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Xin hỗ trợ thêm ngoài policy cần trình sếp những gì?",
+    "options": [
+      "Chỉ screenshot không giải thích",
+      "Chỉ câu “khách VIP”",
+      "Lý do, doanh thu/cách làm việc của khách và mức hỗ trợ đề nghị",
+      "Chỉ tên khách"
+    ],
+    "correct": 2,
+    "id": "q043",
+    "enabled": true,
+    "explanation": "Lý do hỗ trợ thêm?- Doanh thu + cách lv của khách?- Yêu cầu hỗ trợ thêm bao nhiêu?"
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Khách VIP được hỗ trợ thêm tối đa bao nhiêu lần theo quy định này?",
+    "options": [
+      "Không giới hạn",
+      "10 lần cùng case",
+      "1 lần mỗi ngày",
+      "3 lần và không cùng case"
+    ],
+    "correct": 3,
+    "id": "q044",
+    "enabled": true,
+    "explanation": "1 khách VIP sẽ đc tối đa 3 lần hỗ trợ thêm và ko cùng case"
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Khi thông báo hỗ trợ thêm, cần làm rõ điều gì?",
+    "options": [
+      "Đây là ngoại lệ, không phải thông lệ",
+      "Lần sau luôn được như vậy",
+      "Mọi khách đều được tự động",
+      "Không cần nhắc policy"
+    ],
+    "correct": 0,
+    "id": "q045",
+    "enabled": true,
+    "explanation": "đây là ngoại lệ chứ ko phải thông lệ"
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Cân nặng tối thiểu mỗi lần hàng về của khách lẻ là bao nhiêu?",
+    "options": [
+      "2kg",
+      "0.5kg",
+      "0.1kg",
+      "1kg"
+    ],
+    "correct": 1,
+    "id": "q046",
+    "enabled": true,
+    "explanation": "Khách lẻ: Tối thiểu 1 lần hàng về là 0.5kg."
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Khách đặt hàng nhẹ cần được báo cân nặng tối thiểu lúc nào?",
+    "options": [
+      "Sau khi giao hàng",
+      "Chỉ khi khách khiếu nại",
+      "Ngay từ đầu",
+      "Sau khi thu tiền"
+    ],
+    "correct": 2,
+    "id": "q047",
+    "enabled": true,
+    "explanation": "thông báo cho khách về cân nặng tối thiểu ngay từ đầu"
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Ship cho khách của khách, nếu hàng đã có thùng sẵn thu phí xử lý bao nhiêu mỗi địa chỉ?",
+    "options": [
+      "5k",
+      "50k",
+      "Miễn phí",
+      "20k"
+    ],
+    "correct": 3,
+    "id": "q048",
+    "enabled": true,
+    "explanation": "Thu phí khách 20k/địa chỉ cho trường hợp ko phải đóng thùng hoặc hàng đã có thùng sẵn."
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Nếu phải lấy thùng bên mình để ship cho khách của khách, cộng thêm bao nhiêu?",
+    "options": [
+      "5k/thùng",
+      "20k/kg",
+      "50k/đơn",
+      "Không cộng thêm"
+    ],
+    "correct": 0,
+    "id": "q049",
+    "enabled": true,
+    "explanation": "Nếu phải lấy thùng bên mình thì sẽ +5k/thùng"
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Hàng về Việt Nam bao lâu chưa giao thì CSKH phải note lý do?",
+    "options": [
+      "60 ngày",
+      "7 ngày",
+      "1 ngày",
+      "30 ngày"
+    ],
+    "correct": 1,
+    "id": "q050",
+    "enabled": true,
+    "explanation": "Tính từ Ngày hàng về VN 07 ngày, ko giao hàng cho khách CSKH sẽ phải note lý do"
+  },
+  {
+    "type": "mc",
+    "source": "bao-hang-ve",
+    "prompt": "Đã giao hàng bao lâu mà chưa thanh toán thì phải note lý do?",
+    "options": [
+      "14 ngày",
+      "30 ngày",
+      "3 ngày",
+      "7 ngày"
+    ],
+    "correct": 2,
+    "id": "q051",
+    "enabled": true,
+    "explanation": "Tính từ Ngày đã giao hàng 03 ngày mà khách chưa thanh toán thì CSKH sẽ phải note lý do"
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "Khách hỏi hàng chưa về sau 1–2 tuần, bước đầu tiên là gì?",
+    "options": [
+      "Hứa ngày giao ngay",
+      "Yêu cầu đặt lại",
+      "Bỏ qua tracking",
+      "Tìm đơn hàng trong hệ thống"
+    ],
+    "correct": 3,
+    "id": "q052",
+    "enabled": true,
+    "explanation": "Đầu tiên tìm đơn hàng trong hệ thống."
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "Có tracking nhưng chưa có delivered date nghĩa là gì theo FAQ?",
+    "options": [
+      "Kiện đang đến kho Mỹ",
+      "Đã giao tới nhà khách ở Việt Nam",
+      "Đơn đã bị hủy",
+      "Khách chưa đặt đơn"
+    ],
+    "correct": 0,
+    "id": "q053",
+    "enabled": true,
+    "explanation": "có nghĩa là kiện hàng đó đang đến kho Mỹ"
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "FAQ hướng dẫn xử lý email đơn hàng không thấy thế nào?",
+    "options": [
+      "Đổi số điện thoại",
+      "Kiểm tra Spam rồi chuyển email ra inbox",
+      "Tạo đơn lần nữa",
+      "Xóa tài khoản"
+    ],
+    "correct": 1,
+    "id": "q054",
+    "enabled": true,
+    "explanation": "Nhắn khách check Spam, rồi move email đó ra inbox"
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "Nhiều item dưới $30 nhưng tổng đơn trên $30, phụ thu 50k tính thế nào?",
+    "options": [
+      "Thu gấp đôi",
+      "Thu theo số link",
+      "Không phụ thu 50k theo ngưỡng này",
+      "Thu mỗi item 50k"
+    ],
+    "correct": 2,
+    "id": "q055",
+    "enabled": true,
+    "explanation": "Tính theo tổng đơn hàng, không tính theo item. Chỉ phụ thu 50k khi tổng đơn hàng <$30."
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "Đơn ba link tổng dưới $30, link đầu chọn danh mục nào?",
+    "options": [
+      "Hàng thông thường",
+      "Hàng cồng kềnh",
+      "Hàng miễn phí",
+      "Items nhỏ hơn $30"
+    ],
+    "correct": 3,
+    "id": "q056",
+    "enabled": true,
+    "explanation": "Link sản phẩm thứ 1 → chọn danh mục \"Items nhỏ hơn $30\""
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "Đơn ba link tổng dưới $30, link thứ hai và ba chọn danh mục nào?",
+    "options": [
+      "Hàng thông thường",
+      "Items nhỏ hơn $30",
+      "Hàng cồng kềnh",
+      "Không cần tạo link"
+    ],
+    "correct": 0,
+    "id": "q057",
+    "enabled": true,
+    "explanation": "Link thứ 2 và thứ 3 → chọn \"Hàng thông thường\""
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "Khách có công nợ cũ và hàng mới về, cần nhắc thanh toán gì để xuất hàng?",
+    "options": [
+      "Không cần thanh toán",
+      "Công nợ cũ và mới",
+      "Chỉ nợ mới",
+      "Chỉ phí ship"
+    ],
+    "correct": 1,
+    "id": "q058",
+    "enabled": true,
+    "explanation": "ck giúp em hết công nợ cũ & mới"
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "Khách nhờ thanh lý vì không thích, hàng được giữ ở đâu theo FAQ?",
+    "options": [
+      "Bắt kho Mỹ nhận lại",
+      "Bỏ hàng tại văn phòng",
+      "Khách giữ hàng, bên mình hỗ trợ đăng bán",
+      "Tự nhập kho stock ngay"
+    ],
+    "correct": 2,
+    "id": "q059",
+    "enabled": true,
+    "explanation": "để hàng khách giữ, nói sẽ đăng bài để bán thanh lý giúp khách"
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "Phí kiểm tra hàng tại kho Mỹ theo FAQ là bao nhiêu?",
+    "options": [
+      "5 USD/item",
+      "3 USD/đơn",
+      "Miễn phí",
+      "5 USD/kiện"
+    ],
+    "correct": 3,
+    "id": "q060",
+    "enabled": true,
+    "explanation": "dịch vụ kiểm tra hàng tại kho Mỹ có phí 5 USD/kiện"
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "Nếu kho Mỹ bị miss kiểm hàng, xử lý phí kiểm thế nào?",
+    "options": [
+      "Hoàn toàn bộ phí 5 USD",
+      "Giữ nguyên phí",
+      "Thu gấp đôi",
+      "Đổi thành tiền cọc"
+    ],
+    "correct": 0,
+    "id": "q061",
+    "enabled": true,
+    "explanation": "hoàn lại toàn bộ phí kiểm hàng 5 USD"
+  },
+  {
+    "type": "mc",
+    "source": "faq",
+    "prompt": "Dịch vụ kiểm hàng tại kho Mỹ thực hiện việc nào?",
+    "options": [
+      "Cam kết không vỡ khi vận chuyển",
+      "Kiểm tra ngoại quan, chụp ảnh gửi khách",
+      "Bảo hành trọn đời",
+      "Lắp đặt tại nhà khách"
+    ],
+    "correct": 1,
+    "id": "q062",
+    "enabled": true,
+    "explanation": "kiểm tra ngoại quan sản phẩm, chụp ảnh thực tế"
+  },
+  {
+    "type": "mc",
+    "source": "thuat-ngu",
+    "prompt": "Trước khi forward bill/mail cho khách, cần xóa thông tin nào?",
+    "options": [
+      "Mọi giá trị đơn",
+      "Tên thương hiệu",
+      "Email team mua hàng và shipping/billing address",
+      "Toàn bộ tên sản phẩm"
+    ],
+    "correct": 2,
+    "id": "q063",
+    "enabled": true,
+    "explanation": "Phải xóa thông tin email của team mua hàng và shipping billing address"
+  },
+  {
+    "type": "mc",
+    "source": "thuat-ngu",
+    "prompt": "Thuật ngữ Deli có nghĩa là gì?",
+    "options": [
+      "Hàng vừa được đặt",
+      "Hàng về nhà khách Việt Nam",
+      "Đơn chưa thanh toán",
+      "Đã giao hàng đến địa chỉ kho Mỹ"
+    ],
+    "correct": 3,
+    "id": "q064",
+    "enabled": true,
+    "explanation": "DeliViết tắt của Delivered — hàng đã được giao đến địa chỉ kho Mỹ"
+  },
+  {
+    "type": "mc",
+    "source": "thuat-ngu",
+    "prompt": "Code riêng cần hỏi ai để biết còn dùng được không?",
+    "options": [
+      "Leader Thuy Duong",
+      "Shipper",
+      "Khách mới",
+      "Bất kỳ seller nào"
+    ],
+    "correct": 0,
+    "id": "q065",
+    "enabled": true,
+    "explanation": "Code riêng → hỏi leader Thuy Duong xem còn dùng được không"
+  },
+  {
+    "type": "mc",
+    "source": "thuat-ngu",
+    "prompt": "Pickup Store là loại nhận hàng nào?",
+    "options": [
+      "Chuyển phát nhanh quốc tế",
+      "Nhận tại cửa hàng nhất định, không hỗ trợ giao hàng",
+      "Giao tận nhà Việt Nam",
+      "Giao miễn phí về kho"
+    ],
+    "correct": 1,
+    "id": "q066",
+    "enabled": true,
+    "explanation": "Pickup StoreLà sản phẩm yêu cầu nhận hàng tại cửa hàng nhất định. Không hỗ trợ giao hàng."
+  },
+  {
+    "type": "mc",
+    "source": "thuat-ngu",
+    "prompt": "Đơn Checkout có mã bắt đầu bằng gì?",
+    "options": [
+      "HN",
+      "SG",
+      "CO",
+      "VN"
+    ],
+    "correct": 2,
+    "id": "q067",
+    "enabled": true,
+    "explanation": "Mã đơn bắt đầu bằng CO..."
+  },
+  {
+    "type": "mc",
+    "source": "thuat-ngu",
+    "prompt": "Chờ $, chờ GC nghĩa là gì?",
+    "options": [
+      "Chờ khách nhận hàng",
+      "Chờ hàng về Việt Nam",
+      "Chờ bảo hành",
+      "Chờ giftcard rate thấp để mua đơn"
+    ],
+    "correct": 3,
+    "id": "q068",
+    "enabled": true,
+    "explanation": "Chờ có giftcard rate thấp để mua đơn"
+  },
+  {
+    "type": "mc",
+    "source": "thuat-ngu",
+    "prompt": "Gửi mua hộ là nghiệp vụ của team nào?",
+    "options": [
+      "Mua Hàng",
+      "Chấm công",
+      "Tuyển dụng",
+      "Giao hàng nội địa"
+    ],
+    "correct": 0,
+    "id": "q069",
+    "enabled": true,
+    "explanation": "Là nghiệp vụ của team Mua Hàng"
+  },
+  {
+    "type": "mc",
+    "source": "hang-stock",
+    "prompt": "Muốn biết điều kiện giá Sỉ cho hàng stock, cần hỏi ai?",
+    "options": [
+      "Website nước ngoài",
+      "Quản lý",
+      "Shipper",
+      "Bất kỳ khách lẻ nào"
+    ],
+    "correct": 1,
+    "id": "q070",
+    "enabled": true,
+    "explanation": "Giá SỉLiên hệ quản lý để biết điều kiện cụ thể"
+  },
+  {
+    "type": "tf",
+    "source": "cach-lam-viec",
+    "prompt": "Khi có việc cần hỏi, nên hỏi ngay thay vì để sau.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q071",
+    "enabled": true,
+    "explanation": "Khi có việc cần hỏi thì hỏi ngay, không để sau vì sẽ quên."
+  },
+  {
+    "type": "tf",
+    "source": "cach-lam-viec",
+    "prompt": "Có thể tự đổi quy trình nếu cho rằng thay đổi đó nhỏ.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q072",
+    "enabled": true,
+    "explanation": "TUYỆT ĐỐI KHÔNG THAY ĐỔI QUY TRÌNH khi chưa có sự cho phép của sếp."
+  },
+  {
+    "type": "tf",
+    "source": "cach-lam-viec",
+    "prompt": "Người nhận yêu cầu làm khác quy trình cũng cần xin screenshot sếp đã duyệt.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q073",
+    "enabled": true,
+    "explanation": "Người nhận yêu cầu cũng phải hỏi xin screenshot xác nhận"
+  },
+  {
+    "type": "tf",
+    "source": "cach-lam-viec",
+    "prompt": "Có thể chia sẻ file công ty cho email cá nhân để tiện làm việc.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q074",
+    "enabled": true,
+    "explanation": "Cấm tuyệt đối share file công ty cho email cá nhân"
+  },
+  {
+    "type": "tf",
+    "source": "cach-lam-viec",
+    "prompt": "Lỗi hệ thống nên nhắn riêng thay vì báo group Asale team.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q075",
+    "enabled": true,
+    "explanation": "Tất cả yêu cầu/lỗi hệ thống phải nhắn vào group Asale team, không nhắn riêng."
+  },
+  {
+    "type": "tf",
+    "source": "cach-lam-viec",
+    "prompt": "Khi khách chậm tiền hoặc hay kêu ca, cần báo sếp để có cách xử lý riêng.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q076",
+    "enabled": true,
+    "explanation": "Với khách có vấn đề (chậm tiền, kêu ca...) → báo sếp để có cách xử lý riêng"
+  },
+  {
+    "type": "tf",
+    "source": "bao-gia",
+    "prompt": "Hàng pre-order chỉ cần cọc 50% theo quy định nhận đơn.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q077",
+    "enabled": true,
+    "explanation": "yêu cầu khách thanh toán 100% trước khi nhận đơn"
+  },
+  {
+    "type": "tf",
+    "source": "bao-gia",
+    "prompt": "Báo giá Amazon/Walmart/Ebay cần lưu screenshot giá và seller vì giá có thể thay đổi.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q078",
+    "enabled": true,
+    "explanation": "Luôn screenshot giá sản phẩm + seller khi báo giá Amazon/Walmart/Ebay (giá hay thay đổi)."
+  },
+  {
+    "type": "tf",
+    "source": "bao-gia",
+    "prompt": "Phụ thu 3% cho sản phẩm trên $500 được xét theo tổng đơn, không theo item.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q079",
+    "enabled": true,
+    "explanation": "tính theo từng item, không phải tổng đơn"
+  },
+  {
+    "type": "tf",
+    "source": "bao-gia",
+    "prompt": "Nhận hàng dễ vỡ cần khách đồng ý bằng văn bản trước.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q080",
+    "enabled": true,
+    "explanation": "Yêu cầu khách đồng ý bằng văn bản trước khi nhận đơn."
+  },
+  {
+    "type": "tf",
+    "source": "tao-don",
+    "prompt": "Khách trùng giữa các kênh bắt buộc phải giấu thông tin khách.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q081",
+    "enabled": true,
+    "explanation": "Không cần giấu khách khi trùng khách giữa các kênh."
+  },
+  {
+    "type": "tf",
+    "source": "tao-don",
+    "prompt": "Mọi khoản giảm giá nhập cho khách đều cần note lý do cụ thể.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q082",
+    "enabled": true,
+    "explanation": "Khi SALE/CSKH nhập giảm giá cho khách đều phải note lý do giảm giá cụ thể."
+  },
+  {
+    "type": "tf",
+    "source": "bao-hang-ve",
+    "prompt": "Chỉ xin lỗi khách complain khi xác định lỗi do bên mình.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q083",
+    "enabled": true,
+    "explanation": "Phải xin lỗi khách hàng vì trải nghiệm dịch vụ đã không tốt trong MỌI trường hợp"
+  },
+  {
+    "type": "tf",
+    "source": "bao-hang-ve",
+    "prompt": "Có thể hứa khách mọi lần sau đều được hỗ trợ ngoại lệ giống lần này.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q084",
+    "enabled": true,
+    "explanation": "đây là ngoại lệ chứ ko phải thông lệ"
+  },
+  {
+    "type": "tf",
+    "source": "bao-hang-ve",
+    "prompt": "Khách lẻ đặt hàng nhẹ cần được báo mức tối thiểu 0.5kg ngay từ đầu.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q085",
+    "enabled": true,
+    "explanation": "Khách lẻ: Tối thiểu 1 lần hàng về là 0.5kg. Khi khách đặt đơn hàng nhẹ → thông báo cho khách về cân nặng tối thiểu ngay từ đầu."
+  },
+  {
+    "type": "tf",
+    "source": "faq",
+    "prompt": "Các sản phẩm cùng một đơn luôn được web gửi trong cùng một kiện.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q086",
+    "enabled": true,
+    "explanation": "web có thể tách đơn thành nhiều kiện để giao"
+  },
+  {
+    "type": "tf",
+    "source": "faq",
+    "prompt": "Hàng mua online có thể không có bill giấy mà chỉ có bill online.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q087",
+    "enabled": true,
+    "explanation": "có những sp về không có bill giấy, chỉ có bill online khi mua hàng"
+  },
+  {
+    "type": "tf",
+    "source": "faq",
+    "prompt": "Sản phẩm thương hiệu Mỹ ghi Made in Vietnam luôn là hàng giả.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q088",
+    "enabled": true,
+    "explanation": "các hãng lớn đặt nhà máy sản xuất ở các nước thứ 3 nhưng không vì thế mà ảnh hưởng tới chất lượng sản phẩm"
+  },
+  {
+    "type": "tf",
+    "source": "faq",
+    "prompt": "Theo FAQ, bảo hành sản phẩm mua ở Mỹ có thể cần gửi sản phẩm về Mỹ.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q089",
+    "enabled": true,
+    "explanation": "Trường hợp cần bảo hành phải gửi lại sản phẩm về Mỹ."
+  },
+  {
+    "type": "tf",
+    "source": "faq",
+    "prompt": "Bên mình hiện hỗ trợ dịch vụ gửi hàng từ Việt Nam về Mỹ để return.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q090",
+    "enabled": true,
+    "explanation": "chưa hỗ trợ dịch vụ gửi hàng từ Việt Nam về Mỹ"
+  },
+  {
+    "type": "tf",
+    "source": "faq",
+    "prompt": "Khi hàng đã về Việt Nam gặp vấn đề, bên mình vẫn hỗ trợ claim với website.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q091",
+    "enabled": true,
+    "explanation": "bên em vẫn sẽ hỗ trợ claim với website nếu sản phẩm gặp vấn đề"
+  },
+  {
+    "type": "tf",
+    "source": "faq",
+    "prompt": "Việc website chấp nhận claim hoặc hoàn tiền do website quyết định theo chính sách của họ.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q092",
+    "enabled": true,
+    "explanation": "Việc chấp nhận claim, đổi/trả hay hoàn tiền sẽ do website quyết định theo chính sách của họ"
+  },
+  {
+    "type": "tf",
+    "source": "faq",
+    "prompt": "Khi khách tự gửi hàng về Mỹ để return, có thể hỗ trợ hóa đơn, label và thông tin mua hàng.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q093",
+    "enabled": true,
+    "explanation": "hỗ trợ cung cấp đầy đủ hóa đơn, label và các thông tin mua hàng cần thiết"
+  },
+  {
+    "type": "tf",
+    "source": "thuat-ngu",
+    "prompt": "Tracking number trong wiki là mã vận đơn nội địa Mỹ.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q094",
+    "enabled": true,
+    "explanation": "mã vận đơn nội địa Mỹ"
+  },
+  {
+    "type": "tf",
+    "source": "thuat-ngu",
+    "prompt": "Có thể check tracking trên 17track.net theo wiki.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q095",
+    "enabled": true,
+    "explanation": "Check tracking # ở web: 17track.net"
+  },
+  {
+    "type": "tf",
+    "source": "thuat-ngu",
+    "prompt": "Gom đơn có thể giúp đủ điều kiện free ship hoặc áp code giảm giá.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q096",
+    "enabled": true,
+    "explanation": "Gom nhiều item của 1 khách vào 1 đơn để mua khi đơn lẻ không đủ free ship hoặc không đủ điều kiện để áp code giảm giá"
+  },
+  {
+    "type": "tf",
+    "source": "thuat-ngu",
+    "prompt": "Địa chỉ kho nghĩa là gửi thẳng hàng từ nước ngoài về nhà khách ở Việt Nam.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q097",
+    "enabled": true,
+    "explanation": "không bao giờ ship thẳng từ nước ngoài về địa chỉ nhà ở VN của khách"
+  },
+  {
+    "type": "tf",
+    "source": "thuat-ngu",
+    "prompt": "Rate mua ngay thấp hơn rate chờ đô theo định nghĩa trong wiki.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q098",
+    "enabled": true,
+    "explanation": "Rate mua ngayRate cao hơn rate chờ $"
+  },
+  {
+    "type": "tf",
+    "source": "noi-quy",
+    "prompt": "Nhân sự chưa qua 3 tháng được chat riêng công việc đơn hàng với bất kỳ đồng nghiệp nào.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 1,
+    "id": "q099",
+    "enabled": true,
+    "explanation": "KHÔNG được chat riêng công việc (về đơn hàng) với nhân sự khác ngoại trừ người trainer"
+  },
+  {
+    "type": "tf",
+    "source": "noi-quy",
+    "prompt": "Chấm công, xin nghỉ và báo đi muộn được thực hiện trên app chamcong.basso.vn.",
+    "options": [
+      "Đúng",
+      "Sai"
+    ],
+    "correct": 0,
+    "id": "q100",
+    "enabled": true,
+    "explanation": "Tạo tài khoản và thực hiện chấm công, xin nghỉ, xin làm online, báo đi muộn trên app."
+  }
+]

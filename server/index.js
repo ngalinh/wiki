@@ -6,7 +6,7 @@ const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = process.env.WIKI_DATA_DIR || path.join(__dirname, 'data');
 const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 const CONTENT_DIR = path.join(DATA_DIR, 'content');
 const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
@@ -30,6 +30,14 @@ if (!fs.existsSync(CONFIG_FILE)) {
 
 app.use(express.json({ limit: '2mb' }));
 app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d' }));
+// Server source, answer keys and employee results must never be served as static files.
+app.use((req, res, next) => {
+  try {
+    const segments = decodeURIComponent(req.path).replace(/\\/g, '/').toLowerCase().split('/');
+    if (segments.includes('server')) return res.sendStatus(404);
+  } catch { return res.sendStatus(400); }
+  next();
+});
 app.use(express.static(path.join(__dirname, '..'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('index.html')) {
@@ -138,6 +146,8 @@ app.get('/api/me', (req, res) => {
   const email = getUserEmail(req);
   res.json({ email, isAdmin: isAdmin(email), isEditor: isEditor(email) });
 });
+
+require('./quiz')(app, { dataDir: DATA_DIR, getUserEmail, isAdmin });
 
 // GET /api/settings  — admin only
 app.get('/api/settings', (req, res) => {

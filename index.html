@@ -559,6 +559,7 @@ tbody tr:hover{background:var(--cream);}
   @keyframes ddIn{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:none;}}
 }
 </style>
+<link rel="stylesheet" href="./quiz.css">
 </head>
 <body>
 
@@ -582,6 +583,7 @@ tbody tr:hover{background:var(--cream);}
   <div class="sidebar-section">
     <div class="sidebar-heading">Tổng quan</div>
     <a class="sidebar-link" data-page="home"><span class="icon"></span> Trang chủ</a>
+    <a class="sidebar-link" data-page="take-quiz"><span class="icon"></span> Take quiz</a>
     <a class="sidebar-link ai" data-page="hoi-dap"><span class="icon"></span> Hỏi đáp AI</a>
   </div>
   <div class="sidebar-section">
@@ -609,7 +611,6 @@ tbody tr:hover{background:var(--cream);}
   </div>
   <div class="sidebar-section">
     <a class="sidebar-link" href="/"><span class="icon" data-icon="back"></span> Về Dashboard</a>
-    <a class="sidebar-link" onclick="showAuthDebug()" style="font-size:12px;color:var(--ink-mute)"><span class="icon"></span> Kiểm tra đăng nhập</a>
   </div>
 </aside>
 
@@ -2228,6 +2229,13 @@ tbody tr:hover{background:var(--cream);}
 </section>
 
 <!-- ===== HỎI ĐÁP AI ===== -->
+<section class="page" data-page="take-quiz">
+  <div class="page-header"><h1>Take quiz</h1><p>Ôn tập quy trình công việc dành cho nhân sự mới</p></div>
+  <div id="quiz-tools" class="quiz-toolbar"></div>
+  <p id="quiz-error" class="quiz-error" role="alert"></p>
+  <div id="quiz-content"></div>
+</section>
+
 <section class="page" data-page="hoi-dap">
   <div class="page-header">
     <div class="breadcrumb"><span data-go="home">Trang chủ</span> / Tổng quan</div>
@@ -2656,6 +2664,7 @@ function navigate(id) {
   history.replaceState(null, '', '#' + id);
 
   if (id === 'settings') loadSettings();
+  if (id === 'take-quiz' && typeof Quiz !== 'undefined') Quiz.load();
   refreshEditBtn(id);
 }
 
@@ -2739,6 +2748,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   } catch { /* server chưa chạy — chạy như static file */ }
   renderUserBadge();
   updateRoleUI();
+  if (location.hash === '#take-quiz') Quiz.load();
   await loadAllCustomContent();
   themeHeadingIcons();
   document.querySelectorAll('.page').forEach(p => refreshExpandBtn(p.dataset.page));
@@ -3943,5 +3953,6 @@ async function saveSettings() {
   } catch { showToast('Không kết nối được server', true); }
 }
 </script>
+<script src="./quiz.js"></script>
 </body>
 </html>
