@@ -7,11 +7,13 @@ const express = require('express');
 const mount = require('./quiz');
 const seed = require('./quiz-bank.json');
 test('quiz bank, authorization, random selection, grading, persistence and snapshots', async () => {
-  assert.equal(seed.length, 150); assert.equal(seed.filter(q => q.type === 'mc').length, 105); assert(mount.validateBank(seed));
+  assert.equal(seed.length, 200); assert.equal(seed.filter(q => q.type === 'mc').length, 99); assert(mount.validateBank(seed));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-quiz-test-'));
+  const autoBank = seed.map(q => ({ ...q, enabled: q.correct !== null }));
+  fs.mkdirSync(path.join(dir, 'quiz')); fs.writeFileSync(path.join(dir, 'quiz/state.json'), JSON.stringify({ bank: autoBank, revision: 1, seedVersion: 3, attempts: [] }));
   let server;
   async function boot() {
-    const app = express(); app.use(express.json());
+    const app = express(); app.use(express.json({ limit: '2mb' }));
     mount(app, { dataDir: dir, getUserEmail: req => req.headers['x-test-user'], isAdmin: email => email === 'admin', canManage: email => ['admin', 'editor'].includes(email) });
     server = app.listen(0, '127.0.0.1'); await new Promise(resolve => server.once('listening', resolve));
   }
@@ -33,8 +35,8 @@ test('quiz bank, authorization, random selection, grading, persistence and snaps
     assert.equal((await call('/attempts', 'employee', 'POST', { name: 'Again' })).data.id, first.id);
     assert.equal((await call(`/attempts/${first.id}/submit`, 'other', 'POST', { answers: [] })).status, 404);
     assert.equal((await call(`/attempts/${first.id}/submit`, 'employee', 'POST', { answers: [] })).status, 400);
-    const bank = structuredClone(seed); bank[0].enabled = false;
-    bank.forEach(q => { q.correct = (q.correct + 1) % q.options.length; });
+    const bank = structuredClone(autoBank); bank[0].enabled = false;
+    bank.forEach(q => { if (q.correct !== null) q.correct = (q.correct + 1) % q.options.length; });
     assert.equal((await call('/bank', 'admin', 'PUT', { bank, revision: 1 })).status, 200);
     assert.equal((await call('/bank', 'admin', 'PUT', { bank, revision: 1 })).status, 409);
     const broken = structuredClone(bank); broken.forEach(q => { q.enabled = false; });
@@ -63,7 +65,7 @@ test('quiz bank, authorization, random selection, grading, persistence and snaps
 
 test('editors create image questions, paragraph grading and employee isolation', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-quiz-editor-'));
-  const app = express(); app.use(express.json());
+  const app = express(); app.use(express.json({ limit: '2mb' }));
   mount(app, { dataDir: dir, getUserEmail: req => req.headers['x-test-user'], isAdmin: e => e === 'admin', canManage: e => ['admin', 'editor'].includes(e) });
   const server = app.listen(0, '127.0.0.1'); await new Promise(r => server.once('listening', r));
   async function call(route, user, method = 'GET', body) {
@@ -81,7 +83,7 @@ test('editors create image questions, paragraph grading and employee isolation',
     assert.equal((await call('/questions', 'editor', 'POST', paragraph)).status, 201);
     for (const type of ['mc', 'tf']) assert.equal((await call('/questions', 'editor', 'POST', { ...paragraph, type, options: ['Đúng', 'Sai'], correct: 0 })).status, 201);
     const fetched = (await call('/bank', 'editor')).data;
-    const bank = fetched.bank.map((q, i) => ({ ...q, enabled: i < 49 || q.type === 'paragraph' }));
+    const bank = fetched.bank.map((q, i) => ({ ...q, enabled: i < 49 || q.id.startsWith('custom-') && q.type === 'paragraph' }));
     assert.equal((await call('/bank', 'editor', 'PUT', { bank, revision: fetched.revision })).status, 200);
     const active = (await call('/attempts', 'employee', 'POST', { name: 'Employee' })).data;
     assert.equal(active.questions.length, 50); assert.equal(active.questions.filter(q => q.type === 'paragraph').length, 1);
@@ -116,14 +118,39 @@ test('seed migration preserves edits and snapshots, and runs only once', async (
   try {
     const boot = () => mount(express(), { dataDir: dir, getUserEmail: () => null, isAdmin: () => false });
     boot(); let state = JSON.parse(fs.readFileSync(path.join(dir, 'quiz/state.json')));
-    assert.equal(state.bank.length, 150); assert.equal(state.revision, 8); assert.equal(state.bank[0].prompt, old[0].prompt); assert.equal(state.bank[0].enabled, false);
+    assert.equal(state.bank.length, 200); assert.equal(state.revision, 9); assert.equal(state.bank[0].prompt, old[0].prompt); assert.equal(state.bank[0].enabled, false);
     assert.equal(state.bank[44].prompt, seed[44].prompt); assert.deepEqual(state.attempts, attempts);
-    boot(); state = JSON.parse(fs.readFileSync(path.join(dir, 'quiz/state.json'))); assert.equal(state.revision, 8); assert.equal(state.bank.length, 150);
+    boot(); state = JSON.parse(fs.readFileSync(path.join(dir, 'quiz/state.json'))); assert.equal(state.revision, 9); assert.equal(state.bank.length, 200);
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
 
-test('pricing answer keys and all referenced images', () => {
-  const answers = ['$60.00','$84.00','$40.00','$41.00','$90.00','$20.00','$56.00','$81.00','$72.00','$76.00','$90.00','$42.00','1.977.500 đ','2.628.000 đ','1.503.000 đ','1.293.500 đ','3.125.000 đ','740.000 đ','$60.00','$85.00','120.000 đ','0 đ','477.000 đ','0 đ','2.519.000 đ','110.000 đ','2.808.000 đ','1.541.000 đ','2.177.000 đ','912.500 đ'];
-  answers.forEach((answer, i) => { const q = seed[100 + i]; assert.equal(q.options[q.correct], answer, q.id); });
-  for (const q of seed.slice(100)) { assert(fs.existsSync(path.join(__dirname, '..', q.image)), q.image); assert.equal(new Set(q.options).size, q.options.length); }
+test('form import and screenshot pricing exercises are complete', () => {
+  const form = seed.filter(q => q.id.startsWith('form-'));
+  assert.equal(form.length, 50); assert(form.every(q => q.correct === null));
+  for (let i = 1; i <= 50; i++) assert(form.some(q => q.id === 'form-' + String(i).padStart(3, '0')));
+  assert.equal(form.filter(q => q.image).length, 14);
+  const pricing = seed.slice(100, 150);
+  assert.equal(pricing.length, 50);
+  assert(pricing.every(q => q.image.startsWith('assets/quiz/form-') && !q.prompt.includes('Giá giả định')));
+  assert.equal(new Set(pricing.map(q => q.prompt)).size, 50);
+  for (const q of seed.filter(q => q.image)) assert(fs.existsSync(path.join(__dirname, '..', q.image)), q.image);
+});
+
+test('v3 migration replaces old prices, preserves edited questions and historical attempts', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-quiz-v3-'));
+  const previous = require('./quiz-bank-v2-pricing.json');
+  const bank = structuredClone([...seed.slice(0, 100), ...previous]);
+  bank[100].enabled = false; bank[101].prompt = 'Manager custom pricing';
+  const attempts = [{ id: 'snapshot', questions: [structuredClone(bank[100])] }];
+  fs.mkdirSync(path.join(dir, 'quiz'));
+  const file = path.join(dir, 'quiz/state.json');
+  fs.writeFileSync(file, JSON.stringify({ bank, seedVersion: 2, revision: 5, attempts }));
+  const boot = () => mount(express(), { dataDir: dir, getUserEmail: () => null, isAdmin: () => false });
+  try {
+    boot(); const state = JSON.parse(fs.readFileSync(file));
+    assert.equal(state.bank.length, 200); assert.equal(state.seedVersion, 3); assert.equal(state.revision, 6);
+    assert.equal(state.bank[100].prompt, seed[100].prompt); assert.equal(state.bank[100].enabled, false);
+    assert.equal(state.bank[101].prompt, 'Manager custom pricing'); assert.deepEqual(state.attempts, attempts);
+    boot(); assert.deepEqual(JSON.parse(fs.readFileSync(file)), state);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });

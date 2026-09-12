@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { randomUUID, randomInt } = require('crypto');
 const seed = require('./quiz-bank.json');
+const previousPricing = require('./quiz-bank-v2-pricing.json');
 const SOURCES = new Set(seed.map(q => q.source));
 function shuffle(items) {
   const result = [...items];
@@ -25,14 +26,14 @@ function validateBank(bank) {
         q.options.every(o => typeof o === 'string' && o.trim() && o.length <= 500) &&
         new Set(q.options.map(o => o.trim())).size === q.options.length &&
         (q.type !== 'tf' || (q.options.length === 2 && q.options[0] === 'Đúng' && q.options[1] === 'Sai')) &&
-        Number.isInteger(q.correct) && q.correct >= 0 && q.correct < q.options.length));
+        (q.correct === null || (Number.isInteger(q.correct) && q.correct >= 0 && q.correct < q.options.length))));
 }
 function cleanQuestion(q) {
   const { id, type, source, prompt, options, correct, enabled, explanation, image = '', imageAlt = '', productUrl = '' } = q;
   return { id, type, source, prompt, options, correct, enabled, explanation, image, imageAlt, productUrl };
 }
 function grade(a, grades = a.grades || {}) {
-  const points = a.questions.map((q, i) => q.type === 'paragraph' ? (grades[q.id] ?? null) : (q.correct === a.answers[i] ? 2 : 0));
+  const points = a.questions.map((q, i) => q.correct === null ? (grades[q.id] ?? null) : (q.correct === a.answers[i] ? 2 : 0));
   const pendingCount = points.filter(p => p === null).length;
   const score = points.reduce((sum, p) => sum + (p || 0), 0);
   return { ...a, grades, points, pendingCount, correctCount: points.filter(p => p === 2).length,
@@ -42,7 +43,7 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
   const dir = path.join(dataDir, 'quiz');
   fs.mkdirSync(dir, { recursive: true });
   const file = path.join(dir, 'state.json');
-  let state = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : { bank: seed, revision: 1, attempts: [], seedVersion: 2 };
+  let state = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : { bank: seed, revision: 1, attempts: [], seedVersion: 3 };
   function commit(next) {
     const temp = file + '.tmp';
     fs.writeFileSync(temp, JSON.stringify(next));
@@ -56,12 +57,24 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
     bank.push(...seed.filter(q => !ids.has(q.id)));
     commit({ ...state, bank, seedVersion: 2, revision: state.revision + 1 });
   }
+  // Replace only unchanged bundled pricing exercises; retain manager edits and attempts.
+  if (state.seedVersion < 3) {
+    const ids = new Set(state.bank.map(q => q.id));
+    const bank = state.bank.map(q => {
+      const previous = previousPricing.find(p => p.id === q.id);
+      if (!previous) return q;
+      const unchanged = Object.entries(cleanQuestion(previous)).every(([key, value]) => key === 'enabled' || JSON.stringify(cleanQuestion(q)[key]) === JSON.stringify(value));
+      return unchanged ? { ...seed.find(s => s.id === q.id), enabled: q.enabled } : q;
+    });
+    bank.push(...seed.filter(q => !ids.has(q.id)));
+    commit({ ...state, bank, seedVersion: 3, revision: state.revision + 1 });
+  }
   function summary(a) {
     return { id: a.id, name: a.name, email: a.email, startedAt: a.startedAt, submittedAt: a.submittedAt,
       score: a.score, correctCount: a.correctCount, status: a.status, pendingCount: a.pendingCount || 0, gradedBy: a.gradedBy, gradedAt: a.gradedAt };
   }
   function publicAttempt(a) {
-    return { ...summary(a), questions: a.questions.map(({ correct, explanation, ...q }) => q) };
+    return { ...summary(a), questions: a.questions.map(({ correct, explanation, ...q }) => ({ ...q, manualReview: correct === null })) };
   }
   app.use('/api/quiz', async (req, res, next) => {
     res.set('Cache-Control', 'no-store');
@@ -100,7 +113,7 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
     const questions = shuffle(pool).slice(0, 50).map(q => {
       if (q.type === 'paragraph') return { ...q };
       const order = q.type === 'mc' ? shuffle(q.options.map((_, i) => i)) : [0, 1];
-      return { ...q, options: order.map(i => q.options[i]), correct: order.indexOf(q.correct) };
+      return { ...q, options: order.map(i => q.options[i]), correct: q.correct === null ? null : order.indexOf(q.correct) };
     });
     const attempt = { id: randomUUID(), email: req.quizEmail, name, startedAt: new Date().toISOString(), questions };
     commit({ ...state, attempts: [...state.attempts, attempt] });
@@ -129,11 +142,11 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
     const a = state.attempts.find(a => a.id === req.params.id && a.submittedAt);
     if (!a) return res.status(404).json({ error: 'Không tìm thấy bài làm.' });
     const grades = req.body.grades;
-    const paragraphs = a.questions.filter(q => q.type === 'paragraph');
+    const paragraphs = a.questions.filter(q => q.correct === null);
     if (!grades || typeof grades !== 'object' || Array.isArray(grades) ||
         Object.keys(grades).length !== paragraphs.length || !paragraphs.length ||
         !paragraphs.every(q => Object.hasOwn(grades, q.id) && [0, 2].includes(grades[q.id])))
-      return res.status(400).json({ error: 'Chấm đủ câu tự luận: đúng 2 điểm hoặc sai 0 điểm.' });
+      return res.status(400).json({ error: 'Chấm đủ câu cần duyệt: đúng 2 điểm hoặc sai 0 điểm.' });
     const result = grade({ ...a, gradedBy: req.quizEmail, gradedAt: new Date().toISOString() }, grades);
     commit({ ...state, attempts: state.attempts.map(x => x.id === a.id ? result : x) });
     res.json({ ...summary(result), questions: result.questions, answers: result.answers, points: result.points });

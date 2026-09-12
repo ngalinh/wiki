@@ -44,3 +44,15 @@
 .quiz-sticky{align-items:flex-start;flex-wrap:wrap}
 .quiz-sticky button{white-space:nowrap}
 .quiz-media{max-width:100%}}
+
+/* Question builder popup · inherits the wiki palette and typography. */
+#quiz-create-dialog{margin:auto;box-sizing:border-box;width:min(760px,calc(100vw - 24px));max-height:calc(100dvh - 32px);padding:0;border:1px solid var(--line);border-radius:var(--r-card);background:var(--white);color:var(--ink);overflow:auto;overscroll-behavior:contain}
+#quiz-create-dialog::backdrop{background:var(--ink);opacity:.45}
+#quiz-create-dialog .quiz-create{margin:0;border:0;border-radius:0}
+.quiz-dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.quiz-dialog-heading h2{margin:0;line-height:1.5}
+.quiz-dialog-heading button{white-space:nowrap}
+#quiz-create-dialog button:focus-visible{outline:2px solid var(--lav-ink);outline-offset:3px}
+#quiz-create-dialog input[type=file]{width:100%;min-width:0}
+.quiz-media{max-width:100%}
+.quiz-media img{max-height:none;max-width:100%}
