@@ -40,7 +40,7 @@ test('quiz bank, authorization, random selection, grading, persistence and snaps
     bank.forEach(q => { if (q.correct !== null) q.correct = (q.correct + 1) % q.options.length; });
     assert.equal((await call('/bank', 'admin', 'PUT', { bank, revision: 1 })).status, 200);
     assert.equal((await call('/bank', 'admin', 'PUT', { bank, revision: 1 })).status, 409);
-    const broken = structuredClone(bank); broken.forEach(q => { q.enabled = false; });
+    const broken = structuredClone(bank); broken[0].prompt = '';
     assert.equal((await call('/bank', 'admin', 'PUT', { bank: broken, revision: 2 })).status, 400);
     for (const count of [40, 39, 41, 50, 0]) {
       const a = count === 40 ? first : (await call('/attempts', 'employee', 'POST', { name: 'Test Employee' })).data;
@@ -228,4 +228,31 @@ test('v5 removes only q101–q150 from saved banks and preserves edits, custom q
     assert.equal(state.seedVersion, 5); assert.equal(state.revision, 21);
     boot(); assert.deepEqual(JSON.parse(fs.readFileSync(file)), state);
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});
+test('delete permissions and replacement use current bank without losing old snapshots', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-replace-'));
+  const bank = structuredClone(seed); bank.filter(q=>q.type==='paragraph').slice(0,3).forEach(q=>q.type='short');
+  fs.mkdirSync(path.join(dir,'quiz')); fs.writeFileSync(path.join(dir,'quiz/state.json'),JSON.stringify({bank,revision:1,seedVersion:5,attempts:[]}));
+  const app=express();app.use(express.json({limit:'2mb'}));mount(app,{dataDir:dir,getUserEmail:r=>r.headers['x-user'],isAdmin:e=>e==='editor'});
+  const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));
+  const call=async(route,method='GET',body,user='editor')=>{const r=await fetch(`http://127.0.0.1:${server.address().port}/api/quiz${route}`,{method,headers:{'Content-Type':'application/json','x-user':user},body:body?JSON.stringify(body):undefined});return {status:r.status,data:await r.json()}};
+  try {
+    const old=(await call('/attempts','POST',{name:'Test'})).data;
+    const id=old.questions.find(q=>q.type==='mc').id;
+    assert.equal((await call('/questions/'+id,'DELETE',{revision:1},'employee')).status,403);
+    assert.equal((await call('/questions/'+id,'DELETE',{revision:0})).status,409);
+    assert.equal((await call('/questions/'+id,'DELETE',{revision:1})).status,200);
+    assert((await call('')).data.active.questions.some(q=>q.id===id));
+    const next=(await call('/attempts','POST',{name:'Test',replaceAttemptId:old.id})).data;
+    assert.notEqual(next.id,old.id);assert(!next.questions.some(q=>q.id===id));
+    assert.deepEqual(['short','mc','paragraph','tf'].map(t=>next.questions.filter(q=>q.type===t).length),[20,20,5,5]);
+    assert.equal((await call('/attempts/'+old.id+'/submit','POST',{answers:[]})).status,409);
+    const short=next.questions.find(q=>q.type==='short').id;
+    await call('/questions/'+short,'DELETE',{revision:2});
+    assert.equal((await call('/attempts','POST',{name:'Test',replaceAttemptId:next.id})).status,409);
+    assert.equal((await call('')).data.active.id,next.id);
+    const saved=JSON.parse(fs.readFileSync(path.join(dir,'quiz/state.json')));
+    assert(saved.attempts.find(a=>a.id===old.id).abandonedAt);
+    assert(!saved.bank.some(q=>q.id===id));
+  } finally {await new Promise(r=>server.close(r));fs.rmSync(dir,{recursive:true,force:true})}
 });
