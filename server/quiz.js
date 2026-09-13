@@ -3,6 +3,8 @@ const path = require('path');
 const { randomUUID, randomInt } = require('crypto');
 const seed = require('./quiz-bank.json');
 const previousPricing = require('./quiz-bank-v2-pricing.json');
+const QUOTAS = { short: 20, mc: 20, paragraph: 5, tf: 5 };
+const TYPE_NAMES = { short: 'trả lời ngắn', mc: 'trắc nghiệm', paragraph: 'tự luận', tf: 'đúng/sai' };
 const SOURCES = new Set(seed.map(q => q.source));
 function shuffle(items) {
   const result = [...items];
@@ -124,8 +126,9 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
     const active = state.attempts.find(a => a.email === req.quizEmail && !a.submittedAt);
     if (active) return res.json(publicAttempt(active));
     const pool = state.bank.filter(q => q.enabled);
-    if (pool.length < 50) return res.status(409).json({ error: 'Ngân hàng chưa đủ câu đang được chọn.' });
-    const questions = shuffle(pool).slice(0, 50).map(q => {
+    const missing = Object.entries(QUOTAS).filter(([type, count]) => pool.filter(q => q.type === type).length < count);
+    if (missing.length) return res.status(409).json({ error: 'Ngân hàng chưa đủ câu đang chọn: ' + missing.map(([type, count]) => `${TYPE_NAMES[type]} cần ${count}, hiện có ${pool.filter(q => q.type === type).length}`).join('; ') + '. Admin / Editor cần tạo thêm hoặc đổi loại câu hỏi.' });
+    const questions = shuffle(Object.entries(QUOTAS).flatMap(([type, count]) => shuffle(pool.filter(q => q.type === type)).slice(0, count))).map(q => {
       if (['paragraph', 'short'].includes(q.type)) return { ...q };
       const indices = q.options.map((_, i) => i);
       const order = q.type === 'mc' && !q.id.startsWith('form-') ? shuffle(indices) : indices;

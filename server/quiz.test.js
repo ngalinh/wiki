@@ -9,7 +9,8 @@ const seed = require('./quiz-bank.json');
 test('quiz bank, authorization, random selection, grading, persistence and snapshots', async () => {
   assert.equal(seed.length, 150); assert.equal(seed.filter(q => q.type === 'mc').length, 79); assert(mount.validateBank(seed));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-quiz-test-'));
-  const autoBank = seed.map(q => ({ ...q, enabled: q.correct !== null }));
+  const autoBank = structuredClone(seed);
+  autoBank.filter(q => q.type === 'paragraph').slice(0, 3).forEach(q => { q.type = 'short'; });
   fs.mkdirSync(path.join(dir, 'quiz')); fs.writeFileSync(path.join(dir, 'quiz/state.json'), JSON.stringify({ bank: autoBank, revision: 1, seedVersion: 5, attempts: [] }));
   let server;
   async function boot() {
@@ -30,7 +31,7 @@ test('quiz bank, authorization, random selection, grading, persistence and snaps
     assert.equal((await call('/attempts', 'employee', 'POST', { name: '' })).status, 400);
     let first = (await call('/attempts', 'employee', 'POST', { name: 'Test Employee' })).data;
     assert.equal(first.questions.length, 50); assert.equal(new Set(first.questions.map(q => q.id)).size, 50);
-    assert(first.questions.every(q => ['mc', 'tf'].includes(q.type)));
+    assert.deepEqual(Object.fromEntries(['short', 'mc', 'paragraph', 'tf'].map(t => [t, first.questions.filter(q => q.type === t).length])), { short: 20, mc: 20, paragraph: 5, tf: 5 });
     assert(first.questions.every(q => !('correct' in q) && !('explanation' in q)));
     assert.equal((await call('/attempts', 'employee', 'POST', { name: 'Again' })).data.id, first.id);
     assert.equal((await call(`/attempts/${first.id}/submit`, 'other', 'POST', { answers: [] })).status, 404);
@@ -45,8 +46,10 @@ test('quiz bank, authorization, random selection, grading, persistence and snaps
       const a = count === 40 ? first : (await call('/attempts', 'employee', 'POST', { name: 'Test Employee' })).data;
       if (count !== 40) { assert(!a.questions.some(q => q.id === seed[0].id)); assert.notDeepEqual(a.questions.map(q => q.id), first.questions.map(q => q.id)); }
       const stored = state().attempts.find(x => x.id === a.id);
-      const answers = stored.questions.map((q, i) => i < count ? q.correct : (q.correct + 1) % q.options.length);
-      const result = await call(`/attempts/${a.id}/submit`, 'employee', 'POST', { answers, score: 100 });
+      const answers = stored.questions.map((q, i) => q.correct === null ? (q.options.length ? 0 : 'Written answer') : i < count ? q.correct : (q.correct + 1) % q.options.length);
+      let result = await call(`/attempts/${a.id}/submit`, 'employee', 'POST', { answers, score: 100 });
+      assert.equal(result.data.status, 'Pending review');
+      result = await call(`/results/${a.id}/grade`, 'editor', 'POST', { grades: Object.fromEntries(stored.questions.flatMap((q, i) => q.correct === null ? [[q.id, i < count ? 2 : 0]] : [])) });
       assert.equal(result.status, 200); assert.equal(result.data.score, count * 2);
       assert.equal(result.data.status, count >= 40 ? 'Success' : 'Failed');
       const duplicate = await call(`/attempts/${a.id}/submit`, 'employee', 'POST', { answers: Array(50).fill(0) });
@@ -75,6 +78,8 @@ test('editors create image questions, paragraph grading and employee isolation',
   try {
     assert.equal((await call('', 'editor')).data.canManage, true);
     assert.equal((await call('', 'employee')).data.canManage, false);
+    const shortage = await call('/attempts', 'employee', 'POST', { name: 'Insufficient bank' });
+    assert.equal(shortage.status, 409); assert.match(shortage.data.error, /hiện có 17/);
     const paragraph = { type: 'paragraph', source: 'bao-gia', enabled: true, prompt: 'Giải thích cách tính giá về VN.', options: [], correct: null, explanation: 'Tiền hàng và ship web nhân tỷ giá, cộng phụ thu và cước quốc tế.', image: 'uploads/example.jpg', imageAlt: 'Sản phẩm' };
     assert.equal((await call('/questions', 'employee', 'POST', paragraph)).status, 403);
     for (const image of ['javascript:alert(1)', 'https://other.test/image.svg', 'uploads/../../server/data/quiz/state.json', 'uploads/evil.svg'])
@@ -83,17 +88,18 @@ test('editors create image questions, paragraph grading and employee isolation',
     assert.equal((await call('/questions', 'editor', 'POST', paragraph)).status, 201);
     for (const type of ['mc', 'tf']) assert.equal((await call('/questions', 'editor', 'POST', { ...paragraph, type, options: ['Đúng', 'Sai'], correct: 0 })).status, 201);
     const fetched = (await call('/bank', 'editor')).data;
-    const bank = fetched.bank.map((q, i) => ({ ...q, enabled: i < 49 || q.id.startsWith('custom-') && q.type === 'paragraph' }));
+    const bank = structuredClone(fetched.bank);
+    bank.filter(q => q.type === 'paragraph').slice(0, 3).forEach(q => { q.type = 'short'; });
     assert.equal((await call('/bank', 'editor', 'PUT', { bank, revision: fetched.revision })).status, 200);
     const active = (await call('/attempts', 'employee', 'POST', { name: 'Employee' })).data;
-    assert.equal(active.questions.length, 50); assert.equal(active.questions.filter(q => q.type === 'paragraph').length, 1);
+    assert.equal(active.questions.length, 50); assert.equal(active.questions.filter(q => q.type === 'paragraph').length, 5);
     assert(active.questions.every(q => !('correct' in q) && !('explanation' in q)));
     const saved = JSON.parse(fs.readFileSync(path.join(dir, 'quiz/state.json'))).attempts[0];
-    const answers = saved.questions.map(q => q.type === 'paragraph' ? 'Câu trả lời để giáo viên chấm.' : q.correct);
+    const answers = saved.questions.map(q => q.correct === null ? (q.options.length ? 0 : 'Câu trả lời để giáo viên chấm.') : q.correct);
     const invalid = answers.map(x => typeof x === 'string' ? '   ' : x);
     assert.equal((await call(`/attempts/${active.id}/submit`, 'employee', 'POST', { answers: invalid })).status, 400);
     let result = (await call(`/attempts/${active.id}/submit`, 'employee', 'POST', { answers })).data;
-    assert.equal(result.score, 98); assert.equal(result.status, 'Pending review'); assert.equal(result.pendingCount, 1);
+    assert.equal(result.score, (50 - result.pendingCount) * 2); assert.equal(result.status, 'Pending review'); assert(result.pendingCount >= 25);
     const qid = saved.questions.find(q => q.type === 'paragraph').id;
     assert.equal((await call('/results/' + active.id, 'other')).status, 404);
     assert.equal((await call('/results', 'other')).data.length, 0);
@@ -101,7 +107,7 @@ test('editors create image questions, paragraph grading and employee isolation',
     assert.equal((await call(`/results/${active.id}/grade`, 'employee', 'POST', { grades: { [qid]: 2 } })).status, 403);
     assert.equal((await call(`/results/${active.id}/grade`, 'editor', 'POST', { grades: { [qid]: 1 } })).status, 400);
     assert.equal((await call(`/results/${active.id}/grade`, 'editor', 'POST', { grades: {} })).status, 400);
-    result = (await call(`/results/${active.id}/grade`, 'editor', 'POST', { grades: { [qid]: 2 } })).data;
+    result = (await call(`/results/${active.id}/grade`, 'editor', 'POST', { grades: Object.fromEntries(saved.questions.filter(q => q.correct === null).map(q => [q.id, 2])) })).data;
     assert.equal(result.score, 100); assert.equal(result.status, 'Success'); assert.equal(result.gradedBy, 'editor'); assert.equal(result.pendingCount, 0);
     assert.equal((await call('/results/' + active.id, 'employee')).data.score, 100);
     const repeated = (await call(`/attempts/${active.id}/submit`, 'employee', 'POST', { answers: [] })).data;
@@ -181,7 +187,7 @@ test('form questions match the source exactly; v4 migration preserves attempt sn
 test('short answers and Other choices are validated, saved and manually graded', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-quiz-other-'));
   fs.mkdirSync(path.join(dir, 'quiz'));
-  fs.writeFileSync(path.join(dir, 'quiz/state.json'), JSON.stringify({ bank: seed.map(q => ({ ...q, enabled: q.id.startsWith('form-') })), attempts: [], revision: 1, seedVersion: 4 }));
+  fs.writeFileSync(path.join(dir, 'quiz/state.json'), JSON.stringify({ bank: (() => { const bank = structuredClone(seed); bank.filter(q => q.type === 'paragraph').slice(0, 3).forEach(q => { q.type = 'short'; }); let mc = 0; bank.forEach(q => { if (q.type === 'mc' && !q.id.startsWith('form-')) q.enabled = mc++ < 11; }); return bank; })(), attempts: [], revision: 1, seedVersion: 4 }));
   const app = express(); app.use(express.json());
   mount(app, { dataDir: dir, getUserEmail: req => req.headers['x-test-user'], isAdmin: e => e === 'admin' });
   const server = app.listen(0, '127.0.0.1'); await new Promise(r => server.once('listening', r));
@@ -192,16 +198,16 @@ test('short answers and Other choices are validated, saved and manually graded',
   try {
     const a = (await call('/attempts', { name: 'Local test' })).data;
     const answers = a.questions.map(q => ['short', 'paragraph'].includes(q.type) ? 'Written answer' : q.otherOption !== undefined ? { option: q.otherOption, text: 'Other answer' } : 0);
-    for (let i = 0; i < a.questions.length; i++) assert.deepEqual(a.questions[i].options, seed.find(q => q.id === a.questions[i].id).options);
+    for (let i = 0; i < a.questions.length; i++) if (a.questions[i].id.startsWith('form-')) assert.deepEqual(a.questions[i].options, seed.find(q => q.id === a.questions[i].id).options);
     const other = a.questions.findIndex(q => q.otherOption !== undefined), short = a.questions.findIndex(q => q.type === 'short'), closed = a.questions.findIndex(q => q.type === 'mc' && q.otherOption === undefined);
     for (const [index, value] of [[other, { option: a.questions[other].otherOption, text: ' ' }], [other, a.questions[other].otherOption], [short, ' '], [closed, { text: 'Forged' }]]) {
       const invalid = structuredClone(answers); invalid[index] = value;
       assert.equal((await call(`/attempts/${a.id}/submit`, { answers: invalid })).status, 400);
     }
     const submitted = await call(`/attempts/${a.id}/submit`, { answers });
-    assert.equal(submitted.status, 200); assert.equal(submitted.data.pendingCount, 50); assert.deepEqual(submitted.data.answers, answers);
-    const result = await call(`/results/${a.id}/grade`, { grades: Object.fromEntries(a.questions.map(q => [q.id, 2])) }, 'admin');
-    assert.equal(result.status, 200); assert.equal(result.data.score, 100); assert.equal(result.data.status, 'Success');
+    assert.equal(submitted.status, 200); assert(submitted.data.pendingCount >= 25); assert.deepEqual(submitted.data.answers, answers);
+    const result = await call(`/results/${a.id}/grade`, { grades: Object.fromEntries(a.questions.filter(q => q.manualReview).map(q => [q.id, 2])) }, 'admin');
+    assert.equal(result.status, 200); assert.equal(result.data.pendingCount, 0);
   } finally { await new Promise(r => server.close(r)); fs.rmSync(dir, { recursive: true, force: true }); }
 });
 
