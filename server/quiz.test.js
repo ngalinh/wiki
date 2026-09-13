@@ -7,10 +7,10 @@ const express = require('express');
 const mount = require('./quiz');
 const seed = require('./quiz-bank.json');
 test('quiz bank, authorization, random selection, grading, persistence and snapshots', async () => {
-  assert.equal(seed.length, 200); assert.equal(seed.filter(q => q.type === 'mc').length, 99); assert(mount.validateBank(seed));
+  assert.equal(seed.length, 200); assert.equal(seed.filter(q => q.type === 'mc').length, 105); assert(mount.validateBank(seed));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-quiz-test-'));
   const autoBank = seed.map(q => ({ ...q, enabled: q.correct !== null }));
-  fs.mkdirSync(path.join(dir, 'quiz')); fs.writeFileSync(path.join(dir, 'quiz/state.json'), JSON.stringify({ bank: autoBank, revision: 1, seedVersion: 3, attempts: [] }));
+  fs.mkdirSync(path.join(dir, 'quiz')); fs.writeFileSync(path.join(dir, 'quiz/state.json'), JSON.stringify({ bank: autoBank, revision: 1, seedVersion: 4, attempts: [] }));
   let server;
   async function boot() {
     const app = express(); app.use(express.json({ limit: '2mb' }));
@@ -118,9 +118,9 @@ test('seed migration preserves edits and snapshots, and runs only once', async (
   try {
     const boot = () => mount(express(), { dataDir: dir, getUserEmail: () => null, isAdmin: () => false });
     boot(); let state = JSON.parse(fs.readFileSync(path.join(dir, 'quiz/state.json')));
-    assert.equal(state.bank.length, 200); assert.equal(state.revision, 9); assert.equal(state.bank[0].prompt, old[0].prompt); assert.equal(state.bank[0].enabled, false);
+    assert.equal(state.bank.length, 200); assert.equal(state.revision, 10); assert.equal(state.bank[0].prompt, old[0].prompt); assert.equal(state.bank[0].enabled, false);
     assert.equal(state.bank[44].prompt, seed[44].prompt); assert.deepEqual(state.attempts, attempts);
-    boot(); state = JSON.parse(fs.readFileSync(path.join(dir, 'quiz/state.json'))); assert.equal(state.revision, 9); assert.equal(state.bank.length, 200);
+    boot(); state = JSON.parse(fs.readFileSync(path.join(dir, 'quiz/state.json'))); assert.equal(state.revision, 10); assert.equal(state.bank.length, 200);
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
 
@@ -148,9 +148,61 @@ test('v3 migration replaces old prices, preserves edited questions and historica
   const boot = () => mount(express(), { dataDir: dir, getUserEmail: () => null, isAdmin: () => false });
   try {
     boot(); const state = JSON.parse(fs.readFileSync(file));
-    assert.equal(state.bank.length, 200); assert.equal(state.seedVersion, 3); assert.equal(state.revision, 6);
+    assert.equal(state.bank.length, 200); assert.equal(state.seedVersion, 4); assert.equal(state.revision, 7);
     assert.equal(state.bank[100].prompt, seed[100].prompt); assert.equal(state.bank[100].enabled, false);
     assert.equal(state.bank[101].prompt, 'Manager custom pricing'); assert.deepEqual(state.attempts, attempts);
     boot(); assert.deepEqual(JSON.parse(fs.readFileSync(file)), state);
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('form questions match the source exactly; v4 migration preserves attempt snapshots', () => {
+  const source = require('./quiz-form-source.json');
+  for (const expected of source) {
+    const q = seed.find(q => q.id === expected.id);
+    for (const key of ['prompt', 'type', 'options', 'otherOption', 'imageAlt']) assert.deepEqual(q[key], expected[key], `${q.id}: ${key}`);
+  }
+  assert.equal(source.filter(q => q.type === 'mc').length, 9);
+  assert.equal(source.filter(q => q.type === 'paragraph').length, 24);
+  assert.equal(source.filter(q => q.type === 'short').length, 17);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-quiz-v4-'));
+  const bank = structuredClone(seed); bank[0].prompt = 'Unrelated manager edit';
+  bank[150].prompt = 'Old rewritten form wording'; bank[150].enabled = false;
+  const attempts = [{ id: 'historical', questions: [structuredClone(bank[150])], answers: ['Historical answer'], score: 80 }];
+  fs.mkdirSync(path.join(dir, 'quiz')); const file = path.join(dir, 'quiz/state.json');
+  fs.writeFileSync(file, JSON.stringify({ bank, attempts, revision: 12, seedVersion: 3 }));
+  const boot = () => mount(express(), { dataDir: dir, getUserEmail: () => null, isAdmin: () => false });
+  try {
+    boot(); const state = JSON.parse(fs.readFileSync(file));
+    assert.equal(state.bank[0].prompt, bank[0].prompt); assert.equal(state.bank[150].enabled, false);
+    assert.equal(state.bank[150].prompt, seed[150].prompt); assert.deepEqual(state.attempts, attempts);
+    assert.equal(state.revision, 13); assert.equal(state.seedVersion, 4);
+    boot(); assert.deepEqual(JSON.parse(fs.readFileSync(file)), state);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});
+
+test('short answers and Other choices are validated, saved and manually graded', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-quiz-other-'));
+  fs.mkdirSync(path.join(dir, 'quiz'));
+  fs.writeFileSync(path.join(dir, 'quiz/state.json'), JSON.stringify({ bank: seed.map(q => ({ ...q, enabled: q.id.startsWith('form-') })), attempts: [], revision: 1, seedVersion: 4 }));
+  const app = express(); app.use(express.json());
+  mount(app, { dataDir: dir, getUserEmail: req => req.headers['x-test-user'], isAdmin: e => e === 'admin' });
+  const server = app.listen(0, '127.0.0.1'); await new Promise(r => server.once('listening', r));
+  async function call(route, body, user = 'employee') {
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/api/quiz${route}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-test-user': user }, body: JSON.stringify(body) });
+    return { status: response.status, data: await response.json() };
+  }
+  try {
+    const a = (await call('/attempts', { name: 'Local test' })).data;
+    const answers = a.questions.map(q => ['short', 'paragraph'].includes(q.type) ? 'Written answer' : q.otherOption !== undefined ? { option: q.otherOption, text: 'Other answer' } : 0);
+    for (let i = 0; i < a.questions.length; i++) assert.deepEqual(a.questions[i].options, seed.find(q => q.id === a.questions[i].id).options);
+    const other = a.questions.findIndex(q => q.otherOption !== undefined), short = a.questions.findIndex(q => q.type === 'short'), closed = a.questions.findIndex(q => q.type === 'mc' && q.otherOption === undefined);
+    for (const [index, value] of [[other, { option: a.questions[other].otherOption, text: ' ' }], [other, a.questions[other].otherOption], [short, ' '], [closed, { text: 'Forged' }]]) {
+      const invalid = structuredClone(answers); invalid[index] = value;
+      assert.equal((await call(`/attempts/${a.id}/submit`, { answers: invalid })).status, 400);
+    }
+    const submitted = await call(`/attempts/${a.id}/submit`, { answers });
+    assert.equal(submitted.status, 200); assert.equal(submitted.data.pendingCount, 50); assert.deepEqual(submitted.data.answers, answers);
+    const result = await call(`/results/${a.id}/grade`, { grades: Object.fromEntries(a.questions.map(q => [q.id, 2])) }, 'admin');
+    assert.equal(result.status, 200); assert.equal(result.data.score, 100); assert.equal(result.data.status, 'Success');
+  } finally { await new Promise(r => server.close(r)); fs.rmSync(dir, { recursive: true, force: true }); }
 });

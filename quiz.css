@@ -56,3 +56,10 @@
 #quiz-create-dialog input[type=file]{width:100%;min-width:0}
 .quiz-media{max-width:100%}
 .quiz-media img{max-height:none;max-width:100%}
+
+#quiz-tools .btn.quiz-active{background:#fff;color:var(--ink);border-color:var(--line);box-shadow:0 1px 3px #0000000d}
+.quiz-bank-filters{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,240px);gap:16px;margin:16px 0}
+.quiz-bank-filters label{display:grid;gap:8px;min-width:0}
+#quiz-bank-type{width:100%;padding:12px;border:1px solid var(--line);border-radius:var(--r-xs);font:inherit;color:var(--ink);background:var(--cream)}
+.quiz-bank-filters select:focus-visible{outline:2px solid var(--lav-ink);outline-offset:3px}
+@media(max-width:600px){.quiz-bank-filters{grid-template-columns:1fr}}

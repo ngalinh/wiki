@@ -1,0 +1,401 @@
+[
+  {
+    "id": "form-001",
+    "prompt": "1. Bộ phận Sale & Cskh sẽ làm những công việc gì trong quy trình của đơn hàng?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-002",
+    "prompt": "2. Nội dung chuyển khoản khách phải ghi theo cú pháp nào để nạp tiền vào ví khách?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-003",
+    "prompt": "3. Ví dụ khách ck 20 triệu để đặt cọc 50% cho 3 đơn hàng giá trị sau:\nĐH 1 - 15tr\nĐH 2 - 5tr\nĐH 3 - 20tr\nSẽ tham chiếu từng đơn hàng ntn?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-004",
+    "prompt": "4. Các sản phẩm Amazon prime mất phí ship bao nhiêu?",
+    "type": "mc",
+    "options": [
+      "Luôn được free ship",
+      "Tùy theo sản phẩm",
+      "Tùy theo seller",
+      "Tùy theo giá sản phẩm"
+    ],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-005",
+    "prompt": "5.  Các công việc của CSKH là gì?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-006",
+    "prompt": "6. Web Ebay, Giá báo khách là bao nhiêu? ",
+    "type": "short",
+    "options": [],
+    "imageAlt": "Ghi cụ thể cách tính ra giá sp"
+  },
+  {
+    "id": "form-007",
+    "prompt": "7. Để check đúng giá và phí ship ở Amazon/Ebay cần phải làm gì?",
+    "type": "mc",
+    "options": [
+      "Vào link sản phẩm xem giá",
+      "Đổi zip code US 97035",
+      "Mục khác"
+    ],
+    "otherOption": 2,
+    "imageAlt": ""
+  },
+  {
+    "id": "form-008",
+    "prompt": "8. Yêu cầu đặt nickname cho fb/zalo của khách ntn?",
+    "type": "short",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-009",
+    "prompt": "9.  Web Amazon, Phí ship web và giá báo khách lẻ là bao nhiêu?",
+    "type": "short",
+    "options": [],
+    "imageAlt": "Ghi cụ thể cách tính ra giá sp"
+  },
+  {
+    "id": "form-010",
+    "prompt": "10. SALE cần tham chiếu tiền khách chuyển khoản vào ví khách/đơn hàng trong bao lâu?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-011",
+    "prompt": "11. Những lý do khiến đơn hàng của khách chưa mua được?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-012",
+    "prompt": "12. Nếu khách muốn cancel đơn thì cskh sẽ phải làm gì?",
+    "type": "mc",
+    "options": [
+      "Hủy đơn theo yêu cầu của khách",
+      "Xác nhận với team Mua hàng trước khi hủy đơn hàng",
+      "Hỏi sếp xem có cho cancel đơn không",
+      "Mục khác"
+    ],
+    "otherOption": 3,
+    "imageAlt": ""
+  },
+  {
+    "id": "form-013",
+    "prompt": "13. Khách hàng sẽ nhận được tiền refund trong bao lâu?",
+    "type": "mc",
+    "options": [
+      "Khách sẽ nhận được tiền ngay",
+      "Khách sẽ nhận được tiền trong vòng 24h",
+      "Mục khác"
+    ],
+    "otherOption": 2,
+    "imageAlt": ""
+  },
+  {
+    "id": "form-014",
+    "prompt": "14. Số tiền tối đa chấp nhận thu COD khi giao hàng cho khách?",
+    "type": "mc",
+    "options": [
+      "1 triệu",
+      "2 triệu",
+      "3 triệu",
+      "4 triệu",
+      "Mục khác"
+    ],
+    "otherOption": 4,
+    "imageAlt": ""
+  },
+  {
+    "id": "form-015",
+    "prompt": "15.  Khách đặt đơn order về VN và hỏi: anh/chị đặt thì bao lâu có hàng vậy em?",
+    "type": "mc",
+    "options": [
+      "Dạ dự kiến khoảng 1-2 tuần có hàng ạ",
+      "Dạ dự kiến khoảng 3-4 tuần có hàng ạ"
+    ],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-016",
+    "prompt": "16. Web MK, Giá báo khách lẻ là bao nhiêu?",
+    "type": "short",
+    "options": [],
+    "imageAlt": "Ghi cụ thể cách tính ra giá sp"
+  },
+  {
+    "id": "form-017",
+    "prompt": "17. Website Toryburch, Giá báo khách lẻ là bao nhiêu? ",
+    "type": "short",
+    "options": [],
+    "imageAlt": "Ghi cụ thể cách tính ra giá sp"
+  },
+  {
+    "id": "form-018",
+    "prompt": "18. Các bước giải quyết khi khách hàng complain?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-019",
+    "prompt": "19.  Web Ebay, Giá báo khách lẻ là bao nhiêu?",
+    "type": "short",
+    "options": [],
+    "imageAlt": "Ghi cụ thể cách tính ra giá sp"
+  },
+  {
+    "id": "form-020",
+    "prompt": "20. Web Ashford.com, giá báo khách lẻ là bao nhiêu? ",
+    "type": "short",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-021",
+    "prompt": "21. Web Amazon, Giá báo khách lẻ là bao nhiêu? ",
+    "type": "short",
+    "options": [],
+    "imageAlt": "Ghi cụ thể cách tính ra giá sp"
+  },
+  {
+    "id": "form-022",
+    "prompt": "22.  Web Jomashop, Giá báo khách lẻ là bao nhiêu?",
+    "type": "short",
+    "options": [],
+    "imageAlt": "Ghi cụ thể cách tính ra giá sp"
+  },
+  {
+    "id": "form-023",
+    "prompt": "23.  Web Amazon, Giá báo khách lẻ là bao nhiêu?",
+    "type": "short",
+    "options": [],
+    "imageAlt": "Ghi cụ thể cách tính ra giá sp"
+  },
+  {
+    "id": "form-024",
+    "prompt": "24. Web Puma, giá báo khách lẻ là bao nhiêu? ",
+    "type": "short",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-025",
+    "prompt": "25. Cty sẽ freeship nội thành cho những đơn hàng order trên bao nhiêu tiền?",
+    "type": "mc",
+    "options": [
+      "1 triệu",
+      "2 triệu",
+      "3 triệu",
+      "4 triệu",
+      "Mục khác"
+    ],
+    "otherOption": 4,
+    "imageAlt": ""
+  },
+  {
+    "id": "form-026",
+    "prompt": "26.  Chờ $, chờ GC nghĩa là gì?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-027",
+    "prompt": "27. Web Amazon, Sản phẩm Amz hay Amz Prime và giá báo khách lẻ là bao nhiêu?",
+    "type": "short",
+    "options": [],
+    "imageAlt": "Ghi cụ thể cách tính ra giá sp"
+  },
+  {
+    "id": "form-028",
+    "prompt": "28. Web Ebay, Giá báo khách lẻ là bao nhiêu?",
+    "type": "short",
+    "options": [],
+    "imageAlt": "Ghi cụ thể cách tính ra giá sp"
+  },
+  {
+    "id": "form-029",
+    "prompt": "29. Phí ship của web Gap.com là bao nhiêu? Đơn hàng có giá trị bao nhiêu thì được freeship?",
+    "type": "short",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-030",
+    "prompt": "30. Web Lacoste, giá báo cho khách lẻ là bao nhiêu?",
+    "type": "short",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-031",
+    "prompt": "31.  Đơn hàng bị cancel vì những lý do gì?",
+    "type": "mc",
+    "options": [
+      "Hết sale, tăng giá",
+      "Hết hàng",
+      "Không mua được",
+      "Cả 3 lý do trên"
+    ],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-032",
+    "prompt": "32. Trong trường hợp khách complain đã 4 tuần rồi chưa nhận được hàng thì cần làm những gì?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-033",
+    "prompt": "33. Kiện hàng có delivered date 19/6 thì bao giờ hàng về VN?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-034",
+    "prompt": "34. Kiện hàng đã có mã tracking nhưng chưa có delivered date thì bao giờ hàng về?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-035",
+    "prompt": "35. Trường hợp này khách mua đồng hồ về không chạy nên complain thì CSKH trả lời khách như thế nào?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-036",
+    "prompt": "36. Trường hợp hàng về bị hỏng/vỡ thì sẽ xử lý vấn đề ntn? và giải thích cho khách ntn?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-037",
+    "prompt": "37. Khi khách gửi đơn hàng mà đơn đó bị mất phí ship web thì sẽ báo lại khách ntn?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-038",
+    "prompt": "38. Khi nhận được đường link web lạ (ko phải web brand) khách gửi, sẽ cần báo khách gì? và kiểm tra độ uy tín của web đó ntn?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-039",
+    "prompt": "39. Sau khi đơn hàng bị cancel, trong bao lâu phải báo cho khách? Và khi báo cho khách sẽ nói gì?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-040",
+    "prompt": "40. Khi gửi link giày cho khách và khách bảo: chị đi size 37 em đặt cho chị nhé. Sale sẽ phải làm gì?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-041",
+    "prompt": "41. Khi có deal sale $200 được off $60 (off 30%) mà khách lẻ chỉ gửi 1 món để chờ gom đơn cho đủ off thì sẽ tính cho khách lẻ off bao nhiêu %?",
+    "type": "short",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-042",
+    "prompt": "42. Các thông tin cần ghi vào Note Mua hàng cho team mua hàng?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-043",
+    "prompt": "43. Sau khi tạo ĐH xong có cần gửi link ĐH cho khách ko?",
+    "type": "mc",
+    "options": [
+      "Có",
+      "Không, báo khách vào tài khoản theo dõi ĐH",
+      "Không, chỉ cần gửi tin nhắn xác nhận lại với khách",
+      "Mục khác"
+    ],
+    "otherOption": 3,
+    "imageAlt": ""
+  },
+  {
+    "id": "form-044",
+    "prompt": "44. Công nợ của khách lẻ tối đa là bao nhiêu?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-045",
+    "prompt": "45. Khi khách Basso gửi link yêu cầu báo giá SALE sẽ phải làm gì?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-046",
+    "prompt": "46. Liên hệ khách tạo đơn trên website ntn?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-047",
+    "prompt": "47. Seller trên ebay cần có rating bao nhiêu mới bảo hành đơn hàng cho khách?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-048",
+    "prompt": "48. Web BBW (https://www.bathandbodyworks.com) mất phí ship bao nhiêu? và khi gom đơn sẽ tính phí ship bao nhiêu cho 1 item?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-049",
+    "prompt": "49. Cân nặng tối thiểu cho 1 đơn hàng của khách lẻ là bao nhiêu?",
+    "type": "short",
+    "options": [],
+    "imageAlt": ""
+  },
+  {
+    "id": "form-050",
+    "prompt": "50. Khi khách gửi link sp nặng > 5kg sẽ phải làm gì?",
+    "type": "paragraph",
+    "options": [],
+    "imageAlt": ""
+  }
+]
