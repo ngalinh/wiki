@@ -1,0 +1,320 @@
+[
+  {
+    "id": "form-001",
+    "prompt": "1. Bộ phận Sale & Cskh sẽ làm những công việc gì trong quy trình của đơn hàng?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "SALE nhận link/hình, tư vấn và báo giá; CSKH tạo đơn, xác nhận thông tin, tham chiếu tiền, theo dõi đơn, báo hàng về, điều phối giao hàng, hoàn tất thanh toán và xử lý khiếu nại. Nguồn: Tổng quan công ty; Follow đơn; Báo hàng về.",
+    "source": "tao-don",
+    "correct": null
+  },
+  {
+    "id": "form-002",
+    "prompt": "2. Nội dung chuyển khoản khách phải ghi theo cú pháp nào để nạp tiền vào ví khách?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Nội dung chuyển khoản: DT[SĐT], viết liền DT với số điện thoại của khách. Gửi riêng cú pháp để khách sao chép. Sai cú pháp: SALE/CSKH tham chiếu thủ công tên – SĐT cho SMS thất bại để kế toán duyệt. Nguồn: Tư vấn & Báo giá → Chốt đơn.",
+    "source": "bao-gia",
+    "correct": null
+  },
+  {
+    "id": "form-003",
+    "prompt": "3. Ví dụ khách ck 20 triệu để đặt cọc 50% cho 3 đơn hàng giá trị sau:\nĐH 1 - 15tr\nĐH 2 - 5tr\nĐH 3 - 20tr\nSẽ tham chiếu từng đơn hàng ntn?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Tham chiếu thủ công đúng 50% từng đơn: ĐH 1: 7.500.000đ; ĐH 2: 2.500.000đ; ĐH 3: 10.000.000đ. Tổng 20.000.000đ. Không tham chiếu lẫn giữa các đơn. Nguồn: Follow đơn → Tham chiếu; phép tính theo dữ kiện đề.",
+    "source": "tao-don",
+    "correct": null
+  },
+  {
+    "id": "form-005",
+    "prompt": "5.  Các công việc của CSKH là gì?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Tạo đơn và xác nhận thông tin; tham chiếu tiền; theo dõi tình trạng đơn, cập nhật cho khách và xử lý cancel/issue; báo hàng về; điều phối giao hàng và thanh toán; xử lý khiếu nại theo quy định. Nguồn: Follow đơn; Báo hàng về.",
+    "source": "tao-don",
+    "correct": null
+  },
+  {
+    "id": "form-008",
+    "prompt": "8. Yêu cầu đặt nickname cho fb/zalo của khách ntn?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Tên fb/zalo - SĐT khách. Đặt khi tạo đơn với khách mới để SALE–CSKH cùng theo dõi. Nguồn: Tư vấn & Báo giá → Chốt đơn → Yêu cầu đặt nickname khách.",
+    "source": "bao-gia",
+    "correct": null
+  },
+  {
+    "id": "form-011",
+    "prompt": "11. Những lý do khiến đơn hàng của khách chưa mua được?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Có thể đang chờ giftcard/rate thấp, chưa thu được đô do rate tăng; hoặc không tự mua được vì không có đô, tài khoản bị chặn và phải gửi mua hộ. Kiểm tra tình trạng thực tế với team Mua Hàng, không kết luận chỉ vì chưa có đơn admin: có đơn phải đợi trôi khi test web/thẻ mới. Nguồn: Thuật ngữ → Chờ $, Rate chờ $, Gửi mua hộ; Follow đơn → Trước khi cho khách hủy đơn.",
+    "source": "thuat-ngu",
+    "correct": null
+  },
+  {
+    "id": "form-012",
+    "prompt": "12. Nếu khách muốn cancel đơn thì cskh sẽ phải làm gì?",
+    "options": [
+      "Hủy đơn theo yêu cầu của khách",
+      "Xác nhận với team Mua hàng trước khi hủy đơn hàng",
+      "Hỏi sếp xem có cho cancel đơn không",
+      "Mục khác"
+    ],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Bắt buộc hỏi lại team Mua Hàng xem đơn đã xử lý chưa trước khi cho khách hủy; tránh đơn đã mua hoặc gửi mua hộ nhưng chưa tạo admin. Nguồn: Follow đơn → Trước khi cho khách hủy đơn.",
+    "source": "tao-don",
+    "correct": 1
+  },
+  {
+    "id": "form-013",
+    "prompt": "13. Khách hàng sẽ nhận được tiền refund trong bao lâu?",
+    "options": [
+      "Khách sẽ nhận được tiền ngay",
+      "Khách sẽ nhận được tiền trong vòng 24h",
+      "Mục khác"
+    ],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Kế toán hoàn tiền trong vòng 24h sau khi xin thông tin chuyển khoản và lập yêu cầu refund. Nhập số tiền, mã đơn, lý do, tài khoản chính chủ và STT issue nếu có. Nguồn: Báo hàng về → Xử lý khách hàng khiếu nại → Báo hoàn tiền.",
+    "source": "bao-hang-ve",
+    "correct": 1
+  },
+  {
+    "id": "form-014",
+    "prompt": "14. Số tiền tối đa chấp nhận thu COD khi giao hàng cho khách?",
+    "options": [
+      "1 triệu",
+      "2 triệu",
+      "3 triệu",
+      "4 triệu",
+      "Mục khác"
+    ],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Dưới 1.000.000đ cho lần mua đầu tiên (không phải được thu đúng 1.000.000đ). Nguồn: Báo hàng về → Giao hàng; phần chữ quy định COD. Chọn Mục khác và ghi rõ giới hạn dưới 1 triệu; Admin/Editor chấm nội dung vì các lựa chọn số tròn không diễn đạt đúng dấu <.",
+    "source": "bao-hang-ve",
+    "correct": null
+  },
+  {
+    "id": "form-015",
+    "prompt": "15.  Khách đặt đơn order về VN và hỏi: anh/chị đặt thì bao lâu có hàng vậy em?",
+    "options": [
+      "Dạ dự kiến khoảng 1-2 tuần có hàng ạ",
+      "Dạ dự kiến khoảng 3-4 tuần có hàng ạ"
+    ],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Hàng Mỹ dự kiến 3–4 tuần kể từ ngày đặt hàng; hàng UK/TBN khoảng 3 tuần. Thời gian còn phụ thuộc web giao tới kho; không cam kết ngày chắc chắn. Nguồn: FAQ → Thời gian; Tư vấn & Báo giá → Chốt đơn.",
+    "source": "faq",
+    "correct": 1
+  },
+  {
+    "id": "form-018",
+    "prompt": "18. Các bước giải quyết khi khách hàng complain?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Xin lỗi vì trải nghiệm không tốt, kể cả không phải lỗi bên mình; làm rõ nguyên nhân; bình tĩnh, thấu hiểu khách; hỏi mong muốn và thống nhất phương án; xử lý theo chính sách đền bù. Ưu tiên trả lời nhanh, lên issue và theo dõi đến khi hoàn tất; hỗ trợ ngoài chính sách phải xin duyệt. Nguồn: Báo hàng về → Xử lý khách hàng khiếu nại; Quy trình yêu cầu hỗ trợ thêm.",
+    "source": "bao-hang-ve",
+    "correct": null
+  },
+  {
+    "id": "form-025",
+    "prompt": "25. Cty sẽ freeship nội thành cho những đơn hàng order trên bao nhiêu tiền?",
+    "options": [
+      "1 triệu",
+      "2 triệu",
+      "3 triệu",
+      "4 triệu",
+      "Mục khác"
+    ],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Đơn order trên 2 triệu được freeship nội thành Hà Nội cho khách lẻ theo ảnh Giao hàng; FAQ hiện ghi hỗ trợ tối đa 30k khu vực HCM/HN cũ, ngoại thành 20k; CTV/Sỉ không freeship. Không hiểu là miễn toàn bộ phí trong mọi trường hợp. Nguồn: Báo hàng về → Giao hàng → Phí ship nội địa; FAQ → Có mất phí vận chuyển khi nhận hàng không?",
+    "source": "bao-hang-ve",
+    "correct": 1
+  },
+  {
+    "id": "form-026",
+    "prompt": "26.  Chờ $, chờ GC nghĩa là gì?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Chờ có giftcard rate thấp để mua đơn. Nguồn: Thuật ngữ → Chờ $, chờ GC.",
+    "source": "thuat-ngu",
+    "correct": null
+  },
+  {
+    "id": "form-031",
+    "prompt": "31.  Đơn hàng bị cancel vì những lý do gì?",
+    "options": [
+      "Hết sale, tăng giá",
+      "Hết hàng",
+      "Không mua được",
+      "Cả 3 lý do trên"
+    ],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Cả ba: hết sale/tăng giá, hết hàng, không mua được. Nguồn: Follow đơn → Trường hợp đơn hàng bị cancel (hết hàng, tăng giá, không mua được hàng).",
+    "source": "tao-don",
+    "correct": 3
+  },
+  {
+    "id": "form-032",
+    "prompt": "32. Trong trường hợp khách complain đã 4 tuần rồi chưa nhận được hàng thì cần làm những gì?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Kiểm tra đơn và trạng thái tracking/delivered; vấn đề vận chuyển xem mục Quản lý vận chuyển. Xin lỗi khách, giải thích 3–4 tuần là dự kiến vì vận chuyển quốc tế qua nhiều khâu; cập nhật tình trạng thực tế và báo ngay khi hàng về. Chủ động follow, không hứa ngày chưa xác minh. Nguồn: FAQ → Thời gian; Follow đơn; Báo hàng về → Xử lý issue.",
+    "source": "faq",
+    "correct": null
+  },
+  {
+    "id": "form-033",
+    "prompt": "33. Kiện hàng có delivered date 19/6 thì bao giờ hàng về VN?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Dự kiến 2–3 tuần từ ngày kho Mỹ nhận hàng: delivered 19/6 thì khoảng 3/7–10/7. Đây là khoảng dự kiến, không phải ngày cam kết. Nguồn: Tư vấn & Báo giá → Chốt đơn → Thời gian hàng về.",
+    "source": "bao-gia",
+    "correct": null
+  },
+  {
+    "id": "form-034",
+    "prompt": "34. Kiện hàng đã có mã tracking nhưng chưa có delivered date thì bao giờ hàng về?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Hàng đang trên đường đến kho Mỹ; dự kiến khoảng 20 ngày về VN theo FAQ. Kiểm tra tracking thực tế và cập nhật cho khách, không khẳng định đã đến kho khi chưa có delivered date. Nguồn: FAQ → Sau khi đơn đã mua xong được 1–2 tuần.",
+    "source": "faq",
+    "correct": null
+  },
+  {
+    "id": "form-035",
+    "prompt": "35. Trường hợp này khách mua đồng hồ về không chạy nên complain thì CSKH trả lời khách như thế nào?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Xin lỗi vì trải nghiệm không tốt, giữ bình tĩnh và ưu tiên xử lý; ghi nhận lỗi đồng hồ và việc khách đã thử thay pin, lên issue để bộ phận phụ trách liên hệ web. Theo dõi kết quả và áp dụng chính sách đền bù phù hợp, không tự hứa đổi mới/hoàn toàn bộ khi chưa có căn cứ. Đồng hồ mua ở Mỹ chỉ bảo hành ở Mỹ theo FAQ. Nguồn: Báo hàng về → Xử lý khách hàng khiếu nại, Xử lý issue, Quy trình đền bù; FAQ → Bảo hành.",
+    "source": "bao-hang-ve",
+    "correct": null
+  },
+  {
+    "id": "form-036",
+    "prompt": "36. Trường hợp hàng về bị hỏng/vỡ thì sẽ xử lý vấn đề ntn? và giải thích cho khách ntn?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Xin lỗi, ghi nhận đầy đủ sự việc và lên issue; bộ phận phụ trách làm việc với web/đối tác. Căn cứ chính sách đền bù đúng kênh và kết quả claim để đề xuất phương án, kế toán duyệt refund. Nếu web/đối tác đền cao hơn mức chính sách thì dùng số cao hơn; không tự hứa mức đền chưa được duyệt. Note chi tiết và cập nhật issue 2 ngày/lần. Nguồn: Báo hàng về → Xử lý issue; Quy trình đền bù.",
+    "source": "bao-hang-ve",
+    "correct": null
+  },
+  {
+    "id": "form-037",
+    "prompt": "37. Khi khách gửi đơn hàng mà đơn đó bị mất phí ship web thì sẽ báo lại khách ntn?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Báo rõ phí ship web và cho khách chọn mua ngay hoặc chờ gom. Mua ngay: giá gồm ship, nhất là low stock/sale ngắn. Chờ gom: nói rõ giá chưa gồm ship và đang gom đủ điều kiện freeship; kiểm tra các SALE khác có đơn chờ gom không. Nguồn: Tư vấn & Báo giá → Check phí ship web.",
+    "source": "bao-gia",
+    "correct": null
+  },
+  {
+    "id": "form-038",
+    "prompt": "38. Khi nhận được đường link web lạ (ko phải web brand) khách gửi, sẽ cần báo khách gì? và kiểm tra độ uy tín của web đó ntn?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Theo quy trình nội bộ: không nhận web không có đuôi .com; check Scamadviser >80% và đọc cảnh báo, check Whois Registered date trên 3 năm. Báo khách đây là web lạ, bên mình chỉ hỗ trợ liên hệ web, không chịu trách nhiệm/refund nếu web không ship hoặc sai/thiếu/hỏng; thu trước 100%, khách cân nhắc đồng ý. Đây là tiêu chí nhận đơn nội bộ, không phải bảo đảm web an toàn tuyệt đối. Nguồn: Tư vấn & Báo giá → Check website lạ.",
+    "source": "bao-gia",
+    "correct": null
+  },
+  {
+    "id": "form-039",
+    "prompt": "39. Sau khi đơn hàng bị cancel, trong bao lâu phải báo cho khách? Và khi báo cho khách sẽ nói gì?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Báo ngay, chậm nhất 2 ngày. Nêu lý do cancel, xóa sản phẩm/hủy đơn tương ứng; nếu web cancel sau mua, xin email xác nhận để gửi khách. Để tiền cọc lại ví, nhập Request Refund đầy đủ để kế toán hoàn tiền. Nguồn: Follow đơn → Trường hợp đơn hàng bị cancel.",
+    "source": "tao-don",
+    "correct": null
+  },
+  {
+    "id": "form-040",
+    "prompt": "40. Khi gửi link giày cho khách và khách bảo: chị đi size 37 em đặt cho chị nhé. Sale sẽ phải làm gì?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Xem size chart chính hãng của đúng sản phẩm, chụp gửi khách và tư vấn số liệu tương ứng; để khách chốt size cuối cùng trước khi đặt. Không tự quy đổi size 37 sang một size US cố định mà không báo khách; nhắc khả năng lệch số đo thực tế. Nguồn: Tư vấn & Báo giá → Tư vấn thông tin sản phẩm.",
+    "source": "bao-gia",
+    "correct": null
+  },
+  {
+    "id": "form-042",
+    "prompt": "42. Các thông tin cần ghi vào Note Mua hàng cho team mua hàng?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Ghi code giảm giá; điều kiện gom đủ số tiền để giảm; thời hạn hết sale theo giờ VN; MUA GẤP khi low stock/sắp hết sale/sợ nhỡ hàng/khách từng bị cancel. Đơn bid: giá max bid và ngày giờ hết hạn; make offer: giá muốn offer, kèm ship web nếu có. Nguồn: Follow đơn → Gửi mua hàng → Nội dung cần ghi vào Note mua hàng.",
+    "source": "tao-don",
+    "correct": null
+  },
+  {
+    "id": "form-043",
+    "prompt": "43. Sau khi tạo ĐH xong có cần gửi link ĐH cho khách ko?",
+    "options": [
+      "Có",
+      "Không, báo khách vào tài khoản theo dõi ĐH",
+      "Không, chỉ cần gửi tin nhắn xác nhận lại với khách",
+      "Mục khác"
+    ],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Có. Gửi link đơn cho khách xác nhận lại thông tin, tránh hiểu sai ý hoặc lên sai giá sale. Nguồn: Follow đơn → Tạo đơn hàng → Sau khi tạo đơn hàng.",
+    "source": "tao-don",
+    "correct": 0
+  },
+  {
+    "id": "form-044",
+    "prompt": "44. Công nợ của khách lẻ tối đa là bao nhiêu?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Khách lẻ tối đa 10 triệu, đồng thời tổng công nợ không quá 50% giá trị các đơn đã mua. Chỉ tính đơn đang đặt/chưa về VN; hàng đã về phải thanh toán đủ, không gộp tiền hàng về vào hạn mức này. Nguồn: Follow đơn → Công nợ.",
+    "source": "tao-don",
+    "correct": null
+  },
+  {
+    "id": "form-045",
+    "prompt": "45. Khi khách Basso gửi link yêu cầu báo giá SALE sẽ phải làm gì?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Kiểm tra thông tin sản phẩm, giá, ship web, promotion và điều kiện giảm; tư vấn, báo giá cho khách. Chụp giá và seller với Amazon/Walmart/eBay. Phản hồi Fanpage/Zalo/FB trong 15 phút, email trong 30 phút. Nguồn: Tư vấn & Báo giá → Khách gửi đơn order, Check phí ship web, Check promotion.",
+    "source": "bao-gia",
+    "correct": null
+  },
+  {
+    "id": "form-049",
+    "prompt": "49. Cân nặng tối thiểu cho 1 đơn hàng của khách lẻ là bao nhiêu?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Tối thiểu 0,5 kg cho một lần hàng về của khách lẻ; hàng nhẹ hơn vẫn tính mức tối thiểu và phải báo khách ngay từ đầu. Nguồn: Báo hàng về → Các lưu ý khác; Tư vấn & Báo giá → Cân nặng sản phẩm.",
+    "source": "bao-hang-ve",
+    "correct": null
+  },
+  {
+    "id": "form-050",
+    "prompt": "50. Khi khách gửi link sp nặng > 5kg sẽ phải làm gì?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Check cân nặng dự tính, báo phí vận chuyển dự kiến và thu cùng tiền hàng để khách biết tổng chi phí trước khi nhận đơn. Nguồn: Tư vấn & Báo giá → Cân nặng sản phẩm; Lưu ý quan trọng.",
+    "source": "bao-gia",
+    "correct": null
+  },
+  {
+    "id": "form-004",
+    "prompt": "4. Các sản phẩm Amazon prime mất phí ship bao nhiêu?",
+    "options": [
+      "Luôn được free ship",
+      "Tùy theo sản phẩm",
+      "Tùy theo seller",
+      "Tùy theo giá sản phẩm"
+    ],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Theo Wiki: sản phẩm có Amazon Prime được freeship và ship nhanh. Sản phẩm không thuộc Prime phải kiểm tra ngày ship dự kiến và báo khách. Nguồn: Websites → Amazon / Ebay.",
+    "source": "websites",
+    "correct": 0
+  },
+  {
+    "id": "form-047",
+    "prompt": "47. Seller trên ebay cần có rating bao nhiêu mới bảo hành đơn hàng cho khách?",
+    "options": [],
+    "previousExplanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Theo Wiki, seller eBay uy tín cần rating feedback > 5.000 và có giao dịch trong vòng 3 tháng. Kiểm tra cả nơi gửi hàng; nếu ngoài Mỹ phải báo rủi ro. Đây là tiêu chí seller trong Wiki, không đồng nghĩa mọi sự cố đều được đền bù vô điều kiện. Nguồn: Websites → Ebay.",
+    "source": "websites",
+    "correct": null
+  }
+]

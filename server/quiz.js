@@ -32,8 +32,8 @@ function validateBank(bank) {
         (q.correct === null || (Number.isInteger(q.correct) && q.correct >= 0 && q.correct < q.options.length))));
 }
 function cleanQuestion(q) {
-  const { id, type, source, prompt, options, correct, enabled, explanation, image = '', imageAlt = '', productUrl = '' } = q;
-  return { id, type, source, prompt, options, correct, enabled, explanation, image, imageAlt, productUrl, ...(q.otherOption === undefined ? {} : { otherOption: q.otherOption }) };
+  const { id, type, source, prompt, options, correct, explanation, image = '', imageAlt = '', productUrl = '' } = q;
+  return { id, type, source, prompt, options, correct, enabled: true, explanation, image, imageAlt, productUrl, ...(q.otherOption === undefined ? {} : { otherOption: q.otherOption }) };
 }
 function grade(a, grades = a.grades || {}) {
   const points = a.questions.map((q, i) => q.correct === null ? (grades[q.id] ?? null) : (q.correct === (typeof a.answers[i] === 'object' ? a.answers[i].option : a.answers[i]) ? 2 : 0));
@@ -86,10 +86,27 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
     const bank = state.bank.filter(q => !/^q(?:10[1-9]|1[1-4][0-9]|150)$/.test(q.id));
     commit({ ...state, bank, seedVersion: 5, revision: state.revision + 1 });
   }
+  // Fill only missing answers for unchanged questions; never overwrite manager answers or resurrect deletions.
+  const answerUpdates = require('./quiz-answer-updates.json');
+  const normalizePrompt = value => value.replace(/^\s*\d+\s*[.)]\s*/, '').trim();
+  let answersUpdated = false;
+  const answeredBank = state.bank.map(q => {
+    const update = answerUpdates.find(u => u.id === q.id && normalizePrompt(u.prompt) === normalizePrompt(q.prompt));
+    if (!update || q.correct !== null || (q.explanation.trim() && q.explanation !== update.previousExplanation) ||
+        (!['short', 'paragraph'].includes(q.type) && JSON.stringify(q.options) !== JSON.stringify(update.options))) return q;
+    answersUpdated = true;
+    return { ...q, explanation: update.explanation, source: update.source,
+      correct: ['mc', 'tf'].includes(q.type) ? update.correct : null };
+  });
+  if (answersUpdated) commit({ ...state, bank: answeredBank, revision: state.revision + 1 });
+  // All bank questions participate, including previously disabled questions.
+  if (state.bank.some(q => !q.enabled)) {
+    commit({ ...state, bank: state.bank.map(q => ({ ...q, enabled: true })), revision: state.revision + 1 });
+  }
   function currentQuestions() {
-    const pool = state.bank.filter(q => q.enabled);
+    const pool = state.bank;
     const missing = Object.entries(QUOTAS).filter(([type, count]) => pool.filter(q => q.type === type).length < count);
-    if (missing.length) throw Error('Ngân hàng chưa đủ câu đang chọn: ' + missing.map(([type, count]) => `${TYPE_NAMES[type]} cần ${count}, hiện có ${pool.filter(q => q.type === type).length}`).join('; ') + '. Admin / Editor cần tạo thêm hoặc đổi loại câu hỏi.');
+    if (missing.length) throw Error('Ngân hàng chưa đủ câu: ' + missing.map(([type, count]) => `${TYPE_NAMES[type]} cần ${count}, hiện có ${pool.filter(q => q.type === type).length}`).join('; ') + '. Admin / Editor cần tạo thêm hoặc đổi loại câu hỏi.');
     const questions = shuffle(Object.entries(QUOTAS).flatMap(([type, count]) => shuffle(pool.filter(q => q.type === type)).slice(0, count))).map(q => {
       if (['paragraph', 'short'].includes(q.type)) return { ...q };
       const indices = q.options.map((_, i) => i);
@@ -118,12 +135,12 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
     next();
   });
   app.get('/api/quiz', (req, res) => {
-    const mc = state.bank.filter(q => q.enabled && q.type === 'mc').length;
-    const tf = state.bank.filter(q => q.enabled && q.type === 'tf').length;
+    const mc = state.bank.filter(q => q.type === 'mc').length;
+    const tf = state.bank.filter(q => q.type === 'tf').length;
     let active = state.attempts.find(a => a.email === req.quizEmail && !a.submittedAt && !a.abandonedAt);
     let refreshError;
     try { active = refreshActive(active); } catch (e) { refreshError = e.message; active = null; }
-    res.json({ refreshError, canManage: canManage(req.quizEmail), email: req.quizEmail, available: { mc, tf, paragraph: state.bank.filter(q => q.enabled && q.type === 'paragraph').length, short: state.bank.filter(q => q.enabled && q.type === 'short').length }, active: active ? publicAttempt(active) : null });
+    res.json({ refreshError, canManage: canManage(req.quizEmail), email: req.quizEmail, available: { mc, tf, paragraph: state.bank.filter(q => q.type === 'paragraph').length, short: state.bank.filter(q => q.type === 'short').length }, active: active ? publicAttempt(active) : null });
   });
   app.get('/api/quiz/bank', (req, res) => {
     if (!canManage(req.quizEmail)) return res.status(403).json({ error: 'Chỉ Admin và Editor được quản lý câu hỏi.' });
