@@ -184,6 +184,16 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
     commit({ ...state, attempts: state.attempts.map(x => x.id === a.id ? result : x) });
     res.json({ ...summary(result), questions: result.questions, answers: result.answers, points: result.points });
   });
+  app.put('/api/quiz/questions/:id', (req, res) => {
+    if (!canManage(req.quizEmail)) return res.status(403).json({ error: 'Chỉ Admin và Editor được sửa câu hỏi.' });
+    if (req.body.revision !== state.revision) return res.status(409).json({ error: 'Ngân hàng đã thay đổi. Tải lại trước khi lưu.' });
+    if (!state.bank.some(q => q.id === req.params.id)) return res.status(404).json({ error: 'Không tìm thấy câu hỏi.' });
+    const question = { ...req.body.question, id: req.params.id };
+    if (!validateBank([question])) return res.status(400).json({ error: 'Kiểm tra nội dung, đáp án, giải thích và hình ảnh của câu hỏi.' });
+    const clean = cleanQuestion(question);
+    commit({ ...state, bank: state.bank.map(q => q.id === req.params.id ? clean : q), revision: state.revision + 1 });
+    res.json({ question: clean, revision: state.revision });
+  });
   app.delete('/api/quiz/questions/:id', (req, res) => {
     if (!canManage(req.quizEmail)) return res.status(403).json({ error: 'Chỉ Admin và Editor được xóa câu hỏi.' });
     if (req.body.revision !== state.revision) return res.status(409).json({ error: 'Ngân hàng đã thay đổi. Tải lại trước khi xóa.' });

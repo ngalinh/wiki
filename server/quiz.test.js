@@ -288,3 +288,30 @@ test('verified answers fill missing references without replacing edits, deletion
     boot(); assert.deepEqual(JSON.parse(fs.readFileSync(file)), state);
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('individual save only updates selected question with role and revision checks', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-single-save-'));
+  const app = express(); app.use(express.json());
+  mount(app, { dataDir: dir, getUserEmail: req => req.headers['x-test-user'], isAdmin: u => u === 'admin', canManage: u => ['admin', 'editor'].includes(u) });
+  const server = app.listen(0, '127.0.0.1');
+  await new Promise(resolve => server.once('listening', resolve));
+  const call = async (route, method = 'GET', body, user = 'editor') => {
+    const r = await fetch('http://127.0.0.1:' + server.address().port + '/api/quiz' + route, { method, headers: { 'Content-Type': 'application/json', 'x-test-user': user }, body: body && JSON.stringify(body) });
+    return { status: r.status, data: await r.json() };
+  };
+  try {
+    const before = (await call('/bank')).data;
+    const question = { ...before.bank[0], prompt: 'Edited single question' };
+    const route = '/questions/' + question.id, payload = { question, revision: before.revision };
+    assert.equal((await call(route, 'PUT', payload, 'employee')).status, 403);
+    assert.equal((await call(route, 'PUT', { ...payload, question: { ...question, prompt: '' } })).status, 400);
+    assert.equal((await call(route, 'PUT', payload)).status, 200);
+    assert.equal((await call(route, 'PUT', payload)).status, 409);
+    const after = (await call('/bank')).data;
+    assert.equal(after.bank[0].prompt, question.prompt);
+    assert.deepEqual(after.bank.slice(1), before.bank.slice(1));
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});

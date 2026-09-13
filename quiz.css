@@ -67,3 +67,5 @@
 .quiz-heading-copy{flex:1;min-width:0}
 .quiz-question-head{align-items:center}
 .quiz-heading-copy h3{margin:0}
+
+.quiz-save-question{background:#000;color:#fff;border:1px solid #000}.quiz-save-question:hover{background:#222;color:#fff}
