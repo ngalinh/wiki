@@ -44,7 +44,7 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
   const dir = path.join(dataDir, 'quiz');
   fs.mkdirSync(dir, { recursive: true });
   const file = path.join(dir, 'state.json');
-  let state = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : { bank: seed, revision: 1, attempts: [], seedVersion: 4 };
+  let state = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : { bank: seed, revision: 1, attempts: [], seedVersion: 5 };
   function commit(next) {
     const temp = file + '.tmp';
     fs.writeFileSync(temp, JSON.stringify(next));
@@ -65,7 +65,8 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
       const previous = previousPricing.find(p => p.id === q.id);
       if (!previous) return q;
       const unchanged = Object.entries(cleanQuestion(previous)).every(([key, value]) => key === 'enabled' || JSON.stringify(cleanQuestion(q)[key]) === JSON.stringify(value));
-      return unchanged ? { ...seed.find(s => s.id === q.id), enabled: q.enabled } : q;
+      const replacement = seed.find(s => s.id === q.id);
+      return unchanged && replacement ? { ...replacement, enabled: q.enabled } : q;
     });
     bank.push(...seed.filter(q => !ids.has(q.id)));
     commit({ ...state, bank, seedVersion: 3, revision: state.revision + 1 });
@@ -77,6 +78,11 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
       return replacement ? { ...replacement, enabled: q.enabled } : q;
     });
     commit({ ...state, bank, seedVersion: 4, revision: state.revision + 1 });
+  }
+  // Remove exactly the 50 withdrawn rewrites; keep original form questions and attempt snapshots.
+  if (state.seedVersion < 5) {
+    const bank = state.bank.filter(q => !/^q(?:10[1-9]|1[1-4][0-9]|150)$/.test(q.id));
+    commit({ ...state, bank, seedVersion: 5, revision: state.revision + 1 });
   }
   function summary(a) {
     return { id: a.id, name: a.name, email: a.email, startedAt: a.startedAt, submittedAt: a.submittedAt,
