@@ -42,6 +42,9 @@ test('quiz bank, authorization, random selection, grading, persistence and snaps
     assert.equal((await call('/bank', 'admin', 'PUT', { bank, revision: 1 })).status, 409);
     const broken = structuredClone(bank); broken[0].prompt = '';
     assert.equal((await call('/bank', 'admin', 'PUT', { bank: broken, revision: 2 })).status, 400);
+    assert.equal((await call(`/attempts/${first.id}/submit`, 'employee', 'POST', { answers: [], bankRevision: first.bankRevision })).status, 409);
+    first = (await call('')).data.active;
+    assert.equal(first.bankRevision, 2);
     for (const count of [40, 39, 41, 50, 0]) {
       const a = count === 40 ? first : (await call('/attempts', 'employee', 'POST', { name: 'Test Employee' })).data;
       if (count !== 40) { assert(!a.questions.some(q => q.id === seed[0].id)); assert.notDeepEqual(a.questions.map(q => q.id), first.questions.map(q => q.id)); }
@@ -242,7 +245,7 @@ test('delete permissions and replacement use current bank without losing old sna
     assert.equal((await call('/questions/'+id,'DELETE',{revision:1},'employee')).status,403);
     assert.equal((await call('/questions/'+id,'DELETE',{revision:0})).status,409);
     assert.equal((await call('/questions/'+id,'DELETE',{revision:1})).status,200);
-    assert((await call('')).data.active.questions.some(q=>q.id===id));
+    assert(!(await call('')).data.active.questions.some(q=>q.id===id));
     const next=(await call('/attempts','POST',{name:'Test',replaceAttemptId:old.id})).data;
     assert.notEqual(next.id,old.id);assert(!next.questions.some(q=>q.id===id));
     assert.deepEqual(['short','mc','paragraph','tf'].map(t=>next.questions.filter(q=>q.type===t).length),[20,20,5,5]);
@@ -250,7 +253,7 @@ test('delete permissions and replacement use current bank without losing old sna
     const short=next.questions.find(q=>q.type==='short').id;
     await call('/questions/'+short,'DELETE',{revision:2});
     assert.equal((await call('/attempts','POST',{name:'Test',replaceAttemptId:next.id})).status,409);
-    assert.equal((await call('')).data.active.id,next.id);
+    assert.match((await call('')).data.refreshError,/chưa đủ/);
     const saved=JSON.parse(fs.readFileSync(path.join(dir,'quiz/state.json')));
     assert(saved.attempts.find(a=>a.id===old.id).abandonedAt);
     assert(!saved.bank.some(q=>q.id===id));

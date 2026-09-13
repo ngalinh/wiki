@@ -27,9 +27,10 @@ const Quiz = (() => {
   async function load() {
     try {
       meta = await api(); toolbar();
+      if (meta.refreshError) error(new Error(meta.refreshError));
       if (meta.active) {
         attempt = meta.active;
-        try { const saved = JSON.parse(sessionStorage.getItem('wiki-quiz-' + attempt.id)); answers = Array.isArray(saved) && saved.length === 50 ? saved : Array(50).fill(null); }
+        try { const saved = JSON.parse(sessionStorage.getItem('wiki-quiz-' + attempt.id + '-' + attempt.bankRevision)); answers = Array.isArray(saved) && saved.length === 50 ? saved : Array(50).fill(null); }
         catch { answers = Array(50).fill(null); }
         renderAttempt();
       } else {
@@ -58,14 +59,31 @@ const Quiz = (() => {
   }
   const answered = a => a !== null && a !== undefined && (typeof a === 'object' ? Boolean(a.text?.trim()) : typeof a === 'string' ? Boolean(a.trim()) : true);
   function renderAttempt() {
-    root().innerHTML = `<p class="quiz-meta">${esc(attempt.name)} · 50 câu · 2 điểm/câu. Đây là đề đã lưu khi bắt đầu; sửa hoặc xóa câu trong ngân hàng không cập nhật đề này.</p><p class="quiz-meta">${Object.entries({short:"trả lời ngắn",mc:"trắc nghiệm",paragraph:"tự luận",tf:"đúng/sai"}).map(([t,n])=>attempt.questions.filter(q=>q.type===t).length+" "+n).join(" · ")}</p><button class="btn btn-secondary" data-quiz="restart">Bắt đầu đề mới từ ngân hàng hiện tại</button>${attempt.questions.map((q, i) => `<fieldset class="quiz-panel quiz-question" id="quiz-q-${i}"><legend class="quiz-sr-only">Câu ${i + 1}: ${esc(questionText(q))}</legend><div class="quiz-question-head">${numberTag(i, q)}<span class="quiz-points">2 điểm</span></div>${media(q)}${['paragraph', 'short'].includes(q.type) ? `<label>Câu trả lời của bạn<${q.type === 'short' ? 'input type="text" value="' + esc(answers[i]) + '"' : 'textarea'} data-answer="${i}" data-paragraph="true" maxlength="5000" placeholder="Trình bày câu trả lời…">${q.type === 'short' ? '' : esc(answers[i]) + '</textarea>'}</label><p class="quiz-meta">Admin hoặc Editor sẽ chấm theo đáp án tham khảo.</p>` : q.options.map((o, j) => `<label class="quiz-choice"><input type="radio" name="quiz-answer-${i}" data-answer="${i}" value="${j}" ${(answers[i]?.option ?? answers[i]) === j ? 'checked' : ''}><span class="quiz-option-letter">${String.fromCharCode(65 + j)}</span><span>${esc(o)}</span></label>${q.otherOption === j ? `<input type="text" data-other-answer="${i}" maxlength="5000" aria-label="Mục khác" placeholder="Mục khác…" value="${esc(answers[i]?.text)}">` : ''}`).join('')}</fieldset>`).join('')}<div class="quiz-sticky"><span id="quiz-progress">Đã trả lời ${answers.filter(answered).length}/50</span><button class="btn btn-primary" data-quiz="submit">Nộp bài</button></div>`;
+    root().innerHTML = `<p class="quiz-meta">${esc(attempt.name)} · 50 câu · 2 điểm/câu. </p><p class="quiz-meta">${Object.entries({short:"trả lời ngắn",mc:"trắc nghiệm",paragraph:"tự luận",tf:"đúng/sai"}).map(([t,n])=>attempt.questions.filter(q=>q.type===t).length+" "+n).join(" · ")}</p><button class="btn btn-secondary" data-quiz="restart">Bắt đầu đề mới</button>${attempt.questions.map((q, i) => `<fieldset class="quiz-panel quiz-question" id="quiz-q-${i}"><legend class="quiz-sr-only">Câu ${i + 1}: ${esc(questionText(q))}</legend><div class="quiz-question-head">${numberTag(i, q)}<span class="quiz-points">2 điểm</span></div>${media(q)}${['paragraph', 'short'].includes(q.type) ? `<label>Câu trả lời của bạn<${q.type === 'short' ? 'input type="text" value="' + esc(answers[i]) + '"' : 'textarea'} data-answer="${i}" data-paragraph="true" maxlength="5000" placeholder="Trình bày câu trả lời…">${q.type === 'short' ? '' : esc(answers[i]) + '</textarea>'}</label><p class="quiz-meta">Admin hoặc Editor sẽ chấm theo đáp án tham khảo.</p>` : q.options.map((o, j) => `<label class="quiz-choice"><input type="radio" name="quiz-answer-${i}" data-answer="${i}" value="${j}" ${(answers[i]?.option ?? answers[i]) === j ? 'checked' : ''}><span class="quiz-option-letter">${String.fromCharCode(65 + j)}</span><span>${esc(o)}</span></label>${q.otherOption === j ? `<input type="text" data-other-answer="${i}" maxlength="5000" aria-label="Mục khác" placeholder="Mục khác…" value="${esc(answers[i]?.text)}">` : ''}`).join('')}</fieldset>`).join('')}<div class="quiz-sticky"><span id="quiz-progress">Đã trả lời ${answers.filter(answered).length}/50</span><button class="btn btn-primary" data-quiz="submit">Nộp bài</button></div>`;
   }
+  async function refreshTest() {
+    if (busy || !attempt || !root()?.querySelector('[data-quiz="submit"]') || document.hidden) return false;
+    const data = await api();
+    if (busy || !attempt || !root()?.querySelector('[data-quiz="submit"]')) return false;
+    if (data.refreshError) throw Error(data.refreshError);
+    if (data.active && data.active.bankRevision !== attempt.bankRevision) {
+      attempt = data.active; answers = Array(50).fill(null); renderAttempt();
+      document.getElementById('quiz-error').textContent = 'Ngân hàng đã cập nhật. Đề đã tự làm mới; vui lòng trả lời đề mới.';
+      return true;
+    }
+    return false;
+  }
+  setInterval(() => refreshTest().catch(error), 5000);
+  window.addEventListener('focus', () => refreshTest().catch(error));
   async function submit() {
+    const data = await api();
+    if (data.refreshError) throw Error(data.refreshError);
+    if (data.active && data.active.bankRevision !== attempt.bankRevision) { attempt = data.active; answers = Array(50).fill(null); renderAttempt(); throw Error("Ngân hàng đã cập nhật. Vui lòng trả lời đề mới."); }
     const missing = answers.findIndex(a => !answered(a));
     if (missing !== -1) { document.getElementById('quiz-q-' + missing).scrollIntoView({ block: 'center' }); throw Error(`Còn ${answers.filter(a => !answered(a)).length} câu chưa trả lời. Vui lòng hoàn thành trước khi nộp.`); }
     if (!confirm('Nộp bài và chấm điểm? Sau khi nộp không thể đổi câu trả lời.')) return;
-    const result = await api('/attempts/' + attempt.id + '/submit', { method: 'POST', body: JSON.stringify({ answers }) });
-    try { sessionStorage.removeItem('wiki-quiz-' + attempt.id); } catch {}
+    const result = await api('/attempts/' + attempt.id + '/submit', { method: 'POST', body: JSON.stringify({ answers, bankRevision: attempt.bankRevision }) });
+    try { sessionStorage.removeItem('wiki-quiz-' + attempt.id + '-' + attempt.bankRevision); } catch {}
     attempt = null; renderResult(result); document.getElementById('main').scrollTop = 0;
   }
   function renderResult(r) {
@@ -94,7 +112,7 @@ const Quiz = (() => {
     return `<label>Loại câu hỏi<select ${attrs} data-question-type>${['mc', 'tf', 'paragraph', 'short'].map(t => `<option value="${t}" ${q.type === t ? 'selected' : ''}>${typeName(t)}</option>`).join('')}</select></label><label><input type="checkbox" ${attrs} data-field="enabled" ${q.enabled ? 'checked' : ''}> Đưa vào đề</label><label>Câu hỏi<textarea ${attrs} data-field="prompt" maxlength="2000">${esc(questionText(q))}</textarea></label><div class="quiz-image-editor">${media(q)}<label>Chèn / thay ảnh<input type="file" ${attrs} data-image-upload="true" accept="image/png,image/jpeg,image/webp,image/gif"></label><p class="quiz-meta">PNG, JPG, WebP hoặc GIF · tối đa 10 MB</p><label>Mô tả ảnh<input type="text" ${attrs} data-field="imageAlt" maxlength="200" value="${esc(q.imageAlt)}"></label>${q.image ? `<button class="btn btn-secondary" type="button" ${attrs} data-remove-image="true">Bỏ ảnh</button>` : ''}</div><label>Link sản phẩm tham khảo (không bắt buộc)<input type="url" ${attrs} data-field="productUrl" maxlength="1000" value="${esc(q.productUrl)}" placeholder="https://..."></label>${q.options.map((o, j) => `<label>Lựa chọn ${String.fromCharCode(65 + j)}<input type="text" ${attrs} data-option="${j}" maxlength="500" value="${esc(o)}" ${q.type === 'tf' ? 'disabled' : ''}></label>`).join('')}${['paragraph', 'short'].includes(q.type) ? '<p class="quiz-meta">Câu tự luận được Admin / Editor chấm đúng (2 điểm) hoặc sai (0 điểm).</p>' : `<label>Đáp án đúng<select ${attrs} data-field="correct"><option value="" ${q.correct === null ? 'selected' : ''}>Chấm thủ công — chưa có đáp án chuẩn</option>${q.options.map((o, j) => `<option value="${j}" ${q.correct === j ? 'selected' : ''}>${String.fromCharCode(65 + j)}: ${esc(o)}</option>`).join('')}</select></label>`}<label>${['paragraph', 'short'].includes(q.type) ? 'Đáp án tham khảo / tiêu chí chấm' : 'Giải thích / trích dẫn'}<textarea ${attrs} data-field="explanation" maxlength="3000">${esc(q.explanation)}</textarea></label>${sourceSelect(q, attrs)}`;
   }
   function renderBank() {
-    root().innerHTML = `<div class="quiz-bank-heading"><div><h2>Ngân hàng câu hỏi</h2><p id="quiz-bank-totals">${bank.length} câu · ${bank.filter(q => q.type === 'mc').length} trắc nghiệm · ${bank.filter(q => q.type === 'tf').length} đúng/sai · ${bank.filter(q => q.type === 'paragraph').length} tự luận · ${bank.filter(q => q.type === 'short').length} trả lời ngắn</p></div><button class="btn btn-primary" data-quiz="create">Tạo câu hỏi</button></div><p class="quiz-meta">50 câu hỏi lấy từ <a href="https://forms.gle/PKSwfk6NTz7dqw167" target="_blank" rel="noopener noreferrer">form Test SALE/CSKH</a>; đáp án chưa được công khai nên cần chấm thủ công hoặc đặt đáp án chuẩn. Bật “Đưa vào đề” để cho phép rút ngẫu nhiên. Cần chọn đủ 20 trả lời ngắn, 20 trắc nghiệm, 5 tự luận và 5 đúng/sai để tạo đề. Bài đã bắt đầu giữ nguyên câu hỏi và đáp án.</p><div class="quiz-bank-filters"><label>Tìm câu hỏi<input id="quiz-bank-search" type="search" placeholder="Nhập nội dung hoặc mã câu"></label><label>Loại câu hỏi<select id="quiz-bank-type"><option value="">Tất cả loại câu hỏi</option>${['mc', 'tf', 'paragraph', 'short'].map(t => `<option value="${t}">${typeName(t)}</option>`).join('')}</select></label></div><p id="quiz-bank-count" class="quiz-meta" role="status">Hiển thị ${bank.length}/${bank.length} câu</p>${bank.map((q, i) => `<details class="quiz-panel" data-bank-row="${i}"><summary class="quiz-bank-summary"><span class="quiz-number">${String(i + 1).padStart(2, '0')}</span><span class="quiz-summary-copy"><span class="quiz-summary-prompt">${esc(questionText(q))}</span>${q.enabled ? '' : '<span class="quiz-meta">Đã tắt</span>'}</span><span class="quiz-chevron" aria-hidden="true">⌄</span></summary><div class="quiz-question-fields">${questionFields(q, `data-bank="${i}"`)}</div><button type="button" class="btn btn-secondary" data-delete-question="${i}">Xóa câu hỏi</button> <a href="#${esc(q.source)}" data-source="${esc(q.source)}">Đối chiếu nguồn wiki</a></details>`).join('')}<div class="quiz-sticky"><span id="quiz-bank-state">Chưa có thay đổi</span><button class="btn btn-primary" data-quiz="save">Lưu ngân hàng</button></div>`;
+    root().innerHTML = `<div class="quiz-bank-heading"><div><h2>Ngân hàng câu hỏi</h2><p id="quiz-bank-totals">${bank.length} câu · ${bank.filter(q => q.type === 'mc').length} trắc nghiệm · ${bank.filter(q => q.type === 'tf').length} đúng/sai · ${bank.filter(q => q.type === 'paragraph').length} tự luận · ${bank.filter(q => q.type === 'short').length} trả lời ngắn</p></div><button class="btn btn-primary" data-quiz="create">Tạo câu hỏi</button></div><p class="quiz-meta">50 câu hỏi lấy từ <a href="https://forms.gle/PKSwfk6NTz7dqw167" target="_blank" rel="noopener noreferrer">form Test SALE/CSKH</a>; đáp án chưa được công khai nên cần chấm thủ công hoặc đặt đáp án chuẩn. Bật “Đưa vào đề” để cho phép rút ngẫu nhiên. Cần chọn đủ 20 trả lời ngắn, 20 trắc nghiệm, 5 tự luận và 5 đúng/sai để tạo đề. Bài chưa nộp tự cập nhật khi ngân hàng thay đổi.</p><div class="quiz-bank-filters"><label>Tìm câu hỏi<input id="quiz-bank-search" type="search" placeholder="Nhập nội dung hoặc mã câu"></label><label>Loại câu hỏi<select id="quiz-bank-type"><option value="">Tất cả loại câu hỏi</option>${['mc', 'tf', 'paragraph', 'short'].map(t => `<option value="${t}">${typeName(t)}</option>`).join('')}</select></label></div><p id="quiz-bank-count" class="quiz-meta" role="status">Hiển thị ${bank.length}/${bank.length} câu</p>${bank.map((q, i) => `<details class="quiz-panel" data-bank-row="${i}"><summary class="quiz-bank-summary"><span class="quiz-number">${String(i + 1).padStart(2, '0')}</span><span class="quiz-summary-copy"><span class="quiz-summary-prompt">${esc(questionText(q))}</span>${q.enabled ? '' : '<span class="quiz-meta">Đã tắt</span>'}</span><span class="quiz-chevron" aria-hidden="true">⌄</span></summary><div class="quiz-question-fields">${questionFields(q, `data-bank="${i}"`)}</div><button type="button" class="btn btn-secondary" data-delete-question="${i}">Xóa câu hỏi</button> <a href="#${esc(q.source)}" data-source="${esc(q.source)}">Đối chiếu nguồn wiki</a></details>`).join('')}<div class="quiz-sticky"><span id="quiz-bank-state">Chưa có thay đổi</span><button class="btn btn-primary" data-quiz="save">Lưu ngân hàng</button></div>`;
   }
   function filterBank() {
     const term = document.getElementById('quiz-bank-search').value.toLocaleLowerCase('vi');
@@ -163,11 +181,10 @@ const Quiz = (() => {
   }
   async function save() {
     const data = await api('/bank', { method: 'PUT', body: JSON.stringify({ bank, revision }) }); revision = data.revision;
-    const search = document.getElementById('quiz-bank-search').value;
-    const targetType = changedTypes.size ? bank.find(q => q.id === [...changedTypes.keys()].at(-1))?.type : document.getElementById('quiz-bank-type').value;
-    changedTypes.clear(); renderBank();
-    document.getElementById('quiz-bank-search').value = search;
-    document.getElementById('quiz-bank-type').value = targetType || '';
+    changedTypes.clear();
+    root().querySelectorAll('[data-bank-row]').forEach(row => {
+      row.querySelector('.quiz-summary-prompt').textContent = questionText(bank[Number(row.dataset.bankRow)]);
+    });
     filterBank();
     document.getElementById('quiz-bank-state').textContent = 'Đã lưu ngân hàng';
   }
@@ -179,13 +196,13 @@ const Quiz = (() => {
       root().querySelector(`[data-answer="${i}"][value="${q.otherOption}"]`).checked = true;
       answers[i] = { option: q.otherOption, text: el.value };
       document.getElementById('quiz-progress').textContent = `Đã trả lời ${answers.filter(answered).length}/50`;
-      try { sessionStorage.setItem('wiki-quiz-' + attempt.id, JSON.stringify(answers)); } catch {}
+      try { sessionStorage.setItem('wiki-quiz-' + attempt.id + '-' + attempt.bankRevision, JSON.stringify(answers)); } catch {}
     }
     if (el.dataset.answer !== undefined) {
       answers[Number(el.dataset.answer)] = el.dataset.paragraph ? el.value : Number(el.value);
       const q = attempt.questions[Number(el.dataset.answer)];
       if (!el.dataset.paragraph && Number(el.value) === q.otherOption) answers[Number(el.dataset.answer)] = { option: q.otherOption, text: root().querySelector(`[data-other-answer="${el.dataset.answer}"]`).value };
-      try { sessionStorage.setItem('wiki-quiz-' + attempt.id, JSON.stringify(answers)); } catch {}
+      try { sessionStorage.setItem('wiki-quiz-' + attempt.id + '-' + attempt.bankRevision, JSON.stringify(answers)); } catch {}
       document.getElementById('quiz-progress').textContent = `Đã trả lời ${answers.filter(answered).length}/50`;
     }
     if ((el.dataset.bank !== undefined || el.dataset.draft) && !el.dataset.imageUpload && !el.dataset.removeImage && !el.hasAttribute('data-question-type')) {
@@ -235,7 +252,7 @@ const Quiz = (() => {
     try {
       if (el.dataset.deleteQuestion !== undefined) {
         const q = bank[Number(el.dataset.deleteQuestion)];
-        if (!confirm('Xóa câu hỏi này khỏi ngân hàng? Bài đã bắt đầu và kết quả đã nộp vẫn giữ bản cũ.')) return;
+        if (!confirm('Xóa câu hỏi này khỏi ngân hàng? Bài chưa nộp sẽ cập nhật; kết quả đã nộp được giữ nguyên.')) return;
         const data = await api('/questions/' + encodeURIComponent(q.id), { method: 'DELETE', body: JSON.stringify({ revision }) });
         const type = document.getElementById('quiz-bank-type').value, search = document.getElementById('quiz-bank-search').value;
         bank = bank.filter(x => x.id !== q.id); revision = data.revision; changedTypes.delete(q.id); renderBank();

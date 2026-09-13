@@ -86,12 +86,30 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
     const bank = state.bank.filter(q => !/^q(?:10[1-9]|1[1-4][0-9]|150)$/.test(q.id));
     commit({ ...state, bank, seedVersion: 5, revision: state.revision + 1 });
   }
+  function currentQuestions() {
+    const pool = state.bank.filter(q => q.enabled);
+    const missing = Object.entries(QUOTAS).filter(([type, count]) => pool.filter(q => q.type === type).length < count);
+    if (missing.length) throw Error('Ngân hàng chưa đủ câu đang chọn: ' + missing.map(([type, count]) => `${TYPE_NAMES[type]} cần ${count}, hiện có ${pool.filter(q => q.type === type).length}`).join('; ') + '. Admin / Editor cần tạo thêm hoặc đổi loại câu hỏi.');
+    const questions = shuffle(Object.entries(QUOTAS).flatMap(([type, count]) => shuffle(pool.filter(q => q.type === type)).slice(0, count))).map(q => {
+      if (['paragraph', 'short'].includes(q.type)) return { ...q };
+      const indices = q.options.map((_, i) => i);
+      const order = q.type === 'mc' && !q.id.startsWith('form-') ? shuffle(indices) : indices;
+      return { ...q, options: order.map(i => q.options[i]), correct: q.correct === null ? null : order.indexOf(q.correct), ...(q.otherOption === undefined ? {} : { otherOption: order.indexOf(q.otherOption) }) };
+    });
+    return questions;
+  }
+  function refreshActive(a) {
+    if (!a || a.submittedAt || a.abandonedAt || a.bankRevision === state.revision) return a;
+    const updated = { ...a, questions: currentQuestions(), bankRevision: state.revision };
+    commit({ ...state, attempts: state.attempts.map(x => x.id === a.id ? updated : x) });
+    return updated;
+  }
   function summary(a) {
     return { id: a.id, name: a.name, email: a.email, startedAt: a.startedAt, submittedAt: a.submittedAt,
       score: a.score, correctCount: a.correctCount, status: a.status, pendingCount: a.pendingCount || 0, gradedBy: a.gradedBy, gradedAt: a.gradedAt };
   }
   function publicAttempt(a) {
-    return { ...summary(a), questions: a.questions.map(({ correct, explanation, ...q }) => ({ ...q, manualReview: correct === null })) };
+    return { ...summary(a), bankRevision: a.bankRevision, questions: a.questions.map(({ correct, explanation, ...q }) => ({ ...q, manualReview: correct === null })) };
   }
   app.use('/api/quiz', async (req, res, next) => {
     res.set('Cache-Control', 'no-store');
@@ -102,8 +120,10 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
   app.get('/api/quiz', (req, res) => {
     const mc = state.bank.filter(q => q.enabled && q.type === 'mc').length;
     const tf = state.bank.filter(q => q.enabled && q.type === 'tf').length;
-    const active = state.attempts.find(a => a.email === req.quizEmail && !a.submittedAt && !a.abandonedAt);
-    res.json({ canManage: canManage(req.quizEmail), email: req.quizEmail, available: { mc, tf, paragraph: state.bank.filter(q => q.enabled && q.type === 'paragraph').length, short: state.bank.filter(q => q.enabled && q.type === 'short').length }, active: active ? publicAttempt(active) : null });
+    let active = state.attempts.find(a => a.email === req.quizEmail && !a.submittedAt && !a.abandonedAt);
+    let refreshError;
+    try { active = refreshActive(active); } catch (e) { refreshError = e.message; active = null; }
+    res.json({ refreshError, canManage: canManage(req.quizEmail), email: req.quizEmail, available: { mc, tf, paragraph: state.bank.filter(q => q.enabled && q.type === 'paragraph').length, short: state.bank.filter(q => q.enabled && q.type === 'short').length }, active: active ? publicAttempt(active) : null });
   });
   app.get('/api/quiz/bank', (req, res) => {
     if (!canManage(req.quizEmail)) return res.status(403).json({ error: 'Chỉ Admin và Editor được quản lý câu hỏi.' });
@@ -121,19 +141,13 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
   app.post('/api/quiz/attempts', (req, res) => {
     const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
     if (!name || name.length > 120) return res.status(400).json({ error: 'Nhập họ tên (tối đa 120 ký tự).' });
-    const active = state.attempts.find(a => a.email === req.quizEmail && !a.submittedAt && !a.abandonedAt);
+    let active = state.attempts.find(a => a.email === req.quizEmail && !a.submittedAt && !a.abandonedAt);
+    try { active = refreshActive(active); } catch (e) { return res.status(409).json({ error: e.message }); }
     if (req.body.replaceAttemptId && (!active || active.id !== req.body.replaceAttemptId)) return res.status(409).json({ error: 'Đề đã thay đổi. Tải lại trước khi tạo đề mới.' });
     if (active && !req.body.replaceAttemptId) return res.json(publicAttempt(active));
-    const pool = state.bank.filter(q => q.enabled);
-    const missing = Object.entries(QUOTAS).filter(([type, count]) => pool.filter(q => q.type === type).length < count);
-    if (missing.length) return res.status(409).json({ error: 'Ngân hàng chưa đủ câu đang chọn: ' + missing.map(([type, count]) => `${TYPE_NAMES[type]} cần ${count}, hiện có ${pool.filter(q => q.type === type).length}`).join('; ') + '. Admin / Editor cần tạo thêm hoặc đổi loại câu hỏi.' });
-    const questions = shuffle(Object.entries(QUOTAS).flatMap(([type, count]) => shuffle(pool.filter(q => q.type === type)).slice(0, count))).map(q => {
-      if (['paragraph', 'short'].includes(q.type)) return { ...q };
-      const indices = q.options.map((_, i) => i);
-      const order = q.type === 'mc' && !q.id.startsWith('form-') ? shuffle(indices) : indices;
-      return { ...q, options: order.map(i => q.options[i]), correct: q.correct === null ? null : order.indexOf(q.correct), ...(q.otherOption === undefined ? {} : { otherOption: order.indexOf(q.otherOption) }) };
-    });
-    const attempt = { id: randomUUID(), email: req.quizEmail, name, startedAt: new Date().toISOString(), questions };
+    let questions;
+    try { questions = currentQuestions(); } catch (e) { return res.status(409).json({ error: e.message }); }
+    const attempt = { id: randomUUID(), email: req.quizEmail, name, startedAt: new Date().toISOString(), questions, bankRevision: state.revision };
     commit({ ...state, attempts: [...state.attempts.map(a => active && a.id === active.id ? { ...a, abandonedAt: new Date().toISOString() } : a), attempt] });
     res.status(201).json(publicAttempt(attempt));
   });
@@ -142,6 +156,10 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
     if (!a) return res.status(404).json({ error: 'Không tìm thấy bài làm.' });
     if (a.abandonedAt) return res.status(409).json({ error: 'Đề này đã được thay bằng đề mới. Vui lòng tải lại.' });
     if (a.submittedAt) return res.json({ ...summary(a), questions: a.questions, answers: a.answers, points: a.points });
+    if (a.bankRevision !== state.revision || (req.body.bankRevision !== undefined && req.body.bankRevision !== a.bankRevision)) {
+      try { refreshActive(a); } catch (e) { return res.status(409).json({ error: e.message }); }
+      return res.status(409).json({ error: 'Ngân hàng đã cập nhật. Đề được làm mới; vui lòng kiểm tra và trả lời đề mới.' });
+    }
     const answers = req.body.answers;
     if (!Array.isArray(answers) || answers.length !== 50 || answers.some((v, i) => ['paragraph', 'short'].includes(a.questions[i].type) ? typeof v !== 'string' || !v.trim() || v.length > 5000 : (v && typeof v === 'object' ? !Number.isInteger(a.questions[i].otherOption) || !Number.isInteger(v.option) || v.option !== a.questions[i].otherOption || typeof v.text !== 'string' || !v.text.trim() || v.text.length > 5000 : !Number.isInteger(v) || v < 0 || v >= a.questions[i].options.length || v === a.questions[i].otherOption)))
       return res.status(400).json({ error: 'Vui lòng trả lời đủ 50 câu trước khi nộp.' });
