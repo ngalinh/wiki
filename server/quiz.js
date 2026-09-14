@@ -35,8 +35,9 @@ function cleanQuestion(q) {
   const { id, type, source, prompt, options, correct, explanation, image = '', imageAlt = '', productUrl = '' } = q;
   return { id, type, source, prompt, options, correct, enabled: true, explanation, image, imageAlt, productUrl, ...(q.otherOption === undefined ? {} : { otherOption: q.otherOption }) };
 }
+function needsManualGrade(q) { return ['short', 'paragraph'].includes(q.type) || q.correct === null; }
 function grade(a, grades = a.grades || {}) {
-  const points = a.questions.map((q, i) => q.correct === null ? (grades[q.id] ?? null) : (q.correct === (typeof a.answers[i] === 'object' ? a.answers[i].option : a.answers[i]) ? 2 : 0));
+  const points = a.questions.map((q, i) => needsManualGrade(q) ? (grades[q.id] ?? null) : (q.correct === (typeof a.answers[i] === 'object' ? a.answers[i].option : a.answers[i]) ? 2 : 0));
   const pendingCount = points.filter(p => p === null).length;
   const score = points.reduce((sum, p) => sum + (p || 0), 0);
   return { ...a, grades, points, pendingCount, correctCount: points.filter(p => p === 2).length,
@@ -126,7 +127,7 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
       score: a.score, correctCount: a.correctCount, status: a.status, pendingCount: a.pendingCount || 0, gradedBy: a.gradedBy, gradedAt: a.gradedAt };
   }
   function publicAttempt(a) {
-    return { ...summary(a), bankRevision: a.bankRevision, questions: a.questions.map(({ correct, explanation, ...q }) => ({ ...q, manualReview: correct === null })) };
+    return { ...summary(a), bankRevision: a.bankRevision, questions: a.questions.map(({ correct, explanation, ...q }) => ({ ...q, manualReview: needsManualGrade({ ...q, correct }) })) };
   }
   app.use('/api/quiz', async (req, res, next) => {
     res.set('Cache-Control', 'no-store');
@@ -213,7 +214,7 @@ module.exports = function mountQuiz(app, { dataDir, getUserEmail, isAdmin, canMa
     const a = state.attempts.find(a => a.id === req.params.id && a.submittedAt);
     if (!a) return res.status(404).json({ error: 'Không tìm thấy bài làm.' });
     const grades = req.body.grades;
-    const paragraphs = a.questions.filter(q => q.correct === null);
+    const paragraphs = a.questions.filter(needsManualGrade);
     if (!grades || typeof grades !== 'object' || Array.isArray(grades) ||
         Object.keys(grades).length !== paragraphs.length || !paragraphs.length ||
         !paragraphs.every(q => Object.hasOwn(grades, q.id) && [0, 2].includes(grades[q.id])))

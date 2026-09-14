@@ -284,7 +284,8 @@ test('verified answers fill missing references without replacing edits, deletion
     assert.equal(q('form-012').correct, 0); assert.equal(q('form-013').correct, 1);
     assert.equal(q('form-005'), undefined); assert(state.bank.every(q => q.enabled));
     assert.deepEqual(state.attempts, attempts);
-    for (const id of ['form-006', 'form-016', 'form-029', 'form-041', 'form-048']) assert.deepEqual(q(id), retained.find(q => q.id === id));
+    for (const id of ['form-029', 'form-048']) assert.deepEqual(q(id), retained.find(q => q.id === id));
+    for (const id of ['form-006', 'form-016', 'form-041']) { assert.equal(q(id).explanation, seed.find(q => q.id === id).explanation); assert.equal(q(id).correct, null); }
     boot(); assert.deepEqual(JSON.parse(fs.readFileSync(file)), state);
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
@@ -314,4 +315,34 @@ test('individual save only updates selected question with role and revision chec
     await new Promise(resolve => server.close(resolve));
     fs.rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test('Asale pricing references preserve source questions and open responses always await manual grading', async () => {
+  const updates = require('./quiz-answer-updates.json');
+  const pricingIds = [6,9,16,17,19,20,21,22,23,24,27,28,30,41].map(n => 'form-' + String(n).padStart(3, '0'));
+  for (const id of pricingIds) {
+    const q = seed.find(q => q.id === id), update = updates.find(u => u.id === id);
+    assert.equal(q.correct, null); assert.equal(q.explanation, update.explanation);
+    assert.equal(q.prompt, update.prompt); assert.match(q.explanation, /28.500/);
+  }
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wiki-asale-'));
+  const bank = structuredClone(seed); bank.filter(q=>q.type==='paragraph').slice(0,3).forEach(q=>q.type='short');
+  fs.mkdirSync(path.join(dir,'quiz')); fs.writeFileSync(path.join(dir,'quiz/state.json'),JSON.stringify({bank,revision:1,seedVersion:5,attempts:[]}));
+  const app=express();app.use(express.json());mount(app,{dataDir:dir,getUserEmail:req=>req.headers['x-user'],isAdmin:u=>u==='admin'});
+  const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));
+  const call=async(route,user='employee',body)=>{const r=await fetch(`http://127.0.0.1:${server.address().port}/api/quiz${route}`,{method:body?'POST':'GET',headers:{'Content-Type':'application/json','x-user':user},body:body&&JSON.stringify(body)});return {status:r.status,data:await r.json()}};
+  try {
+    const a=(await call('/attempts','employee',{name:'Manual test'})).data;
+    const saved=JSON.parse(fs.readFileSync(path.join(dir,'quiz/state.json'))).attempts[0];
+    const open=q=>['short','paragraph'].includes(q.type);
+    assert.equal(a.questions.filter(open).length,25);assert(a.questions.filter(open).every(q=>q.manualReview));
+    const answers=saved.questions.map(q=>open(q)?q.explanation:(q.correct??0));
+    const result=(await call('/attempts/'+a.id+'/submit','employee',{answers,bankRevision:a.bankRevision})).data;
+    assert.equal(result.status,'Pending review');assert(result.pendingCount>=25);
+    result.questions.forEach((q,i)=>{if(open(q))assert.equal(result.points[i],null)});
+    const grades=Object.fromEntries(result.questions.filter(q=>open(q)||q.correct===null).map(q=>[q.id,2]));
+    assert.equal((await call('/results/'+a.id+'/grade','employee',{grades})).status,403);
+    const graded=(await call('/results/'+a.id+'/grade','admin',{grades})).data;
+    assert.equal(graded.pendingCount,0);assert.equal(graded.score,100);
+  } finally {await new Promise(r=>server.close(r));fs.rmSync(dir,{recursive:true,force:true})}
 });

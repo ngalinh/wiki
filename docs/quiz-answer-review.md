@@ -36,3 +36,26 @@ identity and wording still match; closed-choice options must also match.
 It preserves manager-provided answers, deleted questions, custom questions,
 question types and submitted results. Previously disabled bank questions now
 participate automatically in the 20 short / 20 MC / 5 paragraph / 5 TF draw.
+
+## Asale pricing references — 2026-09-14 follow-up
+
+The owner now requests calculation references for pricing questions. Added references
+for form-006, 009, 016, 017, 019–024, 027, 028, 030 and 041 (14 questions).
+Original wording, types, images and options are unchanged. Migration fills only the
+previous bundled explanation or a blank explanation, preserving manager edits.
+
+Read the current Pricing, Goods Arrival and FAQ APIs through the live Wiki browser,
+and visually checked all 13 product screenshots. USA Asale rate: 28,500 VND/USD;
+shipping: 250,000 VND/kg, with the Wiki's weight tiers. Minimum 0.5 kg is per arrival,
+not per item. Small-order surcharge is per order; high-value surcharge uses 26,500.
+
+References calculate the known VND portion and explicitly retain unknown shipping,
+weight and category surcharges. No invented final landed prices. The category tariff
+link https://basso.vn/basso/order_term/ redirects to login. The Wiki does not clarify
+whether web shipping counts toward the $30 small-order threshold; form-019 shows
+both outcomes. Form-029 (Gap shipping) and form-048 (BBW shipping/allocation) still
+lack verified fee data and are not filled with guessed current retailer policies.
+
+Short and paragraph answers always await manual grading even when the employee's
+answer exactly equals the reference. They cannot receive automatic 0 or 2 points.
+Existing Admin/Editor grading permissions and submitted results are retained.

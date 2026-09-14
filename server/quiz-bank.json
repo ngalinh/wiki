@@ -1517,7 +1517,7 @@
     "prompt": "6. Web Ebay, Giá báo khách là bao nhiêu? ",
     "options": [],
     "correct": null,
-    "explanation": "Ảnh có Starting bid US $75.00, Place bid và Make Offer; FREE Standard Shipping. Chưa thể xác định giá thắng đấu giá; không báo chắc tổng tiền về VN.",
+    "explanation": "$75 là giá khởi điểm đấu giá, không phải giá mua ngay. Ship web ghi FREE. Chỉ khi thắng giá $75 thì tiền hàng = 75 × 28.500 = 2.137.500đ; nếu giá thắng là P USD, tiền hàng = P × 28.500đ. Chưa có giá thắng/offer được chấp thuận nên không được chốt 2.137.500đ là giá mua. Laptop còn cần kiểm tra phụ thu danh mục. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-6.png",
     "imageAlt": "Ghi cụ thể cách tính ra giá sp",
     "productUrl": ""
@@ -1561,7 +1561,7 @@
     "prompt": "9.  Web Amazon, Phí ship web và giá báo khách lẻ là bao nhiêu?",
     "options": [],
     "correct": null,
-    "explanation": "One-time Purchase $8.88; $8.44 thuộc Subscribe & Save. Extra $1.00 Off Coupon chỉ cho first Subscribe and Save order. Ship miễn phí có điều kiện đơn hàng/Prime; ảnh không cho phí ship cụ thể nếu không đủ điều kiện.",
+    "explanation": "Mua một lần chọn One-time Purchase $8.88, không dùng $8.44 Subscribe & Save và không trừ coupon $1 chỉ dành cho lần Subscribe & Save đầu. Tiền hàng = 8,88 × 28.500 = 253.080đ. Nếu đơn riêng đủ điều kiện free ship: cộng phụ thu đơn dưới $30 là 50.000đ → 303.080đ trước vận chuyển quốc tế và phụ thu danh mục. Nếu không có Prime/không đủ ngưỡng free ship, cộng S × 28.500đ; ảnh không nêu S. Đơn gom đạt $30 thì không cộng 50.000đ. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-9.png",
     "imageAlt": "Ghi cụ thể cách tính ra giá sp",
     "productUrl": ""
@@ -1673,7 +1673,7 @@
     "prompt": "16. Web MK, Giá báo khách lẻ là bao nhiêu?",
     "options": [],
     "correct": null,
-    "explanation": "Was $250.00, Now $131.25. Giá Now đã giảm; ảnh không hiển thị thêm coupon hoặc phí ship. Cần xác minh ship trước khi chốt.",
+    "explanation": "Giá Now $131.25 đã giảm từ $250; không giảm lại. Tiền hàng = 131,25 × 28.500 = 3.740.625đ. Ship web chưa có trong ảnh: cộng S × 28.500đ theo giỏ, không mặc định miễn phí. Đồng hồ cần kiểm tra phụ thu danh mục. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-16.png",
     "imageAlt": "Ghi cụ thể cách tính ra giá sp",
     "productUrl": ""
@@ -1686,7 +1686,7 @@
     "prompt": "17. Website Toryburch, Giá báo khách lẻ là bao nhiêu? ",
     "options": [],
     "correct": null,
-    "explanation": "Ảnh: $448 gạch ngang, $269 hiện tại, Extra 25% off: Code EXTRA. Nếu giỏ xác nhận đủ điều kiện: 269 × 0.75 = $201.75. Có Free Shipping Returns and Gift Wrap; cần xác minh địa chỉ và điều kiện.",
+    "explanation": "Giá hiện tại $269, nhập EXTRA để giảm thêm 25% khi giỏ chấp nhận: 269 × 75% = $201.75. Tiền hàng = 201,75 × 28.500 = 5.749.875đ. Ảnh ghi free shipping; áp dụng nếu địa chỉ kho đủ điều kiện. Không giảm từ giá gạch ngang $448. Nếu mã không hợp lệ phải báo lại giá giỏ, không hứa giá đã giảm. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-17.png",
     "imageAlt": "Ghi cụ thể cách tính ra giá sp",
     "productUrl": ""
@@ -1712,7 +1712,7 @@
     "prompt": "19.  Web Ebay, Giá báo khách lẻ là bao nhiêu?",
     "options": [],
     "correct": null,
-    "explanation": "Buy It Now US $28.99; Shipping $4.00. Tổng tiền hàng + ship theo ảnh = $32.99. Make Offer chưa phải ưu đãi đã chấp thuận; cần đổi đúng địa chỉ kho khi kiểm tra.",
+    "explanation": "Buy It Now $28.99 + ship web $4 = $32.99; Make Offer chưa phải giảm giá được duyệt. Tiền hàng và ship = 32,99 × 28.500 = 940.215đ. FAQ quy định phụ thu 50.000đ theo tổng đơn dưới $30 nhưng chưa nói rõ có tính ship vào ngưỡng: nếu xét tiền hàng $28.99 thì cộng 50.000đ → 990.215đ; nếu tổng xét ngưỡng gồm ship $32.99 thì 940.215đ. Người chấm cần xác nhận cách xét ngưỡng, không đánh sai chỉ vì điểm chưa rõ này. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-19.png",
     "imageAlt": "Ghi cụ thể cách tính ra giá sp",
     "productUrl": ""
@@ -1725,7 +1725,7 @@
     "prompt": "20. Web Ashford.com, giá báo khách lẻ là bao nhiêu? ",
     "options": [],
     "correct": null,
-    "explanation": "List Price $240; Our Price $115; Apply Coupon LOVEMOM; After Coupon $105.80. Không giảm lặp trên $105.80. Ảnh ghi free standard shipping in contiguous United States; kiểm tra kho nhận có đáp ứng.",
+    "explanation": "Tick/apply LOVEMOM: After Coupon $105.80 là giá sau mã (từ $115), không giảm lặp. Tiền hàng = 105,80 × 28.500 = 3.015.300đ. Free standard shipping trong contiguous United States nếu kho đáp ứng. Đồng hồ cần kiểm tra phụ thu danh mục. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-20.png",
     "imageAlt": "",
     "productUrl": ""
@@ -1738,7 +1738,7 @@
     "prompt": "21. Web Amazon, Giá báo khách lẻ là bao nhiêu? ",
     "options": [],
     "correct": null,
-    "explanation": "Price $26.04 + $2.99 shipping; coupon save an extra 15% when you apply this coupon. Nếu đủ điều kiện: 26.04 × 0.85 = $22.134 ≈ $22.13; cộng ship = $25.12. Không giảm ship khi chưa có điều kiện cho phép.",
+    "explanation": "Tick coupon giảm thêm 15% trên $26.04: 26,04 × 85% = $22.134, làm tròn tiền hàng theo giỏ $22.13. Cộng ship $2.99 → $25.12. Quy đổi = 25,12 × 28.500 = 715.920đ; đơn riêng dưới $30 cộng 50.000đ → 765.920đ trước vận chuyển quốc tế/phụ thu danh mục. Không giảm 15% phí ship. Nếu chưa làm tròn USD, kết quả là 766.034đ; chấp nhận chênh lệch làm tròn nếu cách tính rõ và khớp giỏ. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-21.png",
     "imageAlt": "Ghi cụ thể cách tính ra giá sp",
     "productUrl": ""
@@ -1751,7 +1751,7 @@
     "prompt": "22.  Web Jomashop, Giá báo khách lẻ là bao nhiêu?",
     "options": [],
     "correct": null,
-    "explanation": "Retail $310; was $232.50; sale $69.99 (77% off). Không giảm tiếp 77%. IN STOCK $5.99 SHIPPED: tiền hàng + ship = $75.98 theo ảnh; kiểm tra tại giỏ.",
+    "explanation": "Giá sale $69.99 đã gồm mức giảm 77%, không giảm tiếp. Ship theo ảnh $5.99 → $75.98. Quy đổi = 75,98 × 28.500 = 2.165.430đ trước vận chuyển quốc tế/phụ thu danh mục. Kiểm tra ship tại giỏ; kính cần kiểm tra phụ thu danh mục. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-22.png",
     "imageAlt": "Ghi cụ thể cách tính ra giá sp",
     "productUrl": ""
@@ -1764,7 +1764,7 @@
     "prompt": "23.  Web Amazon, Giá báo khách lẻ là bao nhiêu?",
     "options": [],
     "correct": null,
-    "explanation": "Giá $129.99 & FREE Shipping. Buy 2 Kindle devices … save 10% before taxes and fees, Terms and conditions. Một máy không đủ điều kiện số lượng. Hai máy cùng giá nếu đủ điều kiện: 129.99 × 2 × 0.9 = $233.982 ≈ $233.98, đối chiếu cách làm tròn tại giỏ.",
+    "explanation": "Một Kindle: $129.99, free shipping → 129,99 × 28.500 = 3.704.715đ trước vận chuyển quốc tế/phụ thu danh mục. Không tự giảm 10% khi mua một máy. Nếu mua đủ hai máy cùng giá và chương trình hợp lệ: 129,99 × 2 × 90% = $233.982, làm tròn giỏ $233.98 → 6.668.430đ cho hai máy. Kiểm tra phụ thu thiết bị điện tử. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-23.png",
     "imageAlt": "Ghi cụ thể cách tính ra giá sp",
     "productUrl": ""
@@ -1777,7 +1777,7 @@
     "prompt": "24. Web Puma, giá báo khách lẻ là bao nhiêu? ",
     "options": [],
     "correct": null,
-    "explanation": "Giá $69.99, $75 gạch ngang; UP TO 50% OFF + EXTRA 20% WITH CODE: EXTRA20. Không dùng UP TO 50% làm giảm cố định thêm. Nếu áp EXTRA20 thành công: 69.99 × 0.8 = $55.992 ≈ $55.99. Ảnh không có phí ship.",
+    "explanation": "Giá hiện tại $69.99; UP TO 50% không phải giảm thêm cố định 50%. Nhập EXTRA20, nếu hợp lệ: 69,99 × 80% = $55.992, làm tròn giỏ $55.99 → 55,99 × 28.500 = 1.595.715đ. Cộng S × 28.500đ vì ảnh chưa có ship web. Không tính theo khoản trả góp $17.50. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-24.png",
     "imageAlt": "",
     "productUrl": ""
@@ -1823,7 +1823,7 @@
     "prompt": "27. Web Amazon, Sản phẩm Amz hay Amz Prime và giá báo khách lẻ là bao nhiêu?",
     "options": [],
     "correct": null,
-    "explanation": "List Price $22.99; Price $17.49; You Save $5.50 (24%). Không giảm tiếp 24%. Ảnh ghi FREE Shipping on orders over $25 shipped by Amazon hoặc với Amazon Prime. Ships from and sold by Amazon.com chưa tự chứng minh tài khoản có Prime.",
+    "explanation": "Giá hiện tại $17.49 đã giảm 24% từ $22.99; không giảm tiếp. Ships from and sold by Amazon.com; free shipping khi đơn trên $25 hoặc có Amazon Prime. Ảnh không đủ để khẳng định tài khoản mua có Prime. Tiền hàng = 17,49 × 28.500 = 498.465đ. Đơn riêng có free ship và dưới $30: cộng 50.000đ → 548.465đ trước vận chuyển quốc tế/phụ thu danh mục. Nếu không đủ free ship, cộng S × 28.500đ theo giỏ. Đơn gom đạt $30 không cộng phụ thu đơn nhỏ. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-27.png",
     "imageAlt": "Ghi cụ thể cách tính ra giá sp",
     "productUrl": ""
@@ -1836,7 +1836,7 @@
     "prompt": "28. Web Ebay, Giá báo khách lẻ là bao nhiêu?",
     "options": [],
     "correct": null,
-    "explanation": "Buy It Now US $74.00; Shipping $10.00. Tổng USD theo ảnh $84.00. More than 79% sold là tỷ lệ đã bán, không phải phần trăm giảm giá.",
+    "explanation": "Buy It Now $74 + ship web $10 = $84. Quy đổi = 84 × 28.500 = 2.394.000đ trước vận chuyển quốc tế/phụ thu danh mục. More than 79% sold là tỷ lệ đã bán, không phải giảm giá. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-28.png",
     "imageAlt": "Ghi cụ thể cách tính ra giá sp",
     "productUrl": ""
@@ -1862,7 +1862,7 @@
     "prompt": "30. Web Lacoste, giá báo cho khách lẻ là bao nhiêu?",
     "options": [],
     "correct": null,
-    "explanation": "Ảnh có 30% OFF / NEW MARKDOWN; giá hiện tại $86.99, giá cũ $125.00. Không giảm thêm 30% vào $86.99. Free shipping on orders $100+; một áo chưa đạt ngưỡng, ảnh không cho số tiền ship phải trả.",
+    "explanation": "Giá $86.99 đã giảm từ $125 (nhãn 30% OFF), không trừ thêm 30%. Quy đổi tiền hàng = 86,99 × 28.500 = 2.479.215đ. Free shipping chỉ khi đơn $100+; một áo chưa đạt. Cộng S × 28.500đ theo giỏ; ảnh không nêu số tiền ship. Không lấy giá trả góp $21.74. Khách lẻ Asale, theo Wiki kiểm tra 14/09/2026: giá về VN = (giá web sau ưu đãi + ship web) × 28.500 + phụ thu + vận chuyển Mỹ–VN. Các số trên chưa phải tổng cuối cùng: ảnh không có cân nặng. VC = 250.000đ/kg; trên 10kg: 240.000đ/kg, trên 20kg: 230.000đ/kg; tối thiểu 0,5kg cho một lần hàng về (không mặc định 0,5kg từng món). Phụ thu đơn dưới $30: 50.000đ/đơn, không mỗi món; item trên $500: 3% × giá item USD × 26.500. Bảng phụ thu danh mục đang yêu cầu đăng nhập nên cần người chấm xác nhận, không tự coi bằng 0. Nguồn: Wiki → Tư vấn & Báo giá mục 7; Báo hàng về mục 5; FAQ. Đáp án tham khảo để chấm thủ công, không tự động cho điểm.",
     "image": "assets/quiz/form-30.png",
     "imageAlt": "",
     "productUrl": ""
@@ -2004,13 +2004,13 @@
   },
   {
     "id": "form-041",
-    "source": "cach-lam-viec",
+    "source": "bao-gia",
     "type": "short",
     "enabled": true,
     "prompt": "41. Khi có deal sale $200 được off $60 (off 30%) mà khách lẻ chỉ gửi 1 món để chờ gom đơn cho đủ off thì sẽ tính cho khách lẻ off bao nhiêu %?",
     "options": [],
     "correct": null,
-    "explanation": "Chưa có đáp án chuẩn công khai từ form. Admin/Editor đối chiếu quy trình wiki hiện hành và duyệt câu trả lời trước khi chấm; không dùng suy đoán làm đáp án.",
+    "explanation": "Khách lẻ gửi một món chờ gom: áp mức giảm 25% = 30% − 5 điểm phần trăm theo Wiki → Tư vấn & Báo giá → Các trường hợp đặc biệt. Tiền hàng báo khách = giá món trước deal × 75%; quy đổi Asale nhân 28.500đ/USD, cộng ship web, phụ thu và vận chuyển nếu có. Không dùng 30% cho món lẻ chưa đủ ngưỡng $200. Nguồn: Wiki → Tư vấn & Báo giá → Các trường hợp đặc biệt. Chấm thủ công.",
     "image": "",
     "imageAlt": "",
     "productUrl": ""
