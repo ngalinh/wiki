@@ -3,6 +3,8 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const wikiAuth = require('./wiki-auth');
+const quizIdentity = require('./quiz-identity');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,6 +31,29 @@ if (!fs.existsSync(CONFIG_FILE)) {
 }
 
 app.use(express.json({ limit: '2mb' }));
+
+// Chặn toàn bộ /api/* và /uploads/* nếu chưa đăng nhập — tránh việc ai có
+// link cũng đọc được nội dung wiki (dữ liệu nội bộ công ty). Đăng nhập hợp lệ
+// là HOẶC phiên Dashboard/Basso đã xác minh (quizIdentity, gọi API Basso),
+// HOẶC tài khoản riêng cho Wiki (wiki_session, xác minh cục bộ — dành cho
+// nhân viên thử việc chưa có tài khoản Basso). Không tin query/header do
+// client tự khai — đó là lỗ hổng mà quiz-identity.js đã vá trước đây.
+const PUBLIC_API_PATHS = new Set(['/api/version', '/api/me', '/api/wiki-login', '/api/wiki-logout']);
+async function verifiedIdentity(req) {
+  const local = wikiAuth.emailFromRequest(req);
+  if (local) return local;
+  try { return await quizIdentity(req); } catch { return null; }
+}
+app.use(async (req, res, next) => {
+  const isApi = req.path.startsWith('/api/');
+  const isUploads = req.path.startsWith('/uploads/');
+  if (!isApi && !isUploads) return next();
+  if (isApi && PUBLIC_API_PATHS.has(req.path)) return next();
+  const email = await verifiedIdentity(req);
+  if (email) { req.verifiedEmail = email; return next(); }
+  res.status(401).json({ error: 'Cần đăng nhập để sử dụng Wiki.' });
+});
+
 app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d' }));
 // Server source, answer keys and employee results must never be served as static files.
 app.use((req, res, next) => {
@@ -142,13 +167,56 @@ app.get('/api/debug-auth', (req, res) => {
   });
 });
 
-// GET /api/me
-app.get('/api/me', (req, res) => {
-  const email = getUserEmail(req);
+// GET /api/me — public: cho frontend biết đã đăng nhập chưa (để hiện màn hình đăng nhập)
+app.get('/api/me', async (req, res) => {
+  const email = await verifiedIdentity(req);
   res.json({ email, isAdmin: isAdmin(email), isEditor: isEditor(email) });
 });
 
-const quizIdentity = require('./quiz-identity');
+// POST /api/wiki-login — đăng nhập bằng tài khoản riêng cho Wiki (admin cấp thủ công,
+// dành cho nhân viên thử việc chưa có tài khoản Dashboard/Basso)
+app.post('/api/wiki-login', (req, res) => {
+  const { email, password } = req.body || {};
+  if (typeof email !== 'string' || typeof password !== 'string')
+    return res.status(400).json({ error: 'Thiếu email hoặc mật khẩu' });
+  const normalized = email.trim().toLowerCase();
+  const user = wikiAuth.findUser(normalized);
+  if (!user || !wikiAuth.verifyPassword(password, user.passwordHash))
+    return res.status(401).json({ error: 'Sai email hoặc mật khẩu' });
+  wikiAuth.setSessionCookie(req, res, normalized);
+  res.json({ success: true, email: normalized });
+});
+
+// POST /api/wiki-logout
+app.post('/api/wiki-logout', (req, res) => {
+  wikiAuth.clearSessionCookie(res);
+  res.json({ success: true });
+});
+
+// GET/POST/DELETE /api/wiki-users — admin only: cấp/xóa tài khoản đăng nhập riêng cho Wiki
+app.get('/api/wiki-users', (req, res) => {
+  const email = getUserEmail(req);
+  if (!isAdmin(email)) return res.status(403).json({ error: 'Chỉ Admin mới có quyền xem' });
+  res.json({ users: wikiAuth.listUsers().map(u => ({ email: u.email, label: u.label, createdAt: u.createdAt })) });
+});
+
+app.post('/api/wiki-users', (req, res) => {
+  const email = getUserEmail(req);
+  if (!isAdmin(email)) return res.status(403).json({ error: 'Chỉ Admin mới có quyền cấp tài khoản' });
+  const { email: newEmail, password, label } = req.body || {};
+  if (typeof newEmail !== 'string' || !newEmail.includes('@') || typeof password !== 'string' || password.length < 6)
+    return res.status(400).json({ error: 'Cần email hợp lệ và mật khẩu tối thiểu 6 ký tự' });
+  wikiAuth.upsertUser(newEmail.trim().toLowerCase(), password, (label || '').trim(), email);
+  res.json({ success: true });
+});
+
+app.delete('/api/wiki-users/:email', (req, res) => {
+  const email = getUserEmail(req);
+  if (!isAdmin(email)) return res.status(403).json({ error: 'Chỉ Admin mới có quyền xóa' });
+  wikiAuth.removeUser(decodeURIComponent(req.params.email).trim().toLowerCase());
+  res.json({ success: true });
+});
+
 // Protect role changes and quiz image uploads with the same verified identity.
 app.use(['/api/settings', '/api/upload'], async (req, res, next) => {
   try { req.verifiedEmail = await quizIdentity(req); next(); }
