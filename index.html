@@ -391,6 +391,18 @@ tbody tr:hover{background:var(--cream);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.error{background:var(--red-ink);}
 
+/* ---------- LOGIN GATE ---------- */
+.login-gate{position:fixed;inset:0;background:var(--cream);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.login-gate.open{display:flex;}
+.login-gate-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow-md);width:100%;max-width:380px;padding:28px;}
+.login-gate-card h2{font-size:18px;font-weight:700;margin-bottom:6px;}
+.login-gate-card p{color:var(--ink-soft);font-size:13px;margin-bottom:18px;}
+.login-gate-card input{width:100%;border:1px solid var(--line);border-radius:var(--r-pill);padding:10px 14px;
+  font-size:14px;font-family:var(--font);outline:none;background:var(--white);color:var(--ink);margin-bottom:10px;box-sizing:border-box;}
+.login-gate-card input:focus{border-color:var(--lav-ink);box-shadow:0 0 0 3px var(--lav-soft);}
+.login-gate-card .btn{width:100%;justify-content:center;margin-top:4px;}
+.login-gate-error{color:var(--red-ink);font-size:13px;margin-top:10px;display:none;}
+
 /* ---------- EDIT MODAL + WYSIWYG ---------- */
 .modal-overlay{position:fixed;inset:0;background:rgba(26,25,22,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
@@ -562,6 +574,20 @@ tbody tr:hover{background:var(--cream);}
 <link rel="stylesheet" href="./quiz.css">
 </head>
 <body>
+
+<!-- LOGIN GATE: chặn toàn bộ nội dung đến khi đăng nhập hợp lệ -->
+<div class="login-gate" id="loginGate">
+  <div class="login-gate-card">
+    <h2>🔒 Đăng nhập Wiki</h2>
+    <p>Dùng tài khoản Dashboard (đăng nhập ở Dashboard trước) hoặc tài khoản thử việc được Admin cấp riêng cho Wiki.</p>
+    <form id="loginGateForm" onsubmit="submitWikiLogin(event)">
+      <input type="email" id="loginGateEmail" placeholder="email@example.com" autocomplete="username" required>
+      <input type="password" id="loginGatePassword" placeholder="Mật khẩu" autocomplete="current-password" required>
+      <button class="btn" type="submit">Đăng nhập</button>
+    </form>
+    <div class="login-gate-error" id="loginGateError"></div>
+  </div>
+</div>
 
 <!-- TOP NAV -->
 <nav class="topnav">
@@ -2303,6 +2329,19 @@ tbody tr:hover{background:var(--cream);}
     </div>
 
     <div class="section">
+      <h2>🔑 Tài khoản thử việc (riêng cho Wiki)</h2>
+      <p style="color:var(--ink-soft);margin-top:-4px;">Dành cho nhân viên thử việc chưa có tài khoản Dashboard/Basso. Tài khoản này đăng nhập trực tiếp tại Wiki (không qua Dashboard) để đọc nội dung và làm quiz — không có quyền chỉnh sửa trang hay quản lý Cài đặt.</p>
+      <ul class="email-list" id="wikiUserList"></ul>
+      <div class="email-input-row" style="flex-wrap:wrap;">
+        <input type="email" id="wikiUserEmailInput" placeholder="email@example.com" style="flex:1 1 180px;">
+        <input type="text" id="wikiUserLabelInput" placeholder="Tên (tùy chọn)" style="flex:1 1 140px;">
+        <input type="text" id="wikiUserPasswordInput" placeholder="Mật khẩu (tối thiểu 6 ký tự)" style="flex:1 1 180px;">
+        <button class="btn btn-secondary btn-sm" onclick="addWikiUser()">+ Cấp tài khoản</button>
+      </div>
+      <div id="wikiUserMsg" style="font-size:13px;margin-top:8px;display:none;"></div>
+    </div>
+
+    <div class="section">
       <h2>📋 Bảng phân quyền</h2>
       <div class="table-wrap">
         <table>
@@ -2320,11 +2359,10 @@ tbody tr:hover{background:var(--cream);}
     <div class="section">
       <h2>🔌 Cách xác thực người dùng</h2>
       <div class="callout info">
-        Wiki tự nhận diện nhân viên qua <strong>phiên đăng nhập hệ thống</strong> (dashboard lưu <code>ai_chat_user</code> khi nhân viên login — dùng chung cho mọi ứng dụng trên dashboard). Nhân viên chỉ cần đăng nhập dashboard một lần, mở wiki là tự có đúng quyền.<br><br>
-        Ngoài ra wiki vẫn nhận <strong>HTTP header</strong> <code>X-User-Email</code> nếu hệ thống proxy gửi kèm (đổi tên header bằng biến <code>USER_EMAIL_HEADER</code> trong <code>.env</code>).
-      </div>
-      <div class="callout warn">
-        <strong>Test nhanh (chỉ dùng khi dev):</strong> Thêm <code>?user_email=your@email.com</code> vào URL để giả lập email đăng nhập — cách này được ưu tiên hơn phiên đăng nhập.
+        Wiki chỉ cho vào khi có <strong>một trong hai phiên đăng nhập đã được xác minh thật</strong> (server tự kiểm tra, không tin dữ liệu client tự khai):<br><br>
+        1. <strong>Phiên Dashboard/Basso</strong> — nhân viên đăng nhập Dashboard, wiki tự xác minh qua API Basso (dùng chung cho mọi app trên dashboard).<br>
+        2. <strong>Tài khoản thử việc riêng cho Wiki</strong> (mục trên) — admin cấp email/mật khẩu, đăng nhập trực tiếp ngay tại Wiki.<br><br>
+        Không đăng nhập bằng một trong hai cách trên → mọi nội dung và quiz đều trả về 401, kể cả khi biết đường link.
       </div>
     </div>
   </div>
@@ -2743,10 +2781,10 @@ function showToast(msg, isError = false) {
 window.addEventListener('DOMContentLoaded', async () => {
   authEmail = resolveUserEmail();
   try {
-    const url = authEmail ? `./api/me?user_email=${encodeURIComponent(authEmail)}` : './api/me';
-    const res = await fetch(url);
+    const res = await fetch('./api/me');
     currentUser = await res.json();
   } catch { /* server chưa chạy — chạy như static file */ }
+  if (!currentUser.email) { showLoginGate(); return; }
   renderUserBadge();
   updateRoleUI();
   if (location.hash === '#take-quiz') Quiz.load();
@@ -2754,6 +2792,28 @@ window.addEventListener('DOMContentLoaded', async () => {
   themeHeadingIcons();
   document.querySelectorAll('.page').forEach(p => refreshExpandBtn(p.dataset.page));
 });
+
+// ─── Login gate: chặn toàn bộ nội dung đến khi có phiên đăng nhập hợp lệ ───
+function showLoginGate() {
+  document.getElementById('loginGate').classList.add('open');
+}
+
+async function submitWikiLogin(event) {
+  event.preventDefault();
+  const email = document.getElementById('loginGateEmail').value.trim();
+  const password = document.getElementById('loginGatePassword').value;
+  const errEl = document.getElementById('loginGateError');
+  errEl.style.display = 'none';
+  try {
+    const res = await fetch('./api/wiki-login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) { errEl.textContent = data.error || 'Đăng nhập thất bại'; errEl.style.display = 'block'; return; }
+    location.reload();
+  } catch { errEl.textContent = 'Không kết nối được server'; errEl.style.display = 'block'; }
+}
 
 document.querySelectorAll('.sidebar-link[data-page]').forEach(l => l.addEventListener('click', () => navigate(l.dataset.page)));
 bindGo(document);
@@ -3895,9 +3955,65 @@ async function loadSettings() {
     renderEmailLists();
     document.getElementById('settings-loading').style.display = 'none';
     document.getElementById('settings-content').style.display = 'block';
+    loadWikiUsers();
   } catch {
     document.getElementById('settings-loading').textContent = '⚠️ Không kết nối được server. Hãy chắc chắn server đang chạy.';
   }
+}
+
+// ─── Tài khoản thử việc (đăng nhập riêng cho Wiki) ─────────────
+async function loadWikiUsers() {
+  try {
+    const res = await fetch('./api/wiki-users');
+    if (!res.ok) return;
+    const { users } = await res.json();
+    renderWikiUsers(users);
+  } catch {}
+}
+
+function renderWikiUsers(users) {
+  const ul = document.getElementById('wikiUserList');
+  if (!ul) return;
+  ul.innerHTML = users.length
+    ? users.map(u => `
+        <li>
+          <span>${u.email}${u.label ? ` — ${u.label}` : ''}</span>
+          <button class="btn-remove" onclick="removeWikiUser('${u.email}')" title="Xóa">✕</button>
+        </li>`).join('')
+    : '<li class="empty-msg">Chưa có tài khoản nào</li>';
+}
+
+async function addWikiUser() {
+  const emailInput = document.getElementById('wikiUserEmailInput');
+  const labelInput = document.getElementById('wikiUserLabelInput');
+  const passwordInput = document.getElementById('wikiUserPasswordInput');
+  const email = emailInput.value.trim().toLowerCase();
+  const password = passwordInput.value;
+  const msg = document.getElementById('wikiUserMsg');
+  if (!email || !email.includes('@') || password.length < 6) {
+    msg.style.display = 'block'; msg.style.color = 'var(--red-ink)';
+    msg.textContent = 'Cần email hợp lệ và mật khẩu tối thiểu 6 ký tự.';
+    return;
+  }
+  try {
+    const res = await fetch('./api/wiki-users', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, label: labelInput.value.trim() }),
+    });
+    const data = await res.json();
+    if (!res.ok) { msg.style.display = 'block'; msg.style.color = 'var(--red-ink)'; msg.textContent = data.error || 'Lỗi khi cấp tài khoản'; return; }
+    emailInput.value = ''; labelInput.value = ''; passwordInput.value = '';
+    msg.style.display = 'block'; msg.style.color = 'var(--green-ink)'; msg.textContent = `✓ Đã cấp tài khoản cho ${email}`;
+    loadWikiUsers();
+  } catch { msg.style.display = 'block'; msg.style.color = 'var(--red-ink)'; msg.textContent = 'Không kết nối được server'; }
+}
+
+async function removeWikiUser(email) {
+  try {
+    await fetch('./api/wiki-users/' + encodeURIComponent(email), { method: 'DELETE' });
+    loadWikiUsers();
+    showToast('✓ Đã xóa tài khoản ' + email);
+  } catch { showToast('Không xóa được tài khoản', true); }
 }
 
 function renderEmailLists() {
